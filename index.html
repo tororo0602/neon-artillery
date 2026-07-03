@@ -64,6 +64,16 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 #report .dealt{color:var(--cyan);text-shadow:0 0 10px var(--cyan);}
 #report .taken{color:var(--magenta);text-shadow:0 0 10px var(--magenta);}
 
+/* tap-to-continue result gate */
+#resultGate{position:absolute;inset:0;z-index:24;display:none;pointer-events:none;cursor:pointer;}
+#resultGate.show{display:block;pointer-events:auto;}
+#resultPrompt{position:absolute;left:50%;top:calc(32% + 118px);transform:translateX(-50%);min-width:230px;padding:10px 18px;text-align:center;
+  border:1px solid rgba(232,246,255,.34);background:rgba(3,7,14,.72);box-shadow:0 0 22px rgba(0,240,255,.16);backdrop-filter:blur(3px);
+  font-family:'Orbitron';letter-spacing:.16em;color:var(--bone);animation:resultPulse 1.1s ease-in-out infinite;}
+#resultPrompt .rpMain{font-weight:900;font-size:12px;color:var(--cyan);text-shadow:0 0 10px rgba(0,240,255,.7);}
+#resultPrompt .rpSub{font-size:9px;color:#9fb8c8;margin-top:4px;letter-spacing:.12em;}
+@keyframes resultPulse{0%,100%{opacity:.68;transform:translateX(-50%) scale(.98);}50%{opacity:1;transform:translateX(-50%) scale(1);}}
+
 /* turn damage log */
 #damageLog{position:absolute;top:94px;left:8px;right:8px;z-index:13;pointer-events:none;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;opacity:0;transform:translateY(-6px);transition:opacity .25s,transform .25s;}
 #damageLog.show{opacity:1;transform:translateY(0);}
@@ -305,6 +315,23 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
 #overStats .sr{display:flex;justify-content:space-between;gap:26px;font-size:12px;letter-spacing:.08em;color:#cfe4f0;margin:4px 0;}
 #overStats .sr b{color:var(--cyan);font-family:'Orbitron';}
 @media (prefers-reduced-motion:reduce){.cutmain,#crisis .edge,#crisisTicker span,.hpbar.cracked .hpfill{animation:none!important;}}
+
+/* result stop: expand damage log and do not abbreviate labels */
+#damageLog.resultMode{top:86px;left:6px;right:6px;z-index:25;gap:8px;align-items:flex-start;}
+#damageLog.resultMode .damageStack{width:min(44vw,190px);max-height:none;overflow:visible;padding:6px 6px 7px;background:rgba(3,7,14,.76);box-shadow:0 0 20px rgba(0,0,0,.34);}
+#damageLog.resultMode .damageHead{font-size:8px;letter-spacing:.12em;}
+#damageLog.resultMode .damageItem{grid-template-columns:24px minmax(0,1fr) auto;align-items:start;gap:5px;padding:3px 4px;font-size:9px;line-height:1.22;}
+#damageLog.resultMode .damageStack.taken .damageItem{grid-template-columns:auto minmax(0,1fr) 24px;}
+#damageLog.resultMode .damageItem em{white-space:normal;overflow:visible;text-overflow:clip;word-break:keep-all;overflow-wrap:normal;line-height:1.22;}
+#damageLog.resultMode .damageItem span{padding-top:1px;}
+#damageLog.resultMode .damageItem b{padding-top:0;}
+@media (max-width:600px), (orientation:portrait){
+  #damageLog.resultMode{top:84px;left:5px;right:5px;gap:6px;}
+  #damageLog.resultMode .damageStack{width:min(45vw,188px);padding:5px;}
+  #damageLog.resultMode .damageItem{grid-template-columns:20px minmax(0,1fr) auto;gap:3px;font-size:8.5px;}
+  #damageLog.resultMode .damageStack.taken .damageItem{grid-template-columns:auto minmax(0,1fr) 20px;}
+}
+
 </style>
 </head>
 <body>
@@ -323,6 +350,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
     <div id="enemyUpgradeBig"><div class="euTop">ENEMY UPGRADE</div><div class="euName" id="euName"></div><div class="euDesc" id="euDesc"></div></div>
     <div id="msg"></div>
     <div id="report"><div class="rt">DAMAGE REPORT // 交戦結果</div><div class="row dealt" id="rDealt"></div><div class="row taken" id="rTaken"></div></div>
+    <div id="resultGate"><div id="resultPrompt"><div class="rpMain">TAP TO CONTINUE</div><div class="rpSub">タップで次へ // 結果確認</div></div></div>
     <div id="damageLog">
       <div class="damageStack dealt"><div class="damageHead">与ダメ <b id="dmgDealtTotal">0</b></div><div class="damageList" id="dmgDealtList"></div></div>
       <div class="damageStack taken"><div class="damageHead">被ダメ <b id="dmgTakenTotal">0</b></div><div class="damageList" id="dmgTakenList"></div></div>
@@ -459,7 +487,7 @@ const G={turn:1,phase:'start',wind:0,slowT:0,shake:0,glitch:0,punch:0,hue:0,
   player:makeUnit(),enemy:makeUnit(),
   owned:{},enemyOwned:{},over:false,
   stats:{fired:0,dealt:0,maxHit:0,crits:0,hellfire:0,swarm:0,carpet:0,thunder:0},lastImpactX:0,lastImpact:null,enemyLevel:3,duel:null,camLockX:null,camPendingLockX:null,
-  volley:{dealt:0,taken:0},specialHits:{},damageSeq:{dealt:0,taken:0},damageLogActive:false};
+  volley:{dealt:0,taken:0},specialHits:{},damageSeq:{dealt:0,taken:0},damageLogActive:false,pendingResult:false};
 let terrain=[],TSTEP=3,cols=0;
 let projectiles=[],interceptors=[],particles=[],beams=[],fires=[],floaters=[],planes=[],stars=[];
 const CORE_R=11,GRAV=0.16;
@@ -500,7 +528,10 @@ function resetDamageLog(show=true){
   if(dealt)dealt.innerHTML='';
   if(taken)taken.innerHTML='';
   updateDamageLogTotals();
-  if(log)log.classList.toggle('show',!!show);
+  if(log){
+    log.classList.remove('resultMode');
+    log.classList.toggle('show',!!show);
+  }
 }
 function updateDamageLogTotals(){
   const d=document.getElementById('dmgDealtTotal'),t=document.getElementById('dmgTakenTotal');
@@ -806,6 +837,8 @@ function showEnemyUpgrade(c){
 }
 function showDraft(){
   if(G.over||G.phase==='draft')return;
+  hideResultGate();
+  G.pendingResult=false;
   G.phase='draft';
   document.getElementById('report').classList.remove('show');
   const dmgLog=document.getElementById('damageLog');if(dmgLog)dmgLog.classList.remove('show');
@@ -1223,6 +1256,8 @@ function dealDamage(who,val,crit,label){
 /* ============ turn flow ============ */
 function startTurn(){
   if(G.over)return;
+  hideResultGate();
+  G.pendingResult=false;
   G.volley={dealt:0,taken:0};
   G.specialHits={};
   resetDamageLog(true);
@@ -1236,26 +1271,44 @@ function startTurn(){
   document.getElementById('ctrl').classList.remove('hidden');
   msg('T-'+String(G.turn).padStart(2,'0')+' // AIM',1000);
 }
+
+function hideResultGate(){
+  const gate=document.getElementById('resultGate');
+  if(gate)gate.classList.remove('show');
+  const dmgLog=document.getElementById('damageLog');
+  if(dmgLog)dmgLog.classList.remove('resultMode');
+}
+function continueAfterVolley(){
+  if(G.over||G.phase!=='afterglow'||!G.pendingResult)return;
+  G.pendingResult=false;
+  hideResultGate();
+  const rep=document.getElementById('report');
+  if(rep)rep.classList.remove('show');
+  const result=duelOutcome();
+  G.duel=null;
+  if(result==='draw')gameOver('draw');
+  else if(result==='win')gameOver(true);
+  else if(result==='lose')gameOver(false);
+  else showDraft();
+}
+
 function afterVolley(){
-  // 余韻フェーズ：合計ダメージ表示→勝敗判定 or ドラフト
+  // 余韻フェーズ：合計ダメージ表示で一時停止。タップ/クリックで次へ進む。
   if(G.over)return;
   G.phase='afterglow';
+  G.pendingResult=true;
   slowmo(0.35);
   const rep=document.getElementById('report');
   document.getElementById('rDealt').textContent='与ダメージ '+G.volley.dealt;
   document.getElementById('rTaken').textContent='被ダメージ '+G.volley.taken;
-  const outcome=duelOutcome();
-  setTimeout(()=>{if(!G.over)rep.classList.add('show');},350);
   setTimeout(()=>{
-    rep.classList.remove('show');
-    if(G.over)return;
-    const result=duelOutcome();
-    G.duel=null;
-    if(result==='draw')gameOver('draw');
-    else if(result==='win')gameOver(true);
-    else if(result==='lose')gameOver(false);
-    else showDraft();
-  },outcome==='continue'?2200:2600);
+    if(G.over||G.phase!=='afterglow'||!G.pendingResult)return;
+    if(rep)rep.classList.add('show');
+    const dmgLog=document.getElementById('damageLog');
+    if(dmgLog)dmgLog.classList.add('resultMode');
+    const gate=document.getElementById('resultGate');
+    if(gate)gate.classList.add('show');
+  },350);
 }
 function epithet(win){
   const st=G.stats;
@@ -1283,6 +1336,8 @@ function killCam(win){
 }
 function gameOver(win){
   G.over=true;G.phase='over';G.duel=null;
+  hideResultGate();
+  G.pendingResult=false;
   killCam(win);
   document.getElementById('ctrl').classList.add('hidden');
   document.getElementById('report').classList.remove('show');
@@ -1323,6 +1378,8 @@ function gameOver(win){
   }
   setTimeout(()=>document.getElementById('over').classList.add('show'),3000);
 }
+const resultGate=document.getElementById('resultGate');
+if(resultGate)resultGate.onclick=()=>continueAfterVolley();
 document.getElementById('retry').onclick=()=>location.reload();
 const nextLvBtn=document.getElementById('nextLv');
 if(nextLvBtn)nextLvBtn.onclick=()=>{
