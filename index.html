@@ -63,6 +63,30 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 #report .row{font-family:'Orbitron';font-weight:700;font-size:17px;margin:4px 0;letter-spacing:.08em;}
 #report .dealt{color:var(--cyan);text-shadow:0 0 10px var(--cyan);}
 #report .taken{color:var(--magenta);text-shadow:0 0 10px var(--magenta);}
+
+/* turn damage log */
+#damageLog{position:absolute;top:94px;left:8px;right:8px;z-index:13;pointer-events:none;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;opacity:0;transform:translateY(-6px);transition:opacity .25s,transform .25s;}
+#damageLog.show{opacity:1;transform:translateY(0);}
+.damageStack{width:132px;max-height:38vh;overflow:hidden;border:1px solid rgba(232,246,255,.18);background:rgba(3,7,14,.52);backdrop-filter:blur(2px);padding:5px 5px 6px;box-shadow:0 0 14px rgba(0,0,0,.25);}
+.damageStack.dealt{border-color:rgba(0,240,255,.34);}
+.damageStack.taken{border-color:rgba(255,45,120,.34);text-align:right;}
+.damageHead{font-family:'Orbitron';font-size:8px;letter-spacing:.14em;color:#9fb8c8;margin-bottom:4px;border-bottom:1px solid rgba(232,246,255,.12);padding-bottom:3px;white-space:nowrap;}
+.damageHead b{font-size:10px;color:var(--bone);margin-left:3px;}
+.damageStack.dealt .damageHead b{color:var(--cyan);text-shadow:0 0 8px rgba(0,240,255,.65);}
+.damageStack.taken .damageHead b{color:var(--magenta);text-shadow:0 0 8px rgba(255,45,120,.65);}
+.damageList{display:flex;flex-direction:column;gap:3px;}
+.damageItem{display:grid;grid-template-columns:24px 1fr auto;gap:4px;align-items:center;font-family:'Orbitron';font-size:9px;line-height:1.15;padding:2px 3px;background:rgba(255,255,255,.035);border-left:2px solid rgba(232,246,255,.22);animation:dmgIn .2s ease forwards;}
+.damageStack.taken .damageItem{border-left:0;border-right:2px solid rgba(232,246,255,.22);grid-template-columns:auto 1fr 24px;}
+.damageItem span{font-size:7px;color:#8aa6b8;letter-spacing:.08em;}
+.damageItem em{font-style:normal;font-family:'Share Tech Mono',monospace;font-size:9px;color:#cfe4f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.damageItem b{font-size:10px;color:var(--bone);font-weight:900;}
+.damageStack.dealt .damageItem{border-left-color:rgba(0,240,255,.58);}
+.damageStack.dealt .damageItem b{color:var(--cyan);}
+.damageStack.taken .damageItem{border-right-color:rgba(255,45,120,.58);}
+.damageStack.taken .damageItem b{color:var(--magenta);}
+.damageItem.crit{background:rgba(255,194,51,.08);box-shadow:0 0 10px rgba(255,194,51,.12);}
+.damageItem.crit span{color:var(--gold);}
+@keyframes dmgIn{from{opacity:0;transform:translateY(-4px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
 /* controls */
 #ctrl{position:absolute;left:0;right:0;bottom:0;z-index:12;padding:8px 12px calc(10px + env(safe-area-inset-bottom));
   background:linear-gradient(180deg,transparent,rgba(3,6,12,.9) 30%);
@@ -188,6 +212,13 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
 
 
 @media (max-width:600px), (orientation:portrait){
+  #damageLog{top:88px;left:6px;right:6px;}
+  .damageStack{width:76px;max-height:34vh;padding:4px;}
+  .damageHead{font-size:7px;letter-spacing:.08em;}
+  .damageHead b{font-size:9px;}
+  .damageItem{font-size:8px;padding:2px;gap:2px;}
+  .damageItem span{font-size:6px;}
+  .damageItem b{font-size:9px;}
   .hpwrap{top:8px;width:34%;}
   .hpwrap.left{left:8px;}
   .hpwrap.right{right:8px;text-align:right;}
@@ -292,6 +323,10 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
     <div id="enemyUpgradeBig"><div class="euTop">ENEMY UPGRADE</div><div class="euName" id="euName"></div><div class="euDesc" id="euDesc"></div></div>
     <div id="msg"></div>
     <div id="report"><div class="rt">DAMAGE REPORT // 交戦結果</div><div class="row dealt" id="rDealt"></div><div class="row taken" id="rTaken"></div></div>
+    <div id="damageLog">
+      <div class="damageStack dealt"><div class="damageHead">与ダメ <b id="dmgDealtTotal">0</b></div><div class="damageList" id="dmgDealtList"></div></div>
+      <div class="damageStack taken"><div class="damageHead">被ダメ <b id="dmgTakenTotal">0</b></div><div class="damageList" id="dmgTakenList"></div></div>
+    </div>
     <div id="callsign"></div>
   </div>
   <div id="cutin"><div class="cutband"><div class="cutmain" id="cutMain"></div><div class="cutsub" id="cutSub"></div></div>
@@ -404,7 +439,7 @@ function makeUnit(){return {
   bounce:0,magnet:0,interceptor:1,comet:0,doomsday:0,prototypeFuse:0,heavy:0,spread:0,powSpread:0,
   gambleSpread:0,gamblePowSpread:0,
   speedMul:1,loft:0,proximity:0,secondBurst:0,splitWarhead:0,samRange:0,samHit:0,decoy:0,
-  phantom:0,thunder:0,afterimage:0,hellfire:0
+  phantom:0,thunder:0,afterimage:0,hellfire:0,samBoost:0,ciws:0,empSam:0
 };}
 const PERSONAS={
   1:{name:'訓練型ドローン "T-04"',lines:['照準較正中……','訓練モード、継続','記録：命中率、低下']},
@@ -424,7 +459,7 @@ const G={turn:1,phase:'start',wind:0,slowT:0,shake:0,glitch:0,punch:0,hue:0,
   player:makeUnit(),enemy:makeUnit(),
   owned:{},enemyOwned:{},over:false,
   stats:{fired:0,dealt:0,maxHit:0,crits:0,hellfire:0,swarm:0,carpet:0,thunder:0},lastImpactX:0,lastImpact:null,enemyLevel:3,duel:null,camLockX:null,camPendingLockX:null,
-  volley:{dealt:0,taken:0},specialHits:{}};
+  volley:{dealt:0,taken:0},specialHits:{},damageSeq:{dealt:0,taken:0},damageLogActive:false};
 let terrain=[],TSTEP=3,cols=0;
 let projectiles=[],interceptors=[],particles=[],beams=[],fires=[],floaters=[],planes=[],stars=[];
 const CORE_R=11,GRAV=0.16;
@@ -447,9 +482,46 @@ function specialHitMultiplier(from,effect,who){
   G.specialHits[key]=n+1;
   return SPECIAL_DECAY[Math.min(n,SPECIAL_DECAY.length-1)];
 }
-function dealSpecialDamage(who,val,crit,from,effect){
+const DAMAGE_LABELS={
+  shell:'主砲',direct:'直撃',proximity:'近接信管',thunder:'サンダー',orbital:'レーザー',echo:'エコー',
+  napalm:'炎上',cluster:'子弾',hellfire:'ヘルファイア',swarm:'スウォーム',carpet:'爆撃',comet:'彗星弾',
+  split:'分裂弾',afterimage:'残像弾',doomsday:'終末榴弾',bigbang:'ビッグバン',recoil:'反動'
+};
+function damageLabel(effect,fallback){return DAMAGE_LABELS[effect]||fallback||'主砲';}
+function dealSpecialDamage(who,val,crit,from,effect,label){
   const m=specialHitMultiplier(from,effect,who);
-  dealDamage(who,val*m,crit);
+  dealDamage(who,val*m,crit,label||damageLabel(effect));
+}
+function resetDamageLog(show=true){
+  G.damageSeq={dealt:0,taken:0};
+  G.damageLogActive=!!show;
+  const log=document.getElementById('damageLog');
+  const dealt=document.getElementById('dmgDealtList'),taken=document.getElementById('dmgTakenList');
+  if(dealt)dealt.innerHTML='';
+  if(taken)taken.innerHTML='';
+  updateDamageLogTotals();
+  if(log)log.classList.toggle('show',!!show);
+}
+function updateDamageLogTotals(){
+  const d=document.getElementById('dmgDealtTotal'),t=document.getElementById('dmgTakenTotal');
+  if(d)d.textContent=G.volley.dealt||0;
+  if(t)t.textContent=G.volley.taken||0;
+}
+function logTurnDamage(who,val,crit,label){
+  if(!G.damageLogActive)return;
+  const side=who==='enemy'?'dealt':'taken';
+  const list=document.getElementById(side==='dealt'?'dmgDealtList':'dmgTakenList');
+  if(!list)return;
+  G.damageSeq[side]=(G.damageSeq[side]||0)+1;
+  const row=document.createElement('div');
+  row.className='damageItem'+(crit?' crit':'');
+  const no=String(G.damageSeq[side]).padStart(2,'0');
+  const safeLabel=String(label||'主砲').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[ch]||ch));
+  if(side==='taken')row.innerHTML='<b>-'+val+'</b><em>'+safeLabel+'</em><span>'+no+(crit?' CRIT':'')+'</span>';
+  else row.innerHTML='<span>'+no+(crit?' CRIT':'')+'</span><em>'+safeLabel+'</em><b>-'+val+'</b>';
+  list.appendChild(row);
+  // 上から順に並べる。多すぎる時は古い順を少し残しつつ、直近が見えるようにする。
+  while(list.children.length>14)list.removeChild(list.firstChild);
 }
 
 function buildTerrain(){
@@ -574,6 +646,9 @@ const CARDS=[
  {id:'radar',code:'ARGUS EYE',t:2,kind:'stable',name:'防空レーダー',desc:'防空圏を広げ、SAMの迎撃精度を少し上げる。爆撃・スウォーム対策。',detail:['防空範囲：+90m','SAM命中：+5% / 枚','迎撃ミサイル本数は増えない'],apply:u=>{u.samRange+=1;u.samHit+=1;}},
  {id:'chaff',code:'GHOST VEIL',t:2,kind:'stable',name:'チャフ散布弾',desc:'自軍の攻撃兵装に妨害片を撒き、敵SAMに落とされにくくする。',detail:['敵SAM命中率：-10% / 枚','対象：主砲弾 / 爆撃弾 / スウォーム','防空を突破するための支援カード'],apply:u=>{u.decoy+=1;}},
  {id:'interceptor',code:'AEGIS WALL',t:2,kind:'stable',name:'迎撃ミサイル',desc:'防空圏へ入った敵兵装をSAMで迎撃する。守りを厚くするカード。',detail:['迎撃数：+3発（初期1発） / 上限なし','対象：主砲弾 / 爆撃弾 / ミサイルスウォーム','防空開始後、画面端まで追跡してから拠点固定。撃ち漏らしは間隔を置いて再斉射'],apply:u=>{u.interceptor+=3;}},
+ {id:'samboost',code:'BOOSTER SAM',t:1,kind:'stable',name:'高速SAMブースター',desc:'迎撃ミサイルの加速と再斉射間隔を改善する。数より質の防空強化。',detail:['SAM速度/加速：+12% / 枚','SAM再斉射：少し短縮','迎撃数：+1発'],apply:u=>{u.interceptor+=1;u.samBoost+=1;}},
+ {id:'ciws',code:'CLOSE-IN CIWS',t:2,kind:'stable',name:'近接防御レーザー',desc:'拠点直前の低空兵装へ短距離レーザー照準を追加。爆撃とスウォームに強い。',detail:['爆弾/スウォームへのSAM命中：+15% / 枚','防空範囲：+40m / 枚','迎撃ラベルがCIWS対応になる'],apply:u=>{u.ciws+=1;u.samRange+=0.45;}},
+ {id:'empsam',code:'EMP BURST SAM',t:3,kind:'stable',name:'EMP迎撃弾',desc:'迎撃成功時に電磁パルスを撒き、周囲の敵兵装を減速させる特殊SAM。',detail:['迎撃成功時：周囲の敵兵装を減速','小型弾は低確率で追加撃墜','多弾攻撃への切り返しカード'],apply:u=>{u.empSam+=1;}},
  {id:'oc',code:'REDLINE DRIVE',t:2,kind:'gamble',name:'オーバークロック',desc:'砲身を赤熱させ火力を上げる。代わりに照準と威力が少し荒れる。',detail:['攻撃：主砲DMG ×1.45','デメリット：角度ブレ +3.2 / POWERブレ ±5','目安：10 → 14.5 / 直撃最大 約25'],apply:u=>{u.dmg*=1.45;u.spread+=3.2;u.powSpread+=5;u.gambleSpread+=3.2;u.gamblePowSpread+=5;}},
  {id:'proto',code:'PANDORA FUZE',t:2,kind:'gamble',name:'試作信管',desc:'高火力だが、飛翔中に自爆する可能性がある危険な信管。',detail:['攻撃：主砲DMG ×1.70','事故：25% × 所持数で飛翔中に自爆（最大48%）','自爆時：小さめ爆発。敵にも自分にも当たり得る'],apply:u=>{u.dmg*=1.7;u.prototypeFuse+=1;u.spread+=1;u.gambleSpread+=1;}},
  {id:'heavy',code:'TITAN SHELL',t:2,kind:'gamble',name:'過積載弾頭',desc:'爆発範囲を大きくするが、弾が重くなって落ちやすくなる。',detail:['爆発半径：×1.60','デメリット：重力影響アップ。飛距離が落ちる','高角度・高POWERで扱うと強い'],apply:u=>{u.radius*=1.6;u.heavy+=1;}},
@@ -669,7 +744,7 @@ function enemyCardScore(c){
   const owned=G.enemyOwned||{},lv=G.enemyLevel||3,od=enemyOverdriveActive();
   const value={
     amp:22,wide:20,twin:24,fin:18,stab:18,bounce:9,echo:19,
-    cluster:24,napalm:23,gwell:14,magnet:22,proximity:28,split:23,radar:25,chaff:22,interceptor:24,phantom:20,thunder:26,
+    cluster:24,napalm:23,gwell:14,magnet:22,proximity:28,split:23,radar:25,chaff:22,interceptor:24,samboost:20,ciws:27,empsam:32,phantom:20,thunder:26,
     oc:20,proto:12,heavy:14,
     orbital:22,carpet:30,swarm:34,bigbang:26,comet:28,doomsday:18,berserk:20,afterimage:36,hellfire:32
   };
@@ -677,7 +752,8 @@ function enemyCardScore(c){
   if(c.once&&owned[c.id])v-=80;
   if(c.kind==='gamble')v+=lv>=4?4:-10;
   if(c.id==='chaff'&&(owned.swarm||owned.carpet||owned.hellfire))v+=18;
-  if(c.id==='interceptor'||c.id==='radar')v+=Math.max(0,8-G.enemy.hp/G.enemy.maxhp*8);
+  if(c.id==='interceptor'||c.id==='radar'||c.id==='samboost'||c.id==='ciws'||c.id==='empsam')v+=Math.max(0,10-G.enemy.hp/G.enemy.maxhp*10);
+  if((c.id==='ciws'||c.id==='empsam')&&(G.player.swarm||G.player.carpet||G.player.hellfire))v+=14;
   if((c.id==='wide'||c.id==='proximity'||c.id==='thunder')&&owned.amp)v+=6;
   if((c.id==='swarm'||c.id==='carpet'||c.id==='hellfire')&&owned.chaff)v+=12;
   if(c.id==='fin'&&((G.enemy.gambleSpread||0)+(G.enemy.gamblePowSpread||0))>4)v+=12;
@@ -732,6 +808,8 @@ function showDraft(){
   if(G.over||G.phase==='draft')return;
   G.phase='draft';
   document.getElementById('report').classList.remove('show');
+  const dmgLog=document.getElementById('damageLog');if(dmgLog)dmgLog.classList.remove('show');
+  G.damageLogActive=false;
   const box=document.getElementById('cards');box.innerHTML='';
   draftPool(G.owned,G.turn).forEach(c=>{
     const el=document.createElement('div');el.className='card t'+c.t+(c.kind==='gamble'?' gamble':'');
@@ -820,6 +898,7 @@ function spawnShot(from,ang,pow,opts){
     swarmMissile:!!o.swarmMissile,
     phantom:!!o.phantom,ghost:!!o.ghost,hellfire:!!o.hellfire,
     specialEffect:o.specialEffect||null,
+    damageLabel:o.damageLabel||null,
     swarmPhase:o.swarmMissile?'climb':null,
     orbitBias:o.orbitBias||0,
     proximity:o.proximity!=null?o.proximity:u.proximity,
@@ -914,7 +993,7 @@ function fireUnit(from,baseAng,basePow){
     const shotPow=clamp(basePow+pJitter,10,100);
     const dmg=u.dmg*multiFactor*(big?1.6:1)*(doom?1.8:1);
     const rad=u.radius*(big?1.8:1)*(doom?1.7:1);
-    spawnShot(from,baseAng+(i-(mainCount-1)/2)*1.35+jitter,shotPow,{big:big||doom,dmg,radius:rad,delay:i*8,bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy});
+    spawnShot(from,baseAng+(i-(mainCount-1)/2)*1.35+jitter,shotPow,{big:big||doom,dmg,radius:rad,delay:i*8,bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:doom?'終末榴弾':(big?'ビッグバン':'主砲')});
   }
   // v4: ファントムラウンド — SAM迎撃を吸う幻影弾（本体と同弾道±ブレ）
   if(u.phantom>0){
@@ -930,7 +1009,7 @@ function fireUnit(from,baseAng,basePow){
     for(let k=0;k<an;k++){
       spawnShot(from,baseAng+(Math.random()*2-1)*0.4,basePow,
         {dmg:u.dmg*multiFactor*0.55,radius:u.radius*0.9,delay:34+k*13,ghost:true,
-         bounces:u.bounce,magnet:u.magnet,proximity:u.proximity,decoy:u.decoy});
+         bounces:u.bounce,magnet:u.magnet,proximity:u.proximity,decoy:u.decoy,damageLabel:'残像弾'});
     }
     floater(muzzle(from).x,muzzle(from).y-64,'AFTERIMAGE ×'+an,from==='player'?'#bff7ff':'#ffb3c8',false);
   }
@@ -944,7 +1023,7 @@ function fireUnit(from,baseAng,basePow){
     for(let n=0;n<u.comet;n++)for(let side of [-1,1]){
       const jitter=side*(5+n*1.4)+(Math.random()*2-1)*(1.8+effectiveSpread(u,from)*0.18);
       spawnShot(from,baseAng+jitter,clamp(basePow+(Math.random()*2-1)*5,10,100),{
-        big:true,dmg:u.dmg*0.78,radius:u.radius*1.48,delay:18+n*14+(side>0?7:0),bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy
+        big:true,dmg:u.dmg*0.78,radius:u.radius*1.48,delay:18+n*14+(side>0?7:0),bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:'彗星弾'
       });
     }
   }
@@ -957,7 +1036,7 @@ function fireUnit(from,baseAng,basePow){
       spawnShot(from,72+Math.random()*12,62,{
         rawPower:62,homing:true,swarmMissile:true,
         orbitBias:lane*18+dir*(Math.random()*18),
-        dmg:u.dmg*0.13,radius:17,delay:14+i*3,bounces:0,magnet:0,gravityScale:0.55,decoy:u.decoy
+        dmg:u.dmg*0.13,radius:17,delay:14+i*3,bounces:0,magnet:0,gravityScale:0.55,decoy:u.decoy,damageLabel:'スウォーム'
       });
     }
   }
@@ -966,7 +1045,7 @@ function fireUnit(from,baseAng,basePow){
     planes.push({from,x:from==='player'?-80:WORLD_W+80,y:H*0.16,vx:9*dir,drops:10*u.carpet,dropT:0});
   }
   if(doom){
-    dealDamage(from,4+u.doomsday*3,false);
+    dealDamage(from,4+u.doomsday*3,false,'反動');
     beams.push({type:'ring',x:muzzle(from).x,y:muzzle(from).y,r:8,max:55,life:22,c:color});
   }
   sfx('fire');shake(5);punch(8);muzzleFlash(from);
@@ -974,7 +1053,8 @@ function fireUnit(from,baseAng,basePow){
 function volleyFire(){
   if(G.phase!=='aim')return;
   G.phase='playerShot';
-  G.volley={dealt:0,taken:0};
+  G.damageLogActive=true;
+  const dmgLog=document.getElementById('damageLog');if(dmgLog)dmgLog.classList.add('show');
   G.specialHits={};
   G.duel={enemyPlan:enemyPlan(),enemyQueued:false,enemyFired:false,resolved:false};
   G.camLockX=null;
@@ -1039,14 +1119,14 @@ function explode(x,y,r,dmg,from,opts){
       let crit=d<CORE_R*1.35;
       let val=dmg*mult*(crit?1.75:1);
       if(from===who)val*=0.45;
-      if(o.specialEffect)dealSpecialDamage(who,val,crit,from,o.specialEffect);
-      else dealDamage(who,val,crit);
+      if(o.specialEffect)dealSpecialDamage(who,val,crit,from,o.specialEffect,o.damageLabel);
+      else dealDamage(who,val,crit,o.damageLabel||damageLabel(o.big?'bigbang':'shell'));
     }
   });
   if(u.secondBurst>0&&!o.child&&!o.noSecond)
     setTimeout(()=>{if(G.over)return;
       const rr=r*(0.52+Math.min(0.18,u.secondBurst*0.04));
-      explode(x,y,rr,dmg*(0.42+Math.min(0.16,u.secondBurst*0.04)),from,{child:true,noWell:true,noOrb:true,noSecond:true,specialEffect:'echo'});
+      explode(x,y,rr,dmg*(0.42+Math.min(0.16,u.secondBurst*0.04)),from,{child:true,noWell:true,noOrb:true,noSecond:true,specialEffect:'echo',damageLabel:'エコー'});
       floater(x,y-24,'ECHO',from==='player'?'#00f0ff':'#ff2d78',false);
     },700);
   if(u.napalm>0&&!o.child)
@@ -1068,7 +1148,7 @@ function explode(x,y,r,dmg,from,opts){
       const val=12*u.thunder*falloff;
       if(val>0.25)setTimeout(()=>{if(G.over)return;
         beams.push({type:'bolt',x1:x,y1:y,x2:foe.x,y2:foe.y-4,life:16,c:from==='player'?'#bff7ff':'#ffb3c8',seed:Math.random()*99});
-        dealSpecialDamage(foeName,val,false,from,'thunder');
+        dealSpecialDamage(foeName,val,false,from,'thunder','サンダー');
         floater((x+foe.x)/2,(y+foe.y)/2-20,'THUNDER CHAIN',from==='player'?'#00f0ff':'#ff2d78',false);
         glitch(5);shake(4);sfx('laser');
         if(from==='player')G.stats.thunder++;
@@ -1083,7 +1163,7 @@ function explode(x,y,r,dmg,from,opts){
       projectiles.push({from,x:clamp(x+(Math.random()*2-1)*60,16,WORLD_W-16),y:-24-Math.random()*60,
         vx:(Math.random()*2-1)*0.7,vy:4.2+Math.random()*2.2,
         homing:false,big:false,child:true,hellfire:true,bomb:false,bounces:0,magnet:0,
-        specialEffect:'hellfire',
+        specialEffect:'hellfire',damageLabel:'ヘルファイア',
         gravityScale:0.55,fuseRisk:0,fuseT:null,dmg:u.dmg*0.22,radius:22,
         swarmMissile:false,swarmPhase:null,orbitBias:0,proximity:0,secondBurst:0,splitWarhead:0,
         splitChild:false,_splitDone:true,_prevVy:null,decoy:u.decoy||0,
@@ -1102,7 +1182,7 @@ function fireOrbital(x,from){
   burst(x,gy,64,['#ffffff',c,'#ffe680'],6,38);
   const dmg=8*u.orbital;
   [['player',G.player],['enemy',G.enemy]].forEach(([who,core])=>{
-    if(Math.abs(x-core.x)<27+u.orbital*5)dealSpecialDamage(who,who===from?dmg*0.45:dmg,true,from,'orbital');
+    if(Math.abs(x-core.x)<27+u.orbital*5)dealSpecialDamage(who,who===from?dmg*0.45:dmg,true,from,'orbital','レーザー');
   });
 }
 function checkEnemyOverdrive(){
@@ -1115,7 +1195,7 @@ function checkEnemyOverdrive(){
     glitch(18);shake(12);
   },180);
 }
-function dealDamage(who,val,crit){
+function dealDamage(who,val,crit,label){
   const c=who==='player'?G.player:G.enemy;
   val=Math.round(val);if(val<=0)return;
   c.hp-=val;
@@ -1130,6 +1210,8 @@ function dealDamage(who,val,crit){
     G.volley.taken+=val;
     if(crit&&Math.random()<0.6){const pl=persona().lines;enemySay(pl[(Math.random()*pl.length)|0]);}
   }
+  updateDamageLogTotals();
+  logTurnDamage(who,val,crit,label||'主砲');
   floater(c.x,c.y-40,(crit?'CRIT ':'-')+val,who==='player'?'#ff2d78':'#00f0ff',crit);
   if(crit){glitch(8);shake(10);}
   updateHUD();
@@ -1141,11 +1223,13 @@ function dealDamage(who,val,crit){
 /* ============ turn flow ============ */
 function startTurn(){
   if(G.over)return;
+  G.volley={dealt:0,taken:0};
   G.specialHits={};
+  resetDamageLog(true);
   fires=fires.filter(f=>f.life-->0);
   fires.forEach(f=>{
     const target=opposite(f.from),core=unit(target);
-    if(Math.abs(f.x-core.x)<f.r+CORE_R)dealSpecialDamage(target,f.dmg,false,f.from,'napalm');
+    if(Math.abs(f.x-core.x)<f.r+CORE_R)dealSpecialDamage(target,f.dmg,false,f.from,'napalm','炎上');
   });
   if(G.over)return;
   G.phase='aim';
@@ -1202,6 +1286,8 @@ function gameOver(win){
   killCam(win);
   document.getElementById('ctrl').classList.add('hidden');
   document.getElementById('report').classList.remove('show');
+  const dmgLog=document.getElementById('damageLog');if(dmgLog)dmgLog.classList.remove('show');
+  G.damageLogActive=false;
   const t=document.getElementById('overTitle'),s=document.getElementById('overSub');
   const nextBtn=document.getElementById('nextLv');
   if(nextBtn)nextBtn.classList.remove('show');
@@ -1336,7 +1422,7 @@ function updateCamera(dt){
 function defenseRange(defender){
   const base=clamp(WORLD_W*0.34,440,760);
   const enemyBonus=defender===G.enemy?((G.enemyLevel>=4?45:0)+(enemyOverdriveActive()?85:0)):0;
-  return base+Math.min(2,Math.max(0,defender.interceptor-1))*35+(defender.samRange||0)*90+enemyBonus;
+  return base+Math.min(2,Math.max(0,defender.interceptor-1))*35+(defender.samRange||0)*90+(defender.ciws||0)*40+enemyBonus;
 }
 function launcherPoint(who){
   const u=unit(who),dir=who==='player'?-1:1;
@@ -1411,6 +1497,8 @@ function interceptorHitChance(target,defender){
   else if(target?.big)ch=0.52+Math.random()*0.08;
   else ch=0.47+Math.random()*0.08;                          // 主砲弾は約50%
   ch+=(defender?.samHit||0)*0.05;
+  if(defender?.ciws&&(target?.bomb||target?.swarmMissile||target?.hellfire))ch+=0.15*defender.ciws;
+  if(defender?.samBoost)ch+=0.025*defender.samBoost;
   if(defender===G.enemy){
     ch+=(G.enemyLevel>=4?0.04:0)+(G.enemyLevel>=5?0.04:0)+(enemyOverdriveActive()?0.06:0);
   }
@@ -1436,7 +1524,7 @@ function tryLaunchInterceptor(p){
   }
   // 迎撃数ぶんだけ脅威を予約。残ったスウォームは次の防空斉射で拾う。
   targets.slice(0,count).forEach(t=>{if(t){t._interceptStarted=true;t._interceptCount=(t._interceptCount||0)+1;}});
-  defender._samCooldown=42;
+  defender._samCooldown=Math.max(24,42-(defender.samBoost||0)*5);
   const col=defenderName==='player'?'#00f0ff':'#ff2d78';
   const dir=defenderName==='player'?1:-1;
   const lp=launcherPoint(defenderName);
@@ -1445,8 +1533,8 @@ function tryLaunchInterceptor(p){
     const side=(n-(count-1)/2);
     const laneX=clamp(lp.x+side*spreadStep,18,WORLD_W-18);
     const target=targets[n%targets.length]||p;
-    const speedMul=0.88+Math.random()*0.30;      // 個体ごとに少し速度差
-    const accelMul=0.84+Math.random()*0.38;      // 追尾の癖もバラす
+    const speedMul=(0.88+Math.random()*0.30)*(1+(defender.samBoost||0)*0.12);      // 個体ごとに少し速度差
+    const accelMul=(0.84+Math.random()*0.38)*(1+(defender.samBoost||0)*0.12);      // 追尾の癖もバラす
     const weave=(Math.random()*2-1)*(14+Math.random()*24);
     interceptors.push({
       from:defenderName,target,
@@ -1455,13 +1543,33 @@ function tryLaunchInterceptor(p){
       vy:-(10.0+Math.random()*3.2),
       life:330+n*7+Math.random()*38,c:col,trail:[],hitChance:interceptorHitChance(target,defender),
       armed:false,phase:'boost',boostT:22+Math.random()*11+n*0.45,launchDelay:0,launcherX:laneX,launcherY:lp.y,
-      speedMul,accelMul,weave,weaveT:Math.random()*Math.PI*2,missileNo:n
+      speedMul,accelMul,weave,weaveT:Math.random()*Math.PI*2,missileNo:n,empSam:defender.empSam||0
     });
   }
-  const label=targets.some(t=>t&&t.swarmMissile)?'ANTI-SWARM ×'+count:(targets.some(t=>t&&t.bomb)?'ANTI-BOMB ×'+count:'AIR DEFENSE ×'+count);
+  const label=defender.empSam?'EMP SAM ×'+count:(defender.ciws?'CIWS LINK ×'+count:(targets.some(t=>t&&t.swarmMissile)?'ANTI-SWARM ×'+count:(targets.some(t=>t&&t.bomb)?'ANTI-BOMB ×'+count:'AIR DEFENSE ×'+count)));
   floater(lp.x,lp.y-50,label,col,false);
   beams.push({type:'ring',x:lp.x,y:lp.y,r:4,max:34+count*5,life:14,c:col});
   shake(3);sfx('fire');
+}
+function empBurst(x,y,defenderName,power){
+  if(!power)return;
+  const col=defenderName==='player'?'#00f0ff':'#ff2d78';
+  const attacker=opposite(defenderName),rad=70+power*28;
+  beams.push({type:'ring',x,y,r:6,max:rad,life:18,c:'#a24dff'});
+  let affected=0;
+  for(let i=projectiles.length-1;i>=0;i--){
+    const q=projectiles[i];
+    if(!q||q.from!==attacker||q.delay>0)continue;
+    const d=Math.hypot(q.x-x,q.y-y);
+    if(d>rad)continue;
+    q.vx*=0.52;q.vy*=0.52;q.life=Math.max(90,(q.life||360)-18*power);
+    affected++;
+    if((q.swarmMissile||q.bomb||q.hellfire||q.splitChild)&&Math.random()<0.16+power*0.06){
+      projectiles.splice(i,1);
+      burst(q.x,q.y,16,[col,'#a24dff','#ffffff'],2.8,18);
+    }
+  }
+  if(affected){floater(x,y-30,'EMP BURST ×'+affected,'#a24dff',false);glitch(4);shake(3);}
 }
 function updateInterceptors(dt){
   for(let i=interceptors.length-1;i>=0;i--){
@@ -1498,7 +1606,8 @@ function updateInterceptors(dt){
         const idx=projectiles.indexOf(t);if(idx>=0)projectiles.splice(idx,1);
         burst(t.x,t.y,42,[m.c,'#ffffff','#ffc233'],4.8,32);
         beams.push({type:'ring',x:t.x,y:t.y,r:4,max:42,life:18,c:m.c});
-        floater(t.x,t.y-20,'INTERCEPT',m.c,true);
+        floater(t.x,t.y-20,m.empSam?'EMP INTERCEPT':'INTERCEPT',m.c,true);
+        if(m.empSam)empBurst(t.x,t.y,m.from,m.empSam);
         shake(6);glitch(4);sfx('boom');
         interceptors.splice(i,1);continue;
       }else{
@@ -1536,7 +1645,7 @@ function splitProjectileAtApex(p){
       bounces:p.bounces||0,magnet:p.magnet||0,gravityScale:p.gravityScale||1,
       fuseRisk:0,fuseT:null,dmg:childDmg,radius:childRad,
       swarmMissile:false,swarmPhase:null,orbitBias:0,
-      proximity:0,secondBurst:0,splitWarhead:0,decoy:p.decoy||0,
+      proximity:0,secondBurst:0,splitWarhead:0,decoy:p.decoy||0,damageLabel:'分裂弾',
       _wallAvoids:0,_interceptStarted:false,_interceptCount:0,
       trail:[...p.trail.slice(-8)],delay:0,life:Math.min(520,p.life||520)
     });
@@ -1641,7 +1750,7 @@ function update(dt){
         if(p.phantom){burst(hp.x,hp.y,12,['#7ef9ff','#ffffff'],2.2,16);break;}
         G.lastImpactX=hp.x;
         floater(hp.x,hp.y-18,'WALL BLOCK',p.from==='player'?'#00f0ff':'#ff2d78',false);
-        explode(hp.x,hp.y,p.radius*0.82,p.dmg*0.55,p.from,{big:p.big,child:p.child,noCarve:true,noWell:true,noOrb:true,specialEffect:p.specialEffect});
+        explode(hp.x,hp.y,p.radius*0.82,p.dmg*0.55,p.from,{big:p.big,child:p.child,noCarve:true,noWell:true,noOrb:true,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
         break;
       }
       if(hitG&&!hitCore&&p.bounces>0&&p.vy>0&&p.x>=0&&p.x<=WORLD_W){
@@ -1660,13 +1769,16 @@ function update(dt){
         if(p.x>-120&&p.x<WORLD_W+120&&p.y<H+70){
           if(proximityHit){
             floater(p.x,p.y-16,'PROXIMITY',p.from==='player'?'#00f0ff':'#ff2d78',false);
-            explode(p.x,p.y,p.radius*0.82,p.dmg*(0.66+Math.min(0.14,p.proximity*0.04)),p.from,{big:false,child:p.child,noCarve:true,specialEffect:'proximity'});
-          }else explode(p.x,Math.min(p.y,tY(p.x)),p.radius,p.dmg,p.from,{big:p.big,child:p.child,specialEffect:p.specialEffect});
+            // v4.4: 近接信管は発動距離と爆発半径を一致。
+            // 「PROXIMITYは出たのにダメージが入らない」空振りゾーンを解消。
+            const proxR=CORE_R+24+p.proximity*8;
+            explode(p.x,p.y,proxR,p.dmg*(0.66+Math.min(0.14,p.proximity*0.04)),p.from,{big:false,child:p.child,noCarve:true,specialEffect:'proximity',damageLabel:'近接信管'});
+          }else explode(p.x,Math.min(p.y,tY(p.x)),p.radius,p.dmg,p.from,{big:p.big,child:p.child,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
           const cu=unit(p.from);
           if(cu.cluster>0&&!p.child&&!p.homing&&!p.bomb){
             for(let k=0;k<8*cu.cluster;k++)
               projectiles.push({from:p.from,x:p.x,y:p.y-8,vx:(Math.random()*2-1)*4.1,vy:-(Math.random()*3.6+2.7),
-                homing:false,big:false,child:true,bomb:false,bounces:0,magnet:0,specialEffect:'cluster',
+                homing:false,big:false,child:true,bomb:false,bounces:0,magnet:0,specialEffect:'cluster',damageLabel:'子弾',
                 dmg:cu.dmg*0.17,radius:cu.radius*0.38,trail:[],delay:0,life:300});
           }
         }
@@ -1682,7 +1794,7 @@ function update(dt){
     if(shouldDrop&&pl.drops>0&&pl.dropT<=0){
       pl.dropT=6;pl.drops--;
       const dir=pl.from==='player'?1:-1;
-      projectiles.push({from:pl.from,x:pl.x,y:pl.y,vx:2*dir,vy:1,dmg:u.dmg*0.27,radius:28,bomb:true,child:true,homing:false,big:false,bounces:0,magnet:0,decoy:u.decoy,trail:[],delay:0,life:400});
+      projectiles.push({from:pl.from,x:pl.x,y:pl.y,vx:2*dir,vy:1,dmg:u.dmg*0.27,radius:28,bomb:true,child:true,homing:false,big:false,bounces:0,magnet:0,decoy:u.decoy,damageLabel:'爆撃',trail:[],delay:0,life:400});
     }
     if(pl.x>WORLD_W+120||pl.x<-120)planes.splice(i,1);
   }
@@ -2018,7 +2130,7 @@ function drawAirDefenseZones(now){
     ctx.beginPath();ctx.arc(u.x,u.y,r*pulse,0,7);ctx.stroke();
     ctx.setLineDash([]);
     ctx.font="700 10px 'Orbitron'";ctx.textAlign='center';ctx.fillStyle=hexA('#7ef9ff',0.82);ctx.shadowColor='#00f0ff';ctx.shadowBlur=8;
-    ctx.fillText('AIR DEFENSE ×'+u.interceptor,u.x,u.y-r*pulse-10);
+    ctx.fillText((u.empSam?'EMP SAM':(u.ciws?'CIWS SAM':'AIR DEFENSE'))+' ×'+u.interceptor,u.x,u.y-r*pulse-10);
     ctx.restore();
   });
 }
