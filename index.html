@@ -380,7 +380,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
       <div id="manualPanel">
         <div id="manualTitle">取説 // HOW TO PLAY</div>
         <div class="manualGrid">
-          <div class="manualItem"><b>AIM</b>角度とPOWERで山なりに撃つ。中央壁は破壊不能なので、低弾道は基本ブロックされる。照準中は中央付近まで弾道予測線を表示するが、風の影響は含まない。</div>
+          <div class="manualItem"><b>AIM</b>角度とPOWERで山なりに撃つ。中央壁は破壊不能なので、低弾道は基本ブロックされる。照準中は中央付近まで弾道予測線を表示するが、風の影響は含まない。LV1〜3では、風を考慮しない敵拠点ヒット補助線も表示する。</div>
           <div class="manualItem"><b>WIND</b>背景の流線と大矢印が風向・風速。強いほど砲弾が横へ流される。</div>
           <div class="manualItem"><b>DUEL</b>演出は自分→敵の順番。先に敵を壊しても、そのターンの敵弾は飛んでくる。</div>
           <div class="manualItem"><b>SAM</b>防空圏に入った敵弾へ、発射台から垂直上昇→追尾。侵入後もまず砲弾を画面端まで追跡し、端に寄ってから防衛拠点側にカメラ固定。初期1発、カードで+3発、上限なし。</div>
@@ -487,7 +487,7 @@ const G={turn:1,phase:'start',wind:0,slowT:0,shake:0,glitch:0,punch:0,hue:0,
   player:makeUnit(),enemy:makeUnit(),
   owned:{},enemyOwned:{},over:false,
   stats:{fired:0,dealt:0,maxHit:0,crits:0,hellfire:0,swarm:0,carpet:0,thunder:0},lastImpactX:0,lastImpact:null,enemyLevel:3,duel:null,camLockX:null,camPendingLockX:null,
-  volley:{dealt:0,taken:0},specialHits:{},damageSeq:{dealt:0,taken:0},damageLogActive:false,pendingResult:false};
+  volley:{dealt:0,taken:0},specialHits:{},damageSeq:{dealt:0,taken:0},damageLogActive:false,pendingResult:false,aimGuide:null,terrainVersion:0};
 let terrain=[],TSTEP=3,cols=0;
 let projectiles=[],interceptors=[],particles=[],beams=[],fires=[],floaters=[],planes=[],stars=[];
 const CORE_R=11,GRAV=0.16;
@@ -572,6 +572,8 @@ function buildTerrain(){
   G.player.x=WORLD_W*0.055;G.enemy.x=WORLD_W*0.945;
   camX=0;
   dropCores();
+  G.terrainVersion=(G.terrainVersion||0)+1;
+  G.aimGuide=null;
 }
 function tY(x){const i=Math.max(0,Math.min(cols-1,x/TSTEP));const i0=Math.floor(i),i1=Math.min(cols-1,i0+1);const f=i-i0;return terrain[i0]*(1-f)+terrain[i1]*f;}
 function dropCores(){G.player.y=tY(G.player.x)-CORE_R;G.enemy.y=tY(G.enemy.x)-CORE_R;}
@@ -584,6 +586,8 @@ function carve(ex,ey,r){
     if(bottom>terrain[i])terrain[i]=Math.min(bottom,H*0.97);
   }
   dropCores();
+  G.terrainVersion=(G.terrainVersion||0)+1;
+  G.aimGuide=null;
 }
 
 /* ============ fx ============ */
@@ -1282,6 +1286,7 @@ function startTurn(){
   G.pendingResult=false;
   G.volley={dealt:0,taken:0};
   G.specialHits={};
+  G.aimGuide=null;
   resetDamageLog(true);
   fires=fires.filter(f=>f.life-->0);
   fires.forEach(f=>{
@@ -2039,7 +2044,10 @@ function draw(now){
   drawCore(G.player,'#00f0ff',now);
   drawCore(G.enemy,'#ff2d78',now);
   // aim hint / v3.25: 中央付近までの弾道予測線（風は考慮しない）
-  if(G.phase==='aim')drawTrajectoryPreview(now);
+  if(G.phase==='aim'){
+    drawNoWindHitGuide(now); // LV1〜3限定：風なしで敵拠点に当たる補助線
+    drawTrajectoryPreview(now);
+  }
   planes.forEach(pl=>{
     const dir=pl.from==='player'?1:-1;
     ctx.fillStyle=pl.from==='player'?'#ffc233':'#ff7ab0';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=12;
@@ -2145,6 +2153,112 @@ function drawLaunchers(now){
     ctx.fillText('SAM',0,-48);
     ctx.restore();
   });
+}
+
+
+function aimAssistEnabled(){
+  return G.phase==='aim'&&(G.enemyLevel||3)<=3;
+}
+function guideCacheKey(){
+  const u=G.player;
+  return [G.turn,G.enemyLevel,Math.round(WORLD_W),Math.round(W),Math.round(H),G.terrainVersion||0,
+    Math.round((u.heavy||0)*100),Math.round((u.speedMul||1)*100),Math.round((u.loft||0)*100)].join('|');
+}
+function simulateNoWindTrajectory(from,ang,pow,collect){
+  const u=unit(from),m=muzzle(from),foe=unit(opposite(from));
+  const dir=from==='player'?1:-1;
+  const rad=ang*Math.PI/180;
+  const rawPow=pow*POWER_INTERNAL_SCALE;
+  const sp=rawPow*0.245*(u.speedMul||1);
+  let x=m.x,y=m.y,vx=Math.cos(rad)*sp*dir,vy=-Math.sin(rad)*sp*(1+(u.loft||0)*0.08);
+  const pts=collect?[{x,y}]:null;
+  let hitCore=false,blocked=false,ground=false;
+  for(let i=0;i<900;i++){
+    const ox=x,oy=y;
+    // LV1〜3の補助線は、あえて風を一切入れない「無風の正解ライン」。
+    vy+=GRAV*(1+Math.min(0.75,u.heavy*0.22));
+    const maxSp=ARTILLERY_MAX_SPEED;
+    const spNow=Math.hypot(vx,vy);if(spNow>maxSp){vx*=maxSp/spNow;vy*=maxSp/spNow;}
+    x+=vx;y+=vy;
+    if(collect)pts.push({x,y});
+    if(segmentHitsWall(ox,oy,x,y)){
+      const hp=wallHitPoint(ox,oy,x,y);x=hp.x;y=hp.y;
+      if(collect)pts.push({x,y});
+      blocked=true;break;
+    }
+    if(Math.hypot(x-foe.x,y-foe.y)<CORE_R+7){hitCore=true;break;}
+    if(y>=tY(x)){ground=true;break;}
+    if(x<0||x>WORLD_W||y>H+180)break;
+  }
+  return {x,y,pts,hitCore,blocked,ground,dist:Math.hypot(x-foe.x,y-foe.y)};
+}
+function findNoWindHitGuide(){
+  const key=guideCacheKey();
+  if(G.aimGuide&&G.aimGuide.key===key)return G.aimGuide;
+  const coarse=[];
+  let best=null;
+  function score(c){
+    // コア命中を最優先。壁ブロックは重く減点。
+    return c.dist+(c.blocked?1500:0)+(c.hitCore?-260:0)+(c.ground?0:40);
+  }
+  for(let ang=12;ang<=84;ang+=2){
+    for(let pow=18;pow<=100;pow+=2){
+      const r=simulateNoWindTrajectory('player',ang,pow,false);
+      const c={ang,pow,...r};
+      c.s=score(c);
+      coarse.push(c);
+      if(!best||c.s<best.s)best=c;
+    }
+  }
+  coarse.sort((a,b)=>a.s-b.s);
+  const seeds=coarse.slice(0,6);
+  for(const seed of seeds){
+    for(let ai=-8;ai<=8;ai++){
+      const ang=clamp(seed.ang+ai*0.25,10,85);
+      for(let pi=-10;pi<=10;pi++){
+        const pow=clamp(seed.pow+pi*0.35,10,100);
+        const r=simulateNoWindTrajectory('player',ang,pow,false);
+        const c={ang,pow,...r};
+        c.s=score(c);
+        if(!best||c.s<best.s)best=c;
+      }
+    }
+  }
+  const full=simulateNoWindTrajectory('player',best.ang,best.pow,true);
+  G.aimGuide={key,ang:best.ang,pow:best.pow,dist:full.dist,hitCore:full.hitCore,blocked:full.blocked,pts:full.pts};
+  return G.aimGuide;
+}
+function drawNoWindHitGuide(now){
+  if(!aimAssistEnabled())return;
+  const guide=findNoWindHitGuide();
+  if(!guide||!guide.pts||guide.pts.length<2||guide.blocked)return;
+  const pts=guide.pts;
+  ctx.save();
+  ctx.lineWidth=2.4;
+  ctx.setLineDash([12,7,2,7]);
+  ctx.strokeStyle='rgba(255,194,51,.72)';
+  ctx.shadowColor='#ffc233';ctx.shadowBlur=12;
+  ctx.beginPath();
+  pts.forEach((p,i)=>{i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});
+  ctx.stroke();
+  ctx.setLineDash([]);
+  for(let i=0;i<pts.length;i+=26){
+    const p=pts[i];
+    ctx.fillStyle=i%52===0?'rgba(255,194,51,.92)':'rgba(255,255,255,.58)';
+    ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fill();
+  }
+  const foe=G.enemy;
+  ctx.lineWidth=1.6;
+  ctx.strokeStyle='rgba(255,194,51,.9)';ctx.fillStyle='rgba(255,194,51,.08)';
+  ctx.beginPath();ctx.arc(foe.x,foe.y,CORE_R+14+Math.sin(now*0.006)*2,0,Math.PI*2);ctx.fill();ctx.stroke();
+  const visiblePts=pts.filter(p=>p.x>camX+54&&p.x<camX+W-54&&p.y>36&&p.y<H-120);
+  const labelAt=visiblePts[Math.floor(visiblePts.length*0.56)]||pts[Math.max(0,Math.min(pts.length-1,Math.floor(pts.length*0.25)))];
+  ctx.font="900 10px 'Orbitron'";ctx.textAlign='center';
+  ctx.fillStyle='rgba(255,220,120,.92)';ctx.shadowBlur=10;
+  ctx.fillText('HIT GUIDE // NO WIND',labelAt.x,labelAt.y-14);
+  ctx.font="700 9px 'Orbitron'";
+  ctx.fillText('A '+Math.round(guide.ang)+'° / P '+Math.round(guide.pow)+'%',labelAt.x,labelAt.y+1);
+  ctx.restore();
 }
 
 
