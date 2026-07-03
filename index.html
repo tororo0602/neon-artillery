@@ -384,7 +384,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
           <div class="manualItem"><b>WIND</b>背景の流線と大矢印が風向・風速。強いほど砲弾が横へ流される。</div>
           <div class="manualItem"><b>DUEL</b>演出は自分→敵の順番。先に敵を壊しても、そのターンの敵弾は飛んでくる。</div>
           <div class="manualItem"><b>SAM</b>防空圏に入った敵弾へ、発射台から垂直上昇→追尾。侵入後もまず砲弾を画面端まで追跡し、端に寄ってから防衛拠点側にカメラ固定。初期1発、カードで+3発、上限なし。</div>
-          <div class="manualItem"><b>CARDS</b>毎ターン1枚選択。敵AIも同じカード群から、あなたと違うカードを1枚取得する。選択肢ではTIER II/IIIは各1枚まで。カード特殊効果のコアDMGは同一ターン内で 100%→45%→20%→10% に減衰。</div>
+          <div class="manualItem"><b>CARDS</b>毎ターン1枚選択。敵AIも同じカード群から1枚取得する。あなたと同じカードを選ぶこともある。選択肢ではTIER II/IIIは各1枚まで。カード特殊効果のコアDMGは同一ターン内で 100%→45%→20%→10% に減衰。</div>
           <div class="manualItem"><b>DMG</b>基礎主砲DMGは10。コア直撃は最大約1.75倍。距離がズレるほど減衰する。</div>
         </div>
         <div class="manualWarn">STABLEは安定強化。GAMBLEは火力が跳ねる代わりにブレ・自爆・反動などの事故要素あり。</div>
@@ -676,7 +676,7 @@ const CARDS=[
  {id:'split',code:'GEMINI WARHEAD',t:2,kind:'stable',name:'分裂弾頭',desc:'最高高度付近で弾頭が左右に割れる。中央壁を越えた後の面制圧に強い。',detail:['分裂：主砲弾が頂点付近で2発に分かれる','分裂弾DMG：各弾 約55%〜。重ねると少し上昇','分裂弾はSAM迎撃対象。追加効果の連鎖は抑制'],apply:u=>{u.splitWarhead+=1;}},
  {id:'radar',code:'ARGUS EYE',t:2,kind:'stable',name:'防空レーダー',desc:'防空圏を広げ、SAMの迎撃精度を少し上げる。爆撃・スウォーム対策。',detail:['防空範囲：+90m','SAM命中：+5% / 枚','迎撃ミサイル本数は増えない'],apply:u=>{u.samRange+=1;u.samHit+=1;}},
  {id:'chaff',code:'GHOST VEIL',t:2,kind:'stable',name:'チャフ散布弾',desc:'自軍の攻撃兵装に妨害片を撒き、敵SAMに落とされにくくする。',detail:['敵SAM命中率：-10% / 枚','対象：主砲弾 / 爆撃弾 / スウォーム','防空を突破するための支援カード'],apply:u=>{u.decoy+=1;}},
- {id:'interceptor',code:'AEGIS WALL',t:2,kind:'stable',name:'迎撃ミサイル',desc:'防空圏へ入った敵兵装をSAMで迎撃する。守りを厚くするカード。',detail:['迎撃数：+3発（初期1発） / 上限なし','対象：主砲弾 / 爆撃弾 / ミサイルスウォーム','防空開始後、画面端まで追跡してから拠点固定。撃ち漏らしは間隔を置いて再斉射'],apply:u=>{u.interceptor+=3;}},
+ {id:'interceptor',code:'AEGIS WALL',t:1,kind:'stable',name:'迎撃ミサイル',desc:'防空圏へ入った敵兵装をSAMで迎撃する。守りを厚くするカード。',detail:['迎撃数：+3発（初期1発） / 上限なし','対象：主砲弾 / 爆撃弾 / ミサイルスウォーム','防空開始後、画面端まで追跡してから拠点固定。撃ち漏らしは間隔を置いて再斉射'],apply:u=>{u.interceptor+=3;}},
  {id:'samboost',code:'BOOSTER SAM',t:1,kind:'stable',name:'高速SAMブースター',desc:'迎撃ミサイルの加速と再斉射間隔を改善する。数より質の防空強化。',detail:['SAM速度/加速：+12% / 枚','SAM再斉射：少し短縮','迎撃数：+1発'],apply:u=>{u.interceptor+=1;u.samBoost+=1;}},
  {id:'ciws',code:'CLOSE-IN CIWS',t:2,kind:'stable',name:'近接防御レーザー',desc:'拠点直前の低空兵装へ短距離レーザー照準を追加。爆撃とスウォームに強い。',detail:['爆弾/スウォームへのSAM命中：+15% / 枚','防空範囲：+40m / 枚','迎撃ラベルがCIWS対応になる'],apply:u=>{u.ciws+=1;u.samRange+=0.45;}},
  {id:'empsam',code:'EMP BURST SAM',t:3,kind:'stable',name:'EMP迎撃弾',desc:'迎撃成功時に電磁パルスを撒き、周囲の敵兵装を減速させる特殊SAM。',detail:['迎撃成功時：周囲の敵兵装を減速','小型弾は低確率で追加撃墜','多弾攻撃への切り返しカード'],apply:u=>{u.empSam+=1;}},
@@ -732,8 +732,28 @@ function enemyTierWeights(turn=G.turn){
   if(turn<=6)return [.14,.56,.30];
   return [.05,.35,.60];
 }
+const DRAFT_APPEAR_BONUS={
+  twin:2.15,        // 主砲弾数カードは少しだけ出やすくする裏補正
+  interceptor:2.15  // SAM弾数カードも同じく出やすくする裏補正
+};
+function weightedDraftPick(list){
+  if(!list||!list.length)return null;
+  let total=0;
+  const weights=list.map(c=>{
+    const w=DRAFT_APPEAR_BONUS[c.id]||1;
+    total+=w;
+    return w;
+  });
+  let r=Math.random()*total;
+  for(let i=0;i<list.length;i++){
+    r-=weights[i];
+    if(r<=0)return list[i];
+  }
+  return list[list.length-1];
+}
 function draftPool(owned=G.owned,turn=G.turn,excludeIds=[],opts={}){
   // v3.27: TIER II / III は選択肢に各1枚まで。強カードが並びすぎる事故を防ぐ。
+  // v4.x: 主砲弾数 / SAM弾数だけ、カード候補内でこっそり出現率を上げる。
   const w=opts.weights||tierWeights(turn);
   const ex=new Set(excludeIds||[]);
   const pool=CARDS.filter(c=>!ex.has(c.id)&&!(c.once&&owned[c.id]));
@@ -742,7 +762,7 @@ function draftPool(owned=G.owned,turn=G.turn,excludeIds=[],opts={}){
   function addTier(t){
     const cand=candidates(t);
     if(!cand.length)return false;
-    const c=cand[(Math.random()*cand.length)|0];
+    const c=weightedDraftPick(cand);
     picks.push(c);tierCount[t]++;
     return true;
   }
@@ -766,7 +786,7 @@ function draftPool(owned=G.owned,turn=G.turn,excludeIds=[],opts={}){
     if(!cand.length)break;
     const pref=cand.filter(c=>c.t===1);
     const list=pref.length?pref:cand;
-    const c=list[(Math.random()*list.length)|0];
+    const c=weightedDraftPick(list);
     picks.push(c);tierCount[c.t]++;
   }
   return picks;
@@ -814,7 +834,9 @@ function chooseEnemyCard(pool){
   return top[(Math.random()*top.length)|0];
 }
 function pickEnemyCard(excludeId){
-  const pool=draftPool(G.enemyOwned,G.turn,excludeId?[excludeId]:[],{weights:enemyTierWeights(G.turn)});
+  // プレイヤーと敵AIが同じカードを選ぶことを許可。
+  // excludeId は旧仕様互換のため受け取るが、敵抽選では除外しない。
+  const pool=draftPool(G.enemyOwned,G.turn,[],{weights:enemyTierWeights(G.turn)});
   const c=chooseEnemyCard(pool);
   if(!c)return null;
   c.apply(G.enemy);
