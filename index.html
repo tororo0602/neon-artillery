@@ -979,6 +979,11 @@ function enemyWindRead(){
   const table={1:0.10,2:0.45,3:0.75,4:0.95,5:1.00};
   return enemyOverdriveActive()?1.05:(table[G.enemyLevel]??0.75);
 }
+function enemyMuzzleJitterScale(){
+  // v4.2: 主砲には常に少量の初期ブレ（±1.35°基礎）が乗る。高LVは精密射撃機構で群を締める。
+  const table={1:1.10,2:1.00,3:1.00,4:0.70,5:0.42};
+  return enemyOverdriveActive()?0.30:(table[G.enemyLevel]??1.00);
+}
 function hiddenEnemyStability(from){
   // LV4/5だけ敵AIが高出力ギャンブル砲を照準補正でねじ伏せる。表示には出さない裏補正。
   if(from!=='enemy')return 1;
@@ -1004,15 +1009,45 @@ function enemyErr(){
   const spreadPenalty=Math.min(36,effectiveSpread(G.enemy,'enemy')*(1.20-0.08*lv));
   return (Math.max(3,lvBase*focus)+spreadPenalty)*(enemyOverdriveActive()?0.58:mul);
 }
+function refineAim(ang,pow,iterations,step){
+  // ランダム探索の粗い最良点を局所探索で追い込む。命中率の低いLVは呼ばない/浅くする。
+  let bestD=simDist(ang,pow);
+  for(let iter=0;iter<iterations;iter++){
+    let improved=false;
+    for(const [da,dp] of [[step,0],[-step,0],[0,step],[0,-step],[step,step],[-step,-step],[step,-step],[-step,step]]){
+      const a2=clamp(ang+da,10,85),p2=clamp(pow+dp,10,100);
+      const d2=simDist(a2,p2);
+      if(d2<bestD){bestD=d2;ang=a2;pow=p2;improved=true;}
+    }
+    if(!improved)step*=0.5;
+    if(step<0.05)break;
+  }
+  return {ang,pow};
+}
 function enemyPlan(){
-  let best=null,bestD=1e9;
   const lv=G.enemyLevel||3;
   const trialMul={1:0.55,2:0.82,3:1.00,4:1.15,5:1.30}[lv]||1;
   const trials=Math.round((90+lv*95+G.turn*8)*trialMul*(enemyOverdriveActive()?1.18:1));
+  // v4.2: 弾道は低伸/高弾道の複数の谷（局所解）に分かれるため、上位K件を別々に保持する。
+  const keepTop={4:2,5:3}[lv]||1;
+  const pool=[];
   for(let k=0;k<trials;k++){
     const ang=18+Math.random()*64,pow=20+Math.random()*80;
     const d=simDist(ang,pow);
-    if(d<bestD){bestD=d;best={ang,pow};}
+    if(pool.length<keepTop){pool.push({ang,pow,d});pool.sort((a,b)=>a.d-b.d);}
+    else if(d<pool[pool.length-1].d){pool[pool.length-1]={ang,pow,d};pool.sort((a,b)=>a.d-b.d);}
+  }
+  let best=pool[0];
+  // v4.2: 粗い乱択の上位候補それぞれを局所探索で仕上げ、最良の谷を選ぶ。低LVは元の粗さを維持。
+  const refineIters={1:0,2:0,3:0,4:14,5:24}[lv]||0;
+  if(refineIters>0){
+    let bestRefined=null,bestRefinedD=1e9;
+    for(const cand of pool){
+      const r=refineAim(cand.ang,cand.pow,refineIters,4);
+      const d=simDist(r.ang,r.pow);
+      if(d<bestRefinedD){bestRefinedD=d;bestRefined=r;}
+    }
+    best=bestRefined;
   }
   const err=enemyErr();
   best.ang+=(Math.random()*2-1)*err*0.065;
@@ -1035,6 +1070,9 @@ function simDist(ang,pow){
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
     x+=vx;y+=vy;
     if(segmentHitsWall(ox,oy,x,y)){const hp=wallHitPoint(ox,oy,x,y);x=hp.x;y=hp.y;break;}
+    // 実弾は着地前でもコア近接（CORE_R+5）で即爆発する。着地点だけを見る旧ロジックは
+    // 「地面に着く前にコアの真上を素通りする弾道」を過大に外れとみなしていたので合わせる。
+    if(Math.hypot(x-G.player.x,y-G.player.y)<CORE_R+5)break;
     if(y>=tY(x)||x<0||x>WORLD_W)break;
   }
   return Math.hypot(x-G.player.x,y-G.player.y);
@@ -1047,7 +1085,8 @@ function fireUnit(from,baseAng,basePow){
   const fuseRisk=Math.min(0.48,0.25*(u.prototypeFuse||0));
   for(let i=0;i<mainCount;i++){
     const spread=effectiveSpread(u,from)+(mainCount>1?0.8:0);
-    const jitter=(Math.random()*2-1)*(1.35+spread*0.55);
+    const jitterMul=from==='enemy'?enemyMuzzleJitterScale():1;
+    const jitter=(Math.random()*2-1)*(1.35+spread*0.55)*jitterMul;
     const pJitter=(Math.random()*2-1)*effectivePowSpread(u,from);
     const shotPow=clamp(basePow+pJitter,10,100);
     const dmg=u.dmg*multiFactor*(big?1.6:1)*(doom?1.8:1);
