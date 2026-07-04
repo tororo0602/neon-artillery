@@ -370,7 +370,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v4.0 // OVERDRIVE PROTOCOL</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v4.5 // OVERDRIVE PROTOCOL</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒</div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -980,7 +980,7 @@ function enemyWindRead(){
   return enemyOverdriveActive()?1.05:(table[G.enemyLevel]??0.75);
 }
 function enemyMuzzleJitterScale(){
-  // v4.2: 主砲には常に少量の初期ブレ（±1.35°基礎）が乗る。高LVは精密射撃機構で群を締める。
+  // v4.5: 主砲には常に少量の初期ブレ（±1.35°基礎）が乗る。高LVは精密射撃機構で群を締める。
   const table={1:1.10,2:1.00,3:1.00,4:0.70,5:0.42};
   return enemyOverdriveActive()?0.30:(table[G.enemyLevel]??1.00);
 }
@@ -1028,7 +1028,7 @@ function enemyPlan(){
   const lv=G.enemyLevel||3;
   const trialMul={1:0.55,2:0.82,3:1.00,4:1.15,5:1.30}[lv]||1;
   const trials=Math.round((90+lv*95+G.turn*8)*trialMul*(enemyOverdriveActive()?1.18:1));
-  // v4.2: 弾道は低伸/高弾道の複数の谷（局所解）に分かれるため、上位K件を別々に保持する。
+  // v4.5: 弾道は低伸/高弾道の複数の谷（局所解）に分かれるため、上位K件を別々に保持する。
   const keepTop={4:2,5:3}[lv]||1;
   const pool=[];
   for(let k=0;k<trials;k++){
@@ -1038,7 +1038,7 @@ function enemyPlan(){
     else if(d<pool[pool.length-1].d){pool[pool.length-1]={ang,pow,d};pool.sort((a,b)=>a.d-b.d);}
   }
   let best=pool[0];
-  // v4.2: 粗い乱択の上位候補それぞれを局所探索で仕上げ、最良の谷を選ぶ。低LVは元の粗さを維持。
+  // v4.5: 粗い乱択の上位候補それぞれを局所探索で仕上げ、最良の谷を選ぶ。低LVは元の粗さを維持。
   const refineIters={1:0,2:0,3:0,4:14,5:24}[lv]||0;
   if(refineIters>0){
     let bestRefined=null,bestRefinedD=1e9;
@@ -1070,7 +1070,7 @@ function simDist(ang,pow){
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
     x+=vx;y+=vy;
     if(segmentHitsWall(ox,oy,x,y)){const hp=wallHitPoint(ox,oy,x,y);x=hp.x;y=hp.y;break;}
-    // 実弾は着地前でもコア近接（CORE_R+5）で即爆発する。着地点だけを見る旧ロジックは
+    // v4.5: 実弾は着地前でもコア近接（CORE_R+5）で即爆発する。着地点だけを見る旧ロジックは
     // 「地面に着く前にコアの真上を素通りする弾道」を過大に外れとみなしていたので合わせる。
     if(Math.hypot(x-G.player.x,y-G.player.y)<CORE_R+5)break;
     if(y>=tY(x)||x<0||x>WORLD_W)break;
