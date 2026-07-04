@@ -797,10 +797,12 @@ function draftPool(owned=G.owned,turn=G.turn,excludeIds=[],opts={}){
 }
 function enemyCardScore(c){
   const owned=G.enemyOwned||{},lv=G.enemyLevel||3,od=enemyOverdriveActive();
+  // v4.6: 実戦計測（同条件シードでの命中ダメージ比較）に基づき、
+  // 過大評価だったproximity/splitを下げ、過小評価だったwide/heavyを上げた。
   const value={
-    amp:22,wide:20,twin:24,fin:18,stab:18,bounce:9,echo:19,
-    cluster:24,napalm:23,gwell:14,magnet:22,proximity:28,split:23,radar:25,chaff:22,interceptor:24,samboost:20,ciws:27,empsam:32,phantom:20,thunder:26,
-    oc:20,proto:12,heavy:14,
+    amp:22,wide:22,twin:24,fin:18,stab:18,bounce:9,echo:19,
+    cluster:24,napalm:23,gwell:14,magnet:22,proximity:10,split:12,radar:25,chaff:22,interceptor:24,samboost:20,ciws:27,empsam:32,phantom:20,thunder:26,
+    oc:20,proto:12,heavy:20,
     orbital:22,carpet:30,swarm:34,bigbang:26,comet:28,doomsday:18,berserk:20,afterimage:36,hellfire:32
   };
   let v=(value[c.id]||14)+c.t*7;
@@ -1067,6 +1069,12 @@ function simDist(ang,pow){
     let wf=WIND_FORCE*(1-Math.min(0.7,G.enemy.windres));
     // 難易度差：敵AIの照準シミュレーションだけ風読み精度を変える。実弾は常に本物の風を受ける。
     vx+=G.wind*enemyWindRead()*wf;vy+=GRAV*(1+Math.min(0.75,G.enemy.heavy*0.22));
+    // v4.6: 誘導カード（magnet）の飛翔中補正も内部モデルに反映。ここを無視すると、
+    // 実弾道だけがコア方向へ微妙に曲がり、絞り込んだ弾道ほど大きく外れてしまう。
+    if(G.enemy.magnet>0){
+      const ma=Math.atan2(G.player.y-y,G.player.x-x),mm=Math.min(0.075,0.022*G.enemy.magnet);
+      vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
+    }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
     x+=vx;y+=vy;
     if(segmentHitsWall(ox,oy,x,y)){const hp=wallHitPoint(ox,oy,x,y);x=hp.x;y=hp.y;break;}
@@ -1202,7 +1210,6 @@ function explode(x,y,r,dmg,from,opts){
   G.lastImpactX=x;
   G.lastImpact={x,y:Math.min(y,tY(x)),from,life:1};
   const o=opts||{},u=unit(from);
-  if(!o.noCarve)carve(x,y,r*0.78);
   const colsP=from==='player'?['#00f0ff','#7ef9ff','#ffffff','#2aa8ff']:['#ff2d78','#ff7ab0','#ffffff','#ff9d3d'];
   burst(x,y,o.big?125:52,colsP,o.big?8:5,o.big?56:36);
   debris(x,y,o.big?14:7,from==='player'?'#0a4a5a':'#5a0a2a');
@@ -1210,6 +1217,8 @@ function explode(x,y,r,dmg,from,opts){
   if(o.big){slowmo(0.75);flash(.45);glitch(12);}
   beams.push({type:'ring',x,y,r:6,max:r*1.55,life:20,c:colsP[0]});
   beams.push({type:'ring',x,y,r:2,max:r*2.1,life:28,c:'#ffffff'});
+  // v4.6: ダメージ判定は掘削(carve)前のコア座標で行う。先に掘ってしまうと dropCores() で
+  // コアのY座標が動き、爆発半径が広いカードほど自分の爆発で判定距離を悪化させていた。
   [['player',G.player],['enemy',G.enemy]].forEach(([who,c])=>{
     const d=Math.hypot(x-c.x,y-c.y);
     if(d<r+CORE_R){
@@ -1221,6 +1230,7 @@ function explode(x,y,r,dmg,from,opts){
       else dealDamage(who,val,crit,o.damageLabel||damageLabel(o.big?'bigbang':'shell'));
     }
   });
+  if(!o.noCarve)carve(x,y,r*0.78);
   if(u.secondBurst>0&&!o.child&&!o.noSecond)
     setTimeout(()=>{if(G.over)return;
       const rr=r*(0.52+Math.min(0.18,u.secondBurst*0.04));
