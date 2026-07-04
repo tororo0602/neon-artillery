@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -370,7 +370,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v4.6 // OVERDRIVE PROTOCOL</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v4.7 // GEHENNA EDUCATION</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒</div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -730,21 +730,28 @@ function enemyTierWeights(turn=G.turn){
     return [.08,.42,.50];
   }
   // LV5は成長が早い。HP50%以下でGEHENNA OVERDRIVE、TIER III寄りに覚醒。
-  if(enemyOverdriveActive())return [.03,.27,.70];
-  if(turn<=2)return [.78,.22,0];
-  if(turn<=4)return [.34,.60,.06];
-  if(turn<=6)return [.14,.56,.30];
-  return [.05,.35,.60];
+  if(enemyOverdriveActive())return [.01,.14,.85];
+  if(turn<=2)return [.66,.34,0];
+  if(turn<=4)return [.22,.66,.12];
+  if(turn<=6)return [.08,.46,.46];
+  return [.02,.23,.75];
 }
 const DRAFT_APPEAR_BONUS={
   twin:2.15,        // 主砲弾数カードは少しだけ出やすくする裏補正
   interceptor:2.15  // SAM弾数カードも同じく出やすくする裏補正
 };
-function weightedDraftPick(list){
+const LV5_ENEMY_APPEAR_BONUS={
+  radar:2.2,ciws:2.7,empsam:2.6,chaff:1.8,interceptor:1.9,samboost:1.6,
+  thunder:2.0,swarm:2.9,afterimage:3.0,hellfire:2.7,carpet:2.5,comet:2.0,orbital:1.8
+};
+function enemyDraftAppearBonus(){
+  return (G.enemyLevel||3)>=5?Object.assign({},DRAFT_APPEAR_BONUS,LV5_ENEMY_APPEAR_BONUS):DRAFT_APPEAR_BONUS;
+}
+function weightedDraftPick(list,appearBonus=DRAFT_APPEAR_BONUS){
   if(!list||!list.length)return null;
   let total=0;
   const weights=list.map(c=>{
-    const w=DRAFT_APPEAR_BONUS[c.id]||1;
+    const w=appearBonus[c.id]||1;
     total+=w;
     return w;
   });
@@ -759,6 +766,7 @@ function draftPool(owned=G.owned,turn=G.turn,excludeIds=[],opts={}){
   // v3.27: TIER II / III は選択肢に各1枚まで。強カードが並びすぎる事故を防ぐ。
   // v4.x: 主砲弾数 / SAM弾数だけ、カード候補内でこっそり出現率を上げる。
   const w=opts.weights||tierWeights(turn);
+  const appearBonus=opts.appearBonus||DRAFT_APPEAR_BONUS;
   const ex=new Set(excludeIds||[]);
   const pool=CARDS.filter(c=>!ex.has(c.id)&&!(c.once&&owned[c.id]));
   const picks=[];const tierCount={1:0,2:0,3:0};
@@ -766,7 +774,7 @@ function draftPool(owned=G.owned,turn=G.turn,excludeIds=[],opts={}){
   function addTier(t){
     const cand=candidates(t);
     if(!cand.length)return false;
-    const c=weightedDraftPick(cand);
+    const c=weightedDraftPick(cand,appearBonus);
     picks.push(c);tierCount[t]++;
     return true;
   }
@@ -790,7 +798,7 @@ function draftPool(owned=G.owned,turn=G.turn,excludeIds=[],opts={}){
     if(!cand.length)break;
     const pref=cand.filter(c=>c.t===1);
     const list=pref.length?pref:cand;
-    const c=weightedDraftPick(list);
+    const c=weightedDraftPick(list,appearBonus);
     picks.push(c);tierCount[c.t]++;
   }
   return picks;
@@ -836,13 +844,17 @@ function chooseEnemyCard(pool){
     return pool[(Math.random()*pool.length)|0];
   }
   // LV4/5はカードシナジーを狙う。最上位を基本選ぶが、少しだけ揺らす。
-  const top=list.slice(0,Math.min(list.length,lv>=5?2:3));
+  if(lv>=5){
+    if(enemyOverdriveActive()||Math.random()<0.88)return list[0];
+    return list[Math.min(1,list.length-1)];
+  }
+  const top=list.slice(0,Math.min(list.length,3));
   return top[(Math.random()*top.length)|0];
 }
 function pickEnemyCard(excludeId){
   // プレイヤーと敵AIが同じカードを選ぶことを許可。
   // excludeId は旧仕様互換のため受け取るが、敵抽選では除外しない。
-  const pool=draftPool(G.enemyOwned,G.turn,[],{weights:enemyTierWeights(G.turn)});
+  const pool=draftPool(G.enemyOwned,G.turn,[],{weights:enemyTierWeights(G.turn),appearBonus:enemyDraftAppearBonus()});
   const c=chooseEnemyCard(pool);
   if(!c)return null;
   c.apply(G.enemy);
@@ -974,17 +986,17 @@ function spawnShot(from,ang,pow,opts){
 }
 function enemyAccuracy(){
   // 5段階難易度。LV1は訓練用、LV5はHP50%以下で鬼照準へ覚醒。
-  const table={1:0.18,2:0.42,3:0.62,4:0.80,5:0.92};
-  return enemyOverdriveActive()?0.96:(table[G.enemyLevel]||0.62);
+  const table={1:0.18,2:0.42,3:0.62,4:0.80,5:0.94};
+  return enemyOverdriveActive()?0.985:(table[G.enemyLevel]||0.62);
 }
 function enemyWindRead(){
-  const table={1:0.10,2:0.45,3:0.75,4:0.95,5:1.00};
-  return enemyOverdriveActive()?1.05:(table[G.enemyLevel]??0.75);
+  const table={1:0.10,2:0.45,3:0.75,4:0.95,5:1.08};
+  return enemyOverdriveActive()?1.15:(table[G.enemyLevel]??0.75);
 }
 function enemyMuzzleJitterScale(){
   // v4.5: 主砲には常に少量の初期ブレ（±1.35°基礎）が乗る。高LVは精密射撃機構で群を締める。
-  const table={1:1.10,2:1.00,3:1.00,4:0.70,5:0.42};
-  return enemyOverdriveActive()?0.30:(table[G.enemyLevel]??1.00);
+  const table={1:1.10,2:1.00,3:1.00,4:0.70,5:0.34};
+  return enemyOverdriveActive()?0.22:(table[G.enemyLevel]??1.00);
 }
 function hiddenEnemyStability(from){
   // LV4/5だけ敵AIが高出力ギャンブル砲を照準補正でねじ伏せる。表示には出さない裏補正。
@@ -1003,9 +1015,9 @@ function effectivePowSpread(u,from){
 function enemyErr(){
   const acc=enemyAccuracy();
   const lv=G.enemyLevel||3;
-  const goodFocus={1:0.46,2:0.32,3:0.20,4:0.15,5:0.10}[lv]||0.20;
-  const badFocus={1:2.20,2:1.55,3:1.20,4:0.92,5:0.62}[lv]||1.20;
-  const mul={1:1.35,2:1.12,3:1.00,4:0.82,5:0.64}[lv]||1.00;
+  const goodFocus={1:0.46,2:0.32,3:0.20,4:0.15,5:0.075}[lv]||0.20;
+  const badFocus={1:2.20,2:1.55,3:1.20,4:0.92,5:0.48}[lv]||1.20;
+  const mul={1:1.35,2:1.12,3:1.00,4:0.82,5:0.52}[lv]||1.00;
   const focus=Math.random()<acc?goodFocus:badFocus;
   const lvBase=102-(lv-1)*21;
   const spreadPenalty=Math.min(36,effectiveSpread(G.enemy,'enemy')*(1.20-0.08*lv));
@@ -1028,10 +1040,10 @@ function refineAim(ang,pow,iterations,step){
 }
 function enemyPlan(){
   const lv=G.enemyLevel||3;
-  const trialMul={1:0.55,2:0.82,3:1.00,4:1.15,5:1.30}[lv]||1;
+  const trialMul={1:0.55,2:0.82,3:1.00,4:1.15,5:1.55}[lv]||1;
   const trials=Math.round((90+lv*95+G.turn*8)*trialMul*(enemyOverdriveActive()?1.18:1));
   // v4.5: 弾道は低伸/高弾道の複数の谷（局所解）に分かれるため、上位K件を別々に保持する。
-  const keepTop={4:2,5:3}[lv]||1;
+  const keepTop={4:2,5:4}[lv]||1;
   const pool=[];
   for(let k=0;k<trials;k++){
     const ang=18+Math.random()*64,pow=20+Math.random()*80;
@@ -1041,7 +1053,7 @@ function enemyPlan(){
   }
   let best=pool[0];
   // v4.5: 粗い乱択の上位候補それぞれを局所探索で仕上げ、最良の谷を選ぶ。低LVは元の粗さを維持。
-  const refineIters={1:0,2:0,3:0,4:14,5:24}[lv]||0;
+  const refineIters={1:0,2:0,3:0,4:14,5:36}[lv]||0;
   if(refineIters>0){
     let bestRefined=null,bestRefinedD=1e9;
     for(const cand of pool){
@@ -1554,7 +1566,7 @@ function updateCamera(dt){
 
 function defenseRange(defender){
   const base=clamp(WORLD_W*0.34,440,760);
-  const enemyBonus=defender===G.enemy?((G.enemyLevel>=4?45:0)+(enemyOverdriveActive()?85:0)):0;
+  const enemyBonus=defender===G.enemy?((G.enemyLevel>=5?80:(G.enemyLevel>=4?45:0))+(enemyOverdriveActive()?120:0)):0;
   return base+Math.min(2,Math.max(0,defender.interceptor-1))*35+(defender.samRange||0)*90+(defender.ciws||0)*40+enemyBonus;
 }
 function launcherPoint(who){
