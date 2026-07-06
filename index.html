@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.50 // DESCENT MAGNET</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.51 // SWARM RANDOM PLUNGE</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -2303,15 +2303,17 @@ function update(dt){
             accel=0; // 座標は下流で直接確定するため、目標追従(tx,ty)による加算は無効化。
             if(p.orbitT>28){
               p.swarmPhase='plunge';
-              // v5.48: 旋回円の端から落とすと横補正が間に合わず、狙点の手前/奥に落ちることがある。
-              // plunge開始時に狙点の真上へ寄せ、ここから垂直落下に固定する。
-              p.x=aimX;p.y=Math.min(p.y,highY-10);p.vx=0;p.vy=2.4;p._plungeLocked=true;
+              // v5.51: 全弾が同じ縦線に落ちないよう、旋回後に個別の落下目標を作る。
+              const scatter=clamp((p.orbitBias||0)*0.32+(Math.random()*2-1)*22,-72,72);
+              p._plungeX=clamp(aimX+scatter,0,WORLD_W);
+              p._plungeY=Math.min(aimY!=null?aimY:tY(p._plungeX),tY(p._plungeX));
+              p.x=p._plungeX;p.y=Math.min(p.y,highY-10);p.vx=0;p.vy=2.4;p._plungeLocked=true;
             }
           }else{
             // plunge: 狙点の真上から垂直に落下。水平はごくわずかな補正のみ。
-            tx=aimX;ty=aimY;
+            tx=p._plungeX!=null?p._plungeX:aimX;ty=p._plungeY!=null?p._plungeY:aimY;
             accel=0.36; // v5.48: 狙点への収束を強める
-            if(p._plungeLocked){p.x=aimX;p.vx=0;}
+            if(p._plungeLocked){p.x=tx;p.vx=0;}
             else p.vx*=Math.pow(0.86,pdt); // 水平速度を減衰させ、真下への刺さりを強める
           }
         }
@@ -2357,7 +2359,8 @@ function update(dt){
       const hitCore=distFoe<CORE_R+(p.big?14:5);
       // v5.20: スウォーム(track中)は「地面に着くまで待つ」と、狙った座標(aimX/aimY)を通り過ぎたり
       // 手前で地面に接地してズレた場所で爆発してしまう。目標座標そのものへの到達で着弾させる。
-      const distAim=(p.swarmMissile&&p.swarmPhase==='plunge'&&p.aimX!=null)?Math.hypot(p.x-p.aimX,p.y-p.aimY):Infinity;
+      const sxAim=p._plungeX!=null?p._plungeX:p.aimX,syAim=p._plungeY!=null?p._plungeY:p.aimY;
+      const distAim=(p.swarmMissile&&p.swarmPhase==='plunge'&&sxAim!=null)?Math.hypot(p.x-sxAim,p.y-syAim):Infinity;
       const hitAim=distAim<26;
       const proximityHit=p.proximity&&!p.child&&!p.bomb&&!p.swarmMissile&&!hitCore&&distFoe<CORE_R+24+p.proximity*8;
       const hitOwn=Math.hypot(p.x-own.x,p.y-own.y)<CORE_R&&p.life<660;
@@ -2404,9 +2407,9 @@ function update(dt){
             const proxR=CORE_R+30+p.proximity*10;
             explode(p.x,p.y,proxR,p.dmg*(0.72+Math.min(0.18,p.proximity*0.05)),p.from,{big:false,child:p.child,mainPayload:p.mainPayload,noCarve:true,specialEffect:'proximity',damageLabel:'近接信管'});
           }else{
-            const swarmAimImpact=p.swarmMissile&&p.aimX!=null&&(hitAim||hitG||p.life<=0);
-            const ix=swarmAimImpact?clamp(p.aimX,0,WORLD_W):p.x;
-            const iy=swarmAimImpact?Math.min(p.aimY!=null?p.aimY:tY(ix),tY(ix)):Math.min(p.y,tY(p.x));
+            const swarmAimImpact=p.swarmMissile&&(p._plungeX!=null||p.aimX!=null)&&(hitAim||hitG||p.life<=0);
+            const ix=swarmAimImpact?clamp(p._plungeX!=null?p._plungeX:p.aimX,0,WORLD_W):p.x;
+            const iy=swarmAimImpact?Math.min(p._plungeY!=null?p._plungeY:(p.aimY!=null?p.aimY:tY(ix)),tY(ix)):Math.min(p.y,tY(p.x));
             explode(ix,iy,p.radius,p.dmg,p.from,{big:p.big,child:p.child,mainPayload:p.mainPayload,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
           }
           const cu=unit(p.from);
