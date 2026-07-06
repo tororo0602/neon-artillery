@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.57 // THUNDER NERF</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.58 // SKYLINE EDGES</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -2496,14 +2496,20 @@ function drawSkyline(now,arr,par,baseY,fill,winA){
   if(G.turn>=15)return;
   const cityLife=clamp((15-G.turn)/7,0,1);
   const red=1-cityLife;
-  const buildAlpha=0.26+cityLife*0.38;
+  const buildAlpha=0.30+cityLife*0.36;
+  const edgeAlpha=0.42+cityLife*0.38;
   const buildFill=`rgba(${Math.round(18+42*red)},${Math.round(14-4*red)},${Math.round(28-10*red)},${buildAlpha})`;
+  const edgeFill=`rgba(${Math.round(82+90*red)},${Math.round(112-58*red)},${Math.round(138-74*red)},${edgeAlpha})`;
+  const roofFill=`rgba(${Math.round(130+90*red)},${Math.round(175-100*red)},${Math.round(190-100*red)},${0.16+cityLife*0.24})`;
   const winKill=1-dread*0.85;
-  ctx.save();ctx.globalAlpha=0.10+cityLife*0.62;ctx.translate(off,0);
+  ctx.save();ctx.globalAlpha=0.16+cityLife*0.68;ctx.translate(off,0);
   ctx.fillStyle=buildFill;
   for(const b of arr){
     const sx=b.x+off;if(sx+b.w<-20||sx>W+20)continue;
     ctx.fillRect(b.x,baseY-b.h,b.w,b.h);
+    ctx.strokeStyle=edgeFill;ctx.lineWidth=1.3;ctx.strokeRect(b.x+0.5,baseY-b.h+0.5,b.w-1,b.h-1);
+    ctx.fillStyle=roofFill;ctx.fillRect(b.x,baseY-b.h,b.w,1.5);ctx.fillRect(b.x,baseY-b.h,1.2,b.h);ctx.fillRect(b.x+b.w-1.2,baseY-b.h,1.2,b.h);
+    ctx.fillStyle=buildFill;
     if(b.ant&&cityLife>0.18){
       ctx.fillRect(b.x+b.w/2-1,baseY-b.h-12,2,12);
       const bl=(Math.sin(now*0.004+b.x)>0.6);
@@ -3196,3 +3202,5 @@ requestAnimationFrame(loop);
 
 
 </body></html>
+
+
