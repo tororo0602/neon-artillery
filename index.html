@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.58 // SKYLINE EDGES</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.59 // EVEN CARPET</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -1477,7 +1477,11 @@ function fireUnit(from,baseAng,basePow){
   }
   if(u.carpet>0){
     const dir=from==='player'?1:-1;
-    planes.push({from,x:from==='player'?-80:WORLD_W+80,y:H*0.16,vx:9*dir,drops:12*u.carpet,dropT:0,dropInterval:clamp(6-(u.carpet-1)*1.45,2.4,6)});
+    const total=12*u.carpet;
+    const dropStart=from==='player'?WORLD_W*0.34:WORLD_W*0.66;
+    const dropEnd=from==='player'?WORLD_W*0.86:WORLD_W*0.14;
+    const dropStep=total>1?(dropEnd-dropStart)/(total-1):0;
+    planes.push({from,x:from==='player'?-80:WORLD_W+80,y:H*0.16,vx:9*dir,drops:total,dropTotal:total,nextDropX:dropStart,dropStep});
   }
   if(doom){
     dealDamage(from,4+u.doomsday*3,false,'反動');
@@ -2425,15 +2429,15 @@ function update(dt){
   updateInterceptors(dt);
   if(!G.over&&interceptors.length===0){G.camLockX=null;G.camPendingLockX=null;}
   for(let i=planes.length-1;i>=0;i--){
-    const pl=planes[i],u=unit(pl.from);pl.x+=pl.vx*dt;pl.dropT-=dt;
-    const shouldDrop=pl.from==='player'?pl.x>WORLD_W*0.40:pl.x<WORLD_W*0.60;
-    if(shouldDrop&&pl.drops>0){
+    const pl=planes[i],u=unit(pl.from);pl.x+=pl.vx*dt;
+    if(pl.drops>0){
       const dir=pl.from==='player'?1:-1;
       let safety=0;
-      while(pl.drops>0&&pl.dropT<=0&&safety++<8){
-        pl.dropT+=(pl.dropInterval||6);pl.drops--;
-        const dx=(safety-1)*5*dir;
-        projectiles.push({from:pl.from,x:pl.x+dx,y:pl.y,vx:2*dir,vy:1,dmg:u.dmg*0.33,radius:32,bomb:true,child:true,homing:false,big:false,bounces:0,magnet:0,decoy:u.decoy,damageLabel:'爆撃',c:projectileColor(pl.from,{bomb:true,child:true}),trail:[],delay:0,life:400});
+      while(pl.drops>0&&(dir>0?pl.x>=pl.nextDropX:pl.x<=pl.nextDropX)&&safety++<12){
+        const dropX=pl.nextDropX;
+        pl.nextDropX+=pl.dropStep;
+        pl.drops--;
+        projectiles.push({from:pl.from,x:dropX,y:pl.y,vx:2*dir,vy:1,dmg:u.dmg*0.33,radius:32,bomb:true,child:true,homing:false,big:false,bounces:0,magnet:0,decoy:u.decoy,damageLabel:'爆撃',c:projectileColor(pl.from,{bomb:true,child:true}),trail:[],delay:0,life:400});
       }
     }
     if((pl.x>WORLD_W+120||pl.x<-120)&&pl.drops<=0)planes.splice(i,1);
