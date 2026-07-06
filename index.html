@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.55 // SWARM ENEMY ZONE</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.57 // THUNDER NERF</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -962,7 +962,7 @@ const CARDS=[
  {id:'berserk',code:'BERSERK LIMIT',t:3,kind:'gamble',name:'暴走装薬',desc:'火力を大幅に上げる代わりに、砲弾がかなり暴れる。ロマン枠。',detail:['攻撃：主砲DMG ×2.10','デメリット：角度ブレ +8 / POWERブレ ±10','目安：10 → 21 / 直撃最大 約37'],apply:u=>{u.dmg*=2.1;u.spread+=8;u.powSpread+=10;u.gambleSpread+=8;u.gamblePowSpread+=10;}},
  {id:'echo',code:'ECHO SHELL',t:1,kind:'stable',name:'エコーシェル',desc:'着弾の残響が同地点で二度目の爆発を起こす。抉れた地形の奥まで届く。',detail:['残響爆発：着弾0.7秒後に同地点で再爆発','残響DMG：約52%＋所持数で上昇','同ターン内の複数ECHO DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.secondBurst+=1;}},
  {id:'phantom',code:'PHANTOM TRIO',t:2,kind:'stable',name:'ファントムラウンド',desc:'主砲と並走する幻影弾を多数実体化。敵SAMは本体と見分けられない。',detail:['幻影弾：+4発 / 枚、上限なし','幻影DMG：主砲の約15% / 小爆発','本体の弾道を薄く増やし、防空網を騙しながら削る'],apply:u=>{u.phantom+=1;}},
- {id:'thunder',code:'THUNDER CHAIN',t:2,kind:'stable',name:'ライトニングアーク',desc:'着弾点が敵コアの近くなら稲妻が跳ぶ。離れすぎると不発になる近距離保険。',detail:['連鎖雷：着弾点→敵コアへ放電','雷DMG：距離減衰・最大15 × 所持数','同ターン内の複数発動DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.thunder+=1;}},
+ {id:'thunder',code:'THUNDER CHAIN',t:2,kind:'stable',name:'ライトニングアーク',desc:'着弾点が敵コアの近くなら稲妻が跳ぶ。離れすぎると不発になる近距離保険。',detail:['連鎖雷：着弾点→敵コアへ放電','雷DMG：距離減衰・最大7.5 × 所持数','同ターン内の複数発動DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.thunder+=1;}},
  {id:'afterimage',code:'AFTERIMAGE BARRAGE',t:3,kind:'stable',name:'アフターイメージ',desc:'砲が直前の弾道を記憶し、残像として追撃を自動連射する。狙いが完璧なら全弾同じ穴に刺さる。',detail:['追撃：同角度・同威力で+3発 × 所持数','追撃DMG：主砲の約65% / 発','ブレほぼゼロ。照準の価値がそのまま倍化する'],apply:u=>{u.afterimage+=1;}},
  {id:'hellfire',code:'HELLFIRE RAIN',t:3,kind:'gamble',name:'ヘルファイアレイン',desc:'主砲の着弾点を空が焼く。照準した場所に地獄の雨が降る。',detail:['着弾派生：着弾点±60へ上空からミサイル7発 × 所持数','雨DMG：主砲の約28% / 発','雨ミサイルのコアDMGは同ターン内で 100%→45%→20%→10% に減衰'],apply:u=>{u.hellfire+=1;}}
 ];
@@ -1584,7 +1584,7 @@ function explode(x,y,r,dmg,from,opts){
     const d=Math.hypot(x-foe.x,y-foe.y);
     if(d<THUNDER_CHAIN_RANGE){
       const falloff=1-d/THUNDER_CHAIN_RANGE;
-      const val=15*u.thunder*falloff;
+      const val=7.5*u.thunder*falloff;
       if(val>0.25)setTimeout(()=>{if(G.over)return;
         beams.push({type:'bolt',x1:x,y1:y,x2:foe.x,y2:foe.y-4,life:16,c:from==='player'?'#bff7ff':'#ffb3c8',seed:Math.random()*99});
         dealSpecialDamage(foeName,val,false,from,'thunder','サンダー');
@@ -1892,8 +1892,8 @@ function buildStartMenu(){
     b.onclick=()=>setDifficultyLevel(i);
     box.appendChild(b);
   }
-  const stored=+sessionStorage.getItem('neonEnemyLevel');
-  setDifficultyLevel(stored||G.enemyLevel||3);
+  sessionStorage.removeItem('neonEnemyLevel');
+  setDifficultyLevel(3);
 }
 
 document.getElementById('muteBtn').onclick=()=>toggleMute();
@@ -2496,10 +2496,10 @@ function drawSkyline(now,arr,par,baseY,fill,winA){
   if(G.turn>=15)return;
   const cityLife=clamp((15-G.turn)/7,0,1);
   const red=1-cityLife;
-  const buildAlpha=0.50+cityLife*0.48;
-  const buildFill=`rgba(${Math.round(24+58*red)},${Math.round(16-6*red)},${Math.round(30-14*red)},${buildAlpha})`;
+  const buildAlpha=0.26+cityLife*0.38;
+  const buildFill=`rgba(${Math.round(18+42*red)},${Math.round(14-4*red)},${Math.round(28-10*red)},${buildAlpha})`;
   const winKill=1-dread*0.85;
-  ctx.save();ctx.globalAlpha=0.18+cityLife*0.82;ctx.translate(off,0);
+  ctx.save();ctx.globalAlpha=0.10+cityLife*0.62;ctx.translate(off,0);
   ctx.fillStyle=buildFill;
   for(const b of arr){
     const sx=b.x+off;if(sx+b.w<-20||sx>W+20)continue;
