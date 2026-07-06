@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<!-- saved from url=(0032)http://127.0.0.1:8765/index.html -->
+﻿<!DOCTYPE html>
+<!-- saved from url=(0045)file:///C:/Users/81905/Downloads/index_5.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,7 +9,7 @@
 <meta property="og:description" content="Neon artillery duel game. Aim, fire, upgrade, and survive.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
-<link href="./index_files/css2" rel="stylesheet">
+<link href="file:///C:/Users/81905/Downloads/index_files/css2" rel="stylesheet">
 <style>
 :root{
   --bg:#05070d; --cyan:#00f0ff; --magenta:#ff2d78; --gold:#ffc233;
@@ -104,7 +104,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
   display:flex;gap:12px;align-items:flex-end;transition:opacity .25s,transform .25s;}
 #ctrl.hidden{opacity:0;transform:translateY(20px);pointer-events:none;}
 .sliderbox{flex:1;min-width:0;}
-.ctrlTop{display:flex;justify-content:flex-end;align-items:center;margin-bottom:4px;}
+.ctrlTop{display:flex;justify-content:flex-start;align-items:center;margin-bottom:4px;}
 .slabel{font-size:11px;letter-spacing:.18em;color:#9fb8c8;display:flex;justify-content:space-between;margin-bottom:2px;}
 .slabel b{color:var(--cyan);font-family:'Orbitron';}
 input[type=range]{width:100%;appearance:none;height:26px;background:transparent;}
@@ -307,7 +307,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
 .cutband{position:absolute;left:-12%;right:-12%;top:38%;padding:16px 0;transform:skewY(-6deg) translateX(-104%);
   background:linear-gradient(90deg,transparent,rgba(3,7,14,.96) 12%,rgba(3,7,14,.96) 88%,transparent);
   border-top:1px solid rgba(232,246,255,.5);border-bottom:1px solid rgba(232,246,255,.5);text-align:center;}
-#cutin.show .cutband{animation:bandIn .32s cubic-bezier(.2,.9,.2,1) forwards, bandOut .3s ease 5.1s forwards;}
+#cutin.show .cutband{animation:bandIn .32s cubic-bezier(.2,.9,.2,1) forwards, bandOut .3s ease 4.1s forwards;}
 @keyframes bandIn{to{transform:skewY(-6deg) translateX(0);}}
 @keyframes bandOut{to{transform:skewY(-6deg) translateX(104%);}}
 .cutmain{font-family:'Orbitron';font-weight:900;font-size:clamp(24px,7vw,44px);letter-spacing:.3em;color:var(--bone);animation:glitchtxt .5s steps(2) infinite;}
@@ -373,7 +373,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   <div id="hud">
     <div class="hpwrap left"><div class="hplabel">YOU // 自陣コア</div><div class="hpbar"><div class="hpghost" id="hgL" style="width:100%"></div><div class="hpfill" id="hpL" style="width:100%"></div></div></div>
     <div class="hpwrap right"><div class="hplabel">敵AI // ENEMY CORE</div><div class="hpbar"><div class="hpghost" id="hgR" style="width:100%"></div><div class="hpfill" id="hpR" style="width:100%"></div></div></div>
-    <div id="turnbox"><div id="turnnum">T-01</div><div id="windbox" style="color: rgb(90, 127, 150); text-shadow: none;">WIND ← 1.5</div><div id="rangebox">RANGE 0872m // DIFFICULTY LV 3</div></div>
+    <div id="turnbox"><div id="turnnum">T-01</div><div id="windbox" style="color: rgb(0, 240, 255); text-shadow: rgb(0, 240, 255) 0px 0px 8px;">WIND ←← 2.0</div><div id="rangebox">RANGE 0872m // DIFFICULTY LV 3</div></div>
     <button id="muteBtn">♪ ON</button>
     <div id="chips"></div>
     <div id="enemyChips"></div>
@@ -385,7 +385,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
     <div id="resultGate"><div id="resultPrompt"><div class="rpMain">TAP TO CONTINUE</div><div class="rpSub">タップで次へ // 結果確認</div></div></div>
     <div id="damageLog">
       <div class="damageStack dealt"><div class="damageHead">与ダメ <b id="dmgDealtTotal">0</b></div><div class="damageList" id="dmgDealtList"></div></div>
-      <div id="windboxLog" style="color: rgb(90, 127, 150); text-shadow: none;">WIND ← 1.5</div>
+      <div id="windboxLog" style="color: rgb(0, 240, 255); text-shadow: rgb(0, 240, 255) 0px 0px 8px;">WIND ←← 2.0</div>
       <div class="damageStack taken"><div class="damageHead">被ダメ <b id="dmgTakenTotal">0</b></div><div class="damageList" id="dmgTakenList"></div></div>
     </div>
     <div id="callsign"></div>
@@ -395,7 +395,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   <div id="ctrl" class="hidden">
     <div class="sliderbox">
       <div class="ctrlTop"><button id="effectBtn">EFFECTS // 効果確認</button></div>
-      <div class="slabel"><span>ANGLE 角度</span><b id="angV">45°</b></div>
+      <div class="slabel"><span>ANGLE 角度</span><b id="angV">50°</b></div>
       <input type="range" id="ang" min="10" max="85" value="45">
       <div class="slabel" style="margin-top:6px"><span>POWER 威力</span><b id="powV">50%</b></div>
       <input type="range" id="pow" min="10" max="100" value="50">
@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.21 // GUIDE LESSON TEXT</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.50 // DESCENT MAGNET</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -417,7 +417,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
           <div class="manualItem"><b>AIM</b>角度とPOWERで山なりに撃つ。中央壁は破壊不能なので、低弾道は基本ブロックされる。照準中は中央付近まで弾道予測線を表示するが、風の影響は含まない。LV1〜3では、風を考慮しない敵拠点ヒット補助線も表示する。</div>
           <div class="manualItem"><b>WIND</b>背景の流線と大矢印が風向・風速。強いほど砲弾が横へ流される。</div>
           <div class="manualItem"><b>DUEL</b>演出は自分→敵の順番。先に敵を壊しても、そのターンの敵弾は飛んでくる。</div>
-          <div class="manualItem"><b>SAM</b>防空圏に入った敵弾へ、発射台から垂直上昇→追尾。侵入後もまず砲弾を画面端まで追跡し、端に寄ってから防衛拠点側にカメラ固定。初期1発、カードで+3発、上限なし。</div>
+          <div class="manualItem"><b>SAM</b>防空圏に入った敵弾へ、発射台から垂直上昇→追尾。侵入後もまず砲弾を画面端まで追跡し、端に寄ってから防衛拠点側にカメラ固定。初期0発、カードで+3発、上限なし。</div>
           <div class="manualItem"><b>CARDS</b>毎ターン1枚選択。敵AIも同じカード群から1枚取得する。あなたと同じカードを選ぶこともある。選択肢ではTIER II/IIIは各1枚まで。カード特殊効果のコアDMGは同一ターン内で 100%→45%→20%→10% に減衰。</div>
           <div class="manualItem"><b>DMG</b>基礎主砲DMGは10。コア直撃は最大約1.75倍。距離がズレるほど減衰する。</div>
         </div>
@@ -446,7 +446,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
 "use strict";
 /* ============ setup ============ */
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
-let W=0,H=0,DPR=1,WORLD_W=0,camX=0;
+let W=0,H=0,DPR=1,WORLD_W=0,camX=0,camBaseX=null;
 const WALL={x:0,w:0,top:0,bottom:0};
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
 function updateWall(){
@@ -491,6 +491,7 @@ function resize(){
   cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
   if(!terrain.length||Math.abs(WORLD_W-pWorld)>120||Math.abs(W-pW)>80||Math.abs(H-pH)>180)buildTerrain();
   camX=clamp(camX,0,Math.max(0,WORLD_W-W));
+  if(camBaseX!=null)camBaseX=clamp(camBaseX,0,Math.max(0,WORLD_W-W));
 }
 addEventListener('resize',resize);
 
@@ -635,7 +636,8 @@ const BGM_BASS=[45,45,57,45, 48,45,57,60, 45,45,57,45, 43,43,55,58,
 const BGM_LEAD=[0,0,69,0, 0,72,0,76, 0,0,69,0, 0,67,0,0,
                 0,0,69,0, 72,0,76,79, 0,0,77,0, 0,74,0,71];
 function mtof(m){return 440*Math.pow(2,(m-69)/12);}
-function bgmIntensity(){return clamp((G.turn-1)/9,0,1);}
+function dreadLevel(){return clamp((G.turn-1)/15,0,1);} // v5.40: 不穏度。BGM/血月/背景/ビルを全部これに統一
+function bgmIntensity(){return dreadLevel();}
 function bgmStepDur(){return 60/(112+bgmIntensity()*26)/4;}
 function bgmScheduleStep(step,t){
   const c=AUDIO.ctx,inten=bgmIntensity();
@@ -707,7 +709,7 @@ function updateMuteBtn(){
 function makeUnit(){return {
   hp:100,maxhp:100,x:0,y:0,
   dmg:10,radius:30,shots:1,windres:0,cluster:0,napalm:0,gwell:0,orbital:0,carpet:0,swarm:0,bigbang:0,
-  bounce:0,magnet:0,interceptor:1,comet:0,doomsday:0,prototypeFuse:0,heavy:0,spread:0,powSpread:0,
+  bounce:0,magnet:0,interceptor:0,comet:0,doomsday:0,prototypeFuse:0,heavy:0,spread:0,powSpread:0,
   gambleSpread:0,gamblePowSpread:0,
   speedMul:1,loft:0,proximity:0,secondBurst:0,splitWarhead:0,samRange:0,samHit:0,decoy:0,
   phantom:0,thunder:0,afterimage:0,hellfire:0,samBoost:0,ciws:0,empSam:0
@@ -729,11 +731,19 @@ function enemySay(txt){
 const G={turn:1,phase:'start',wind:0,slowT:0,shake:0,glitch:0,punch:0,hue:0,
   player:makeUnit(),enemy:makeUnit(),
   owned:{},enemyOwned:{},over:false,
-  stats:{fired:0,dealt:0,maxHit:0,crits:0,hellfire:0,swarm:0,carpet:0,thunder:0},lastImpactX:0,lastImpact:null,enemyLevel:3,duel:null,camLockX:null,camPendingLockX:null,
+  stats:{fired:0,dealt:0,maxHit:0,crits:0,hellfire:0,swarm:0,carpet:0,thunder:0},lastImpactX:0,lastImpact:null,enemyLevel:3,duel:null,camLockX:null,camPendingLockX:null,camManualOffset:0,
   volley:{dealt:0,taken:0},specialHits:{},damageSeq:{dealt:0,taken:0},damageLogActive:false,pendingResult:false,aimGuide:null,windAimGuide:null,terrainVersion:0};
 let terrain=[],TSTEP=3,cols=0;
 let projectiles=[],interceptors=[],particles=[],beams=[],fires=[],floaters=[],planes=[],stars=[];
 const CORE_R=11,GRAV=0.16;
+const MAX_PARTICLES=520,MAX_BEAMS=90,MAX_STARS=44; // v5.42: late-game FPS guardrails
+function perfLoad(){return projectiles.length+interceptors.length*2+particles.length/4+beams.length*3+planes.length*4;}
+function perfHeavy(){return G.turn>=12||perfLoad()>210;}
+function capFxArrays(){
+  if(particles.length>MAX_PARTICLES)particles.splice(0,particles.length-MAX_PARTICLES);
+  if(beams.length>MAX_BEAMS)beams.splice(0,beams.length-MAX_BEAMS);
+  if(stars.length>MAX_STARS)stars.splice(0,stars.length-MAX_STARS);
+}
 // v5.4: 主砲弾の見た目の速度だけ落とす。初速×0.8＋重力×0.64で飛距離は完全保存(滞空+25%)。
 // 爆撃/スウォーム等は対象外。v5.5: 風ドリフトも含めて敵AIの着弾予測(simDist)を実弾道へ同期。
 const SHELL_SPEED_SCALE=0.8;
@@ -748,9 +758,12 @@ const ARTILLERY_MAX_SPEED=24.5;
 const BIG_ARTILLERY_MAX_SPEED=27;
 const HOMING_MAX_SPEED=9.2; // ミサイルスウォームは暴走防止で据え置き
 const INTERCEPTOR_MAX_SPEED=26; // v5.2: 高速化した砲弾に追随できるSAM
-const WIND_FORCE=0.0068; // v5.16: 風の横流しをさらに軽減
+const WIND_FORCE=0.0040; // v5.49: 風の横流しをさらに軽減
 const WIND_MAX=6.5; // v3.16: 強風の最大値を引き上げ
-const THUNDER_CHAIN_RANGE=220; // v4.1: サンダーチェインは近距離保険。遠すぎる着弾では不発
+const THUNDER_CHAIN_RANGE=250; // v4.1: サンダーチェインは近距離保険。遠すぎる着弾では不発
+const MAIN_BLAST_RADIUS_MULT=1.18; // v5.43: 主砲弾は初期から少し拾いやすくする
+const INTERCEPT_MAIN_BLAST_RADIUS=0.65; // v5.43: SAM迎撃されても主砲弾の爆薬は小爆発する
+const INTERCEPT_MAIN_BLAST_DAMAGE=0.45;
 const SPECIAL_DECAY=[1,0.45,0.20,0.10]; // v4.2: 同一ターンのカード特殊効果ダメージ減衰
 const TRAJECTORY_PREVIEW_Y_OFFSET=24; // v5.5: 予想線を実感に合わせて少し下げる
 
@@ -804,7 +817,7 @@ function logTurnDamage(who,val,crit,label){
   else row.innerHTML='<span>'+no+(crit?' CRIT':'')+'</span><em>'+safeLabel+'</em><b>-'+val+'</b>';
   list.appendChild(row);
   // 上から順に並べる。多すぎる時は古い順を少し残しつつ、直近が見えるようにする。
-  while(list.children.length>14)list.removeChild(list.firstChild);
+  while(list.children.length>10)list.removeChild(list.firstChild);
 }
 
 function buildTerrain(){
@@ -878,7 +891,7 @@ function cutin(main,sub,theme){
   document.getElementById('cutMain').textContent=main;
   document.getElementById('cutSub').textContent=sub||'';
   c.className='show'+(theme?' theme-'+theme:'');
-  clearTimeout(c._t);c._t=setTimeout(()=>{c.className='';},5600);
+  clearTimeout(c._t);c._t=setTimeout(()=>{c.className='';},4600);
   glitch(8);punch(6);
 }
 function focusGameOverCamera(x){
@@ -919,39 +932,39 @@ function finaleExplosion(x,y,theme){
 
 /* ============ cards ============ */
 const CARDS=[
- {id:'amp',code:'GAIN BOOSTER',t:1,kind:'stable',name:'パワーアンプ',desc:'基礎火力を底上げする標準強化。迷った時に腐りにくい。',detail:['攻撃：主砲DMG ×1.20','目安：10 → 12 / 直撃最大 約18 → 約21','累積：取るたび掛け算で伸びる'],apply:u=>{u.dmg*=1.2;}},
- {id:'wide',code:'NOVA SPREAD',t:1,kind:'stable',name:'ワイドブラスト',desc:'爆発範囲を広げる。直撃が難しい長距離戦で削りやすくなる。',detail:['爆発半径：×1.25','DMG自体は増えないが、距離減衰を受けにくい','地形破壊範囲も広がる'],apply:u=>{u.radius*=1.25;}},
+ {id:'amp',code:'GAIN BOOSTER',t:1,kind:'stable',name:'パワーアンプ',desc:'基礎火力を底上げする標準強化。迷った時に腐りにくい。',detail:['攻撃：主砲DMG ×1.28','目安：10 → 12.8 / 直撃最大 約18 → 約22','累積：取るたび掛け算で伸びる'],apply:u=>{u.dmg*=1.28;}},
+ {id:'wide',code:'NOVA SPREAD',t:1,kind:'stable',name:'ワイドブラスト',desc:'爆発範囲を広げる。直撃が難しい長距離戦で削りやすくなる。',detail:['爆発半径：×1.35','DMG自体は増えないが、距離減衰を受けにくい','地形破壊範囲も広がる'],apply:u=>{u.radius*=1.35;}},
  {id:'twin',code:'TRIAD VOLLEY',t:1,kind:'stable',name:'トリプルショット',desc:'主砲が合計3発になる。安定して削れるが、1発あたりは少し弱い。',detail:['主砲：+2発（初回で合計3発）','多弾減衰：3発時は各弾 約84%DMG','散り：少し増える。全弾命中なら総火力大'],apply:u=>{u.shots+=2;u.spread+=0.35;}},
- {id:'fin',code:'CALM VECTOR',t:1,kind:'stable',name:'整流フィン',desc:'砲弾の姿勢を安定させ、暴れを少し抑える。ギャンブル装備の保険にもなる。',detail:['命中補助：角度ブレ -0.6 / POWERブレ -1.5','風影響：-8%','火力は増えないが、長距離の再現性が上がる'],apply:u=>{u.spread=Math.max(0,(u.spread||0)-0.6);u.powSpread=Math.max(0,(u.powSpread||0)-1.5);u.windres=(u.windres||0)+0.08;}},
- {id:'stab',code:'AEOLUS ANCHOR',t:1,kind:'stable',name:'スタビライザー',desc:'風に流されにくくする。強風ステージほど価値が上がる。',detail:['風影響：-30%','累積可能。ただし軽減は最大70%まで','火力は増えないが命中率が安定する'],apply:u=>{u.windres=(u.windres||0)+0.30;}},
+ {id:'fin',code:'CALM VECTOR',t:1,kind:'stable',name:'整流フィン',desc:'砲弾の姿勢を安定させ、暴れを少し抑える。ギャンブル装備の保険にもなる。',detail:['命中補助：角度ブレ -0.9 / POWERブレ -2.2','風影響：-12%','火力は増えないが、長距離の再現性が上がる'],apply:u=>{u.spread=Math.max(0,(u.spread||0)-0.9);u.powSpread=Math.max(0,(u.powSpread||0)-2.2);u.windres=(u.windres||0)+0.12;}},
+ {id:'stab',code:'AEOLUS ANCHOR',t:1,kind:'stable',name:'スタビライザー',desc:'風に流されにくくする。強風ステージほど価値が上がる。',detail:['風影響：-40%','累積可能。ただし軽減は最大70%まで','火力は増えないが命中率が安定する'],apply:u=>{u.windres=(u.windres||0)+0.40;}},
  {id:'bounce',code:'RICOCHET ONE',t:1,kind:'stable',name:'バウンド弾',desc:'地形に当たった時、1回だけ跳ねる。壁越え後の変則ヒットを狙える。',detail:['地形バウンド：+1回','壁は破壊不能。壁そのものでは跳ね返らない','跳ねた後は速度が落ちる'],apply:u=>{u.bounce+=1;}},
- {id:'cluster',code:'HYDRA SEEDS',t:2,kind:'stable',name:'クラスターボム',desc:'着弾後に小型子弾を散らす。直撃より、周辺制圧と削り向け。',detail:['着弾時：子弾8発 × 所持数','子弾DMG：主砲の約17% / 小爆発','同ターン内の子弾コアDMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.cluster+=1;}},
- {id:'napalm',code:'PROMETHEUS CODE',t:2,kind:'stable',name:'ナパームコード',desc:'着弾点を炎上させ、範囲内の敵コアに継続ダメージを入れる。',detail:['炎上：3ターン残留','継続DMG：3 × 所持数 / ターン','同ターン内の複数炎上DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.napalm+=1;}},
+ {id:'cluster',code:'HYDRA SEEDS',t:2,kind:'stable',name:'クラスターボム',desc:'着弾後に小型子弾を散らす。直撃より、周辺制圧と削り向け。',detail:['着弾時：子弾10発 × 所持数','子弾DMG：主砲の約21% / 小爆発','同ターン内の子弾コアDMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.cluster+=1;}},
+ {id:'napalm',code:'PROMETHEUS CODE',t:2,kind:'stable',name:'ナパームコード',desc:'着弾点を炎上させ、範囲内の敵コアに継続ダメージを入れる。',detail:['炎上：4ターン残留','継続DMG：4 × 所持数 / ターン','同ターン内の複数炎上DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.napalm+=1;}},
  {id:'gwell',code:'EVENT HORIZON',t:2,kind:'stable',name:'グラビティウェル',desc:'着弾点を重力崩壊させ、地形を大きく削る。地形勝負用。',detail:['直接DMG：なし','地形破壊：大。遮蔽や足場を崩す','中央の破壊不能壁は削れない / 1回取得系'],apply:u=>{u.gwell+=1;},once:true},
- {id:'magnet',code:'LODESTAR',t:2,kind:'stable',name:'電磁誘導弾',desc:'飛翔中に少しだけ敵コア方向へ曲がる。完全追尾ではない。',detail:['誘導：微弱。狙いの補助程度','重ねるほど曲がりやすい','壁に向かう低弾道は救えない'],apply:u=>{u.magnet+=1;}},
- {id:'proximity',code:'AIRBURST FUZE',t:2,kind:'stable',name:'近接信管',desc:'敵コアの近くを通過した時に空中爆発する。直撃できない時の保険。',detail:['発動：敵コア近くで空中爆発','空中爆発DMG：約70%','同ターン内の複数発動DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.proximity+=1;}},
- {id:'split',code:'GEMINI WARHEAD',t:2,kind:'stable',name:'分裂弾頭',desc:'最高高度付近で弾頭が左右に割れる。中央壁を越えた後の面制圧に強い。',detail:['分裂：主砲弾が頂点付近で2発に分かれる','分裂弾DMG：各弾 約55%〜。重ねると少し上昇','分裂弾はSAM迎撃対象。追加効果の連鎖は抑制'],apply:u=>{u.splitWarhead+=1;}},
+ {id:'magnet',code:'LODESTAR',t:2,kind:'stable',name:'電磁誘導弾',desc:'飛翔中に敵コア方向へ曲がる。完全追尾ではないが、以前よりかなり頼れる。',detail:['誘導：中程度。下降中はさらに強く敵コアへ寄る','重ねるほど曲がりやすい','壁に向かう低弾道は救えない'],apply:u=>{u.magnet+=1;}},
+ {id:'proximity',code:'AIRBURST FUZE',t:2,kind:'stable',name:'近接信管',desc:'敵コアの近くを通過した時に空中爆発する。直撃できない時の保険。',detail:['発動：敵コア近くで空中爆発','空中爆発DMG：約72%〜90%','同ターン内の複数発動DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.proximity+=1;}},
+ {id:'split',code:'GEMINI WARHEAD',t:2,kind:'stable',name:'分裂弾頭',desc:'最高高度付近で弾頭が左右に割れる。中央壁を越えた後の面制圧に強い。',detail:['分裂：主砲弾が頂点付近で2発に分かれる','分裂弾DMG：各弾 約60%〜。重ねるとさらに上昇','分裂弾はSAM迎撃対象。追加効果の連鎖は抑制'],apply:u=>{u.splitWarhead+=1;}},
  {id:'radar',code:'ARGUS EYE',t:2,kind:'stable',name:'防空レーダー',desc:'防空圏を広げ、SAMの迎撃精度を少し上げる。爆撃・スウォーム対策。',detail:['防空範囲：+90m','SAM命中：+5% / 枚','迎撃ミサイル本数は増えない'],apply:u=>{u.samRange+=1;u.samHit+=1;}},
- {id:'chaff',code:'GHOST VEIL',t:2,kind:'stable',name:'チャフ散布弾',desc:'自軍の攻撃兵装に妨害片を撒き、敵SAMに落とされにくくする。',detail:['敵SAM命中率：-10% / 枚','対象：主砲弾 / 爆撃弾 / スウォーム','防空を突破するための支援カード'],apply:u=>{u.decoy+=1;}},
- {id:'interceptor',code:'AEGIS WALL',t:1,kind:'stable',name:'迎撃ミサイル',desc:'防空圏へ入った敵兵装をSAMで迎撃する。守りを厚くするカード。',detail:['迎撃数：+3発（初期1発） / 上限なし','対象：主砲弾 / 爆撃弾 / ミサイルスウォーム','防空開始後、画面端まで追跡してから拠点固定。撃ち漏らしは間隔を置いて再斉射'],apply:u=>{u.interceptor+=3;}},
+ {id:'chaff',code:'GHOST VEIL',t:2,kind:'stable',name:'チャフ散布弾',desc:'自軍の攻撃兵装に妨害片を撒き、敵SAMに落とされにくくする。',detail:['敵SAM命中率：-13% / 枚','対象：主砲弾 / 爆撃弾 / スウォーム','防空を突破するための支援カード'],apply:u=>{u.decoy+=1;}},
+ {id:'interceptor',code:'AEGIS WALL',t:1,kind:'stable',name:'迎撃ミサイル',desc:'防空圏へ入った敵兵装をSAMで迎撃する。守りを厚くするカード。',detail:['迎撃数：+3発（初期0発） / 上限なし','対象：主砲弾 / 爆撃弾 / ミサイルスウォーム','防空開始後、画面端まで追跡してから拠点固定。撃ち漏らしは間隔を置いて再斉射'],apply:u=>{u.interceptor+=3;}},
  {id:'samboost',code:'BOOSTER SAM',t:1,kind:'stable',name:'高速SAMブースター',desc:'迎撃ミサイルの加速と再斉射間隔を改善する。数より質の防空強化。',detail:['SAM速度/加速：+12% / 枚','SAM再斉射：少し短縮','迎撃数：+1発'],apply:u=>{u.interceptor+=1;u.samBoost+=1;}},
  {id:'ciws',code:'CLOSE-IN CIWS',t:2,kind:'stable',name:'近接防御レーザー',desc:'拠点直前の低空兵装へ短距離レーザー照準を追加。爆撃とスウォームに強い。',detail:['爆弾/スウォームへのSAM命中：+15% / 枚','防空範囲：+40m / 枚','迎撃ラベルがCIWS対応になる'],apply:u=>{u.ciws+=1;u.samRange+=0.45;}},
  {id:'empsam',code:'EMP BURST SAM',t:3,kind:'stable',name:'EMP迎撃弾',desc:'迎撃成功時に電磁パルスを撒き、周囲の敵兵装を減速させる特殊SAM。',detail:['迎撃成功時：周囲の敵兵装を減速','小型弾は低確率で追加撃墜','多弾攻撃への切り返しカード'],apply:u=>{u.empSam+=1;}},
  {id:'oc',code:'REDLINE DRIVE',t:2,kind:'gamble',name:'オーバークロック',desc:'砲身を赤熱させ火力を上げる。代わりに照準と威力が少し荒れる。',detail:['攻撃：主砲DMG ×1.45','デメリット：角度ブレ +3.2 / POWERブレ ±5','目安：10 → 14.5 / 直撃最大 約25'],apply:u=>{u.dmg*=1.45;u.spread+=3.2;u.powSpread+=5;u.gambleSpread+=3.2;u.gamblePowSpread+=5;}},
  {id:'proto',code:'PANDORA FUZE',t:2,kind:'gamble',name:'試作信管',desc:'高火力だが、飛翔中に自爆する可能性がある危険な信管。',detail:['攻撃：主砲DMG ×1.70','事故：25% × 所持数で飛翔中に自爆（最大48%）','自爆時：小さめ爆発。敵にも自分にも当たり得る'],apply:u=>{u.dmg*=1.7;u.prototypeFuse+=1;u.spread+=1;u.gambleSpread+=1;}},
  {id:'heavy',code:'TITAN SHELL',t:2,kind:'gamble',name:'過積載弾頭',desc:'爆発範囲を大きくするが、弾が重くなって落ちやすくなる。',detail:['爆発半径：×1.60','デメリット：重力影響アップ。飛距離が落ちる','高角度・高POWERで扱うと強い'],apply:u=>{u.radius*=1.6;u.heavy+=1;}},
- {id:'orbital',code:"HEAVEN'S LANCE",t:3,kind:'stable',name:'オービタルレーザー',desc:'着弾点へ衛星レーザーを追加照射する。強すぎたため、追撃寄りに出力を抑えた。',detail:['追加DMG：8 × 所持数','判定幅：やや狭め。直撃補助として使う','同ターン内の複数照射DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.orbital+=1;}},
- {id:'carpet',code:'IRON RAIN',t:3,kind:'stable',name:'カーペットボム',desc:'爆撃機が敵陣へ爆弾を投下する。面制圧だがSAMに落とされる。',detail:['爆弾：10発 × 所持数','爆弾DMG：主砲の約27% / 発','爆弾は防空迎撃対象。突破できれば強い'],apply:u=>{u.carpet+=1;}},
- {id:'swarm',code:'LOCUST SWARM',t:3,kind:'stable',name:'ミサイルスウォーム',desc:'壁越え軌道で上昇してから追尾する小型ミサイル群を放つ。',detail:['ミサイル：+12発 / 枚、上限なし','単発DMG：主砲の約13%','防空迎撃対象。数でSAMを飽和させる'],apply:u=>{u.swarm+=1;}},
- {id:'bigbang',code:'GENESIS BREAKER',t:3,kind:'gamble',name:'ビッグバン・プロトコル',desc:'主砲を巨大化させる大技。火力・範囲ともに跳ねるが自爆も怖い。',detail:['主砲DMG：×1.60','爆発半径：×1.80','着弾スロー演出あり / 1回取得系'],apply:u=>{u.bigbang+=1;},once:true},
- {id:'comet',code:'TWIN COMET Mk.II',t:3,kind:'gamble',name:'ツインコメット',desc:'巨大な彗星弾を2発追加で放つ。派手だが散りとSAM迎撃に注意。',detail:['追加弾：2発 × 所持数','追加弾DMG：主砲の約78% / 発','巨大弾扱い。防空優先度は高い'],apply:u=>{u.comet+=1;}},
- {id:'doomsday',code:'Mk.IX RAGNAROK',t:3,kind:'gamble',name:'終末榴弾',desc:'主砲を終末級の威力と範囲へ変える。発射時に自陣も傷む。',detail:['主砲DMG：×1.80','爆発半径：×1.70','反動：自陣へ 4 + 所持数×3 DMG'],apply:u=>{u.doomsday+=1;}},
+ {id:'orbital',code:"HEAVEN'S LANCE",t:3,kind:'stable',name:'オービタルレーザー',desc:'着弾点へ衛星レーザーを追加照射する。強すぎたため、追撃寄りに出力を抑えた。',detail:['追加DMG：11 × 所持数','判定幅：やや狭め。直撃補助として使う','同ターン内の複数照射DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.orbital+=1;}},
+ {id:'carpet',code:'IRON RAIN',t:3,kind:'stable',name:'カーペットボム',desc:'爆撃機が敵陣へ爆弾を投下する。面制圧だがSAMに落とされる。',detail:['爆弾：12発 × 所持数','爆弾DMG：主砲の約33% / 発','爆弾は防空迎撃対象。突破できれば強い'],apply:u=>{u.carpet+=1;}},
+ {id:'swarm',code:'LOCUST SWARM',t:3,kind:'stable',name:'ミサイルスウォーム',desc:'壁越え軌道で上昇してから追尾する小型ミサイル群を放つ。',detail:['ミサイル：+14発 / 枚、上限なし','単発DMG：主砲の約16%','防空迎撃対象。数でSAMを飽和させる'],apply:u=>{u.swarm+=1;}},
+ {id:'bigbang',code:'GENESIS BREAKER',t:3,kind:'gamble',name:'ビッグバン・プロトコル',desc:'主砲を巨大化させる大技。火力・範囲ともに跳ねるが自爆も怖い。',detail:['主砲DMG：×1.75','爆発半径：×1.95','着弾スロー演出あり / 1回取得系'],apply:u=>{u.bigbang+=1;},once:true},
+ {id:'comet',code:'TWIN COMET Mk.II',t:3,kind:'gamble',name:'ツインコメット',desc:'巨大な彗星弾を2発追加で放つ。派手だが散りとSAM迎撃に注意。',detail:['追加弾：2発 × 所持数','追加弾DMG：主砲の約90% / 発','巨大弾扱い。防空優先度は高い'],apply:u=>{u.comet+=1;}},
+ {id:'doomsday',code:'Mk.IX RAGNAROK',t:3,kind:'gamble',name:'終末榴弾',desc:'主砲を終末級の威力と範囲へ変える。発射時に自陣も傷む。',detail:['主砲DMG：×2.05','爆発半径：×1.90','反動：自陣へ 4 + 所持数×3 DMG'],apply:u=>{u.doomsday+=1;}},
  {id:'berserk',code:'BERSERK LIMIT',t:3,kind:'gamble',name:'暴走装薬',desc:'火力を大幅に上げる代わりに、砲弾がかなり暴れる。ロマン枠。',detail:['攻撃：主砲DMG ×2.10','デメリット：角度ブレ +8 / POWERブレ ±10','目安：10 → 21 / 直撃最大 約37'],apply:u=>{u.dmg*=2.1;u.spread+=8;u.powSpread+=10;u.gambleSpread+=8;u.gamblePowSpread+=10;}},
- {id:'echo',code:'ECHO SHELL',t:1,kind:'stable',name:'エコーシェル',desc:'着弾の残響が同地点で二度目の爆発を起こす。抉れた地形の奥まで届く。',detail:['残響爆発：着弾0.7秒後に同地点で再爆発','残響DMG：約42%＋所持数で微増','同ターン内の複数ECHO DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.secondBurst+=1;}},
+ {id:'echo',code:'ECHO SHELL',t:1,kind:'stable',name:'エコーシェル',desc:'着弾の残響が同地点で二度目の爆発を起こす。抉れた地形の奥まで届く。',detail:['残響爆発：着弾0.7秒後に同地点で再爆発','残響DMG：約52%＋所持数で上昇','同ターン内の複数ECHO DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.secondBurst+=1;}},
  {id:'phantom',code:'PHANTOM TRIO',t:2,kind:'stable',name:'ファントムラウンド',desc:'主砲と並走する幻影弾を実体化。敵SAMは本体と見分けられない。',detail:['幻影弾：+2発 / 枚（最大4発）','幻影DMG：0。ただしSAM迎撃を吸う囮','防空網を突破するための支援カード'],apply:u=>{u.phantom+=1;}},
- {id:'thunder',code:'THUNDER CHAIN',t:2,kind:'stable',name:'ライトニングアーク',desc:'着弾点が敵コアの近くなら稲妻が跳ぶ。離れすぎると不発になる近距離保険。',detail:['連鎖雷：着弾点→敵コアへ放電','雷DMG：距離減衰・最大12 × 所持数','同ターン内の複数発動DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.thunder+=1;}},
- {id:'afterimage',code:'AFTERIMAGE BARRAGE',t:3,kind:'stable',name:'アフターイメージ',desc:'砲が直前の弾道を記憶し、残像として追撃を自動連射する。狙いが完璧なら全弾同じ穴に刺さる。',detail:['追撃：同角度・同威力で+3発 × 所持数','追撃DMG：主砲の約55% / 発','ブレほぼゼロ。照準の価値がそのまま倍化する'],apply:u=>{u.afterimage+=1;}},
- {id:'hellfire',code:'HELLFIRE RAIN',t:3,kind:'gamble',name:'ヘルファイアレイン',desc:'主砲の着弾点を空が焼く。照準した場所に地獄の雨が降る。',detail:['着弾派生：着弾点±60へ上空からミサイル6発 × 所持数','雨DMG：主砲の約22% / 発','雨ミサイルのコアDMGは同ターン内で 100%→45%→20%→10% に減衰'],apply:u=>{u.hellfire+=1;}}
+ {id:'thunder',code:'THUNDER CHAIN',t:2,kind:'stable',name:'ライトニングアーク',desc:'着弾点が敵コアの近くなら稲妻が跳ぶ。離れすぎると不発になる近距離保険。',detail:['連鎖雷：着弾点→敵コアへ放電','雷DMG：距離減衰・最大15 × 所持数','同ターン内の複数発動DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.thunder+=1;}},
+ {id:'afterimage',code:'AFTERIMAGE BARRAGE',t:3,kind:'stable',name:'アフターイメージ',desc:'砲が直前の弾道を記憶し、残像として追撃を自動連射する。狙いが完璧なら全弾同じ穴に刺さる。',detail:['追撃：同角度・同威力で+3発 × 所持数','追撃DMG：主砲の約65% / 発','ブレほぼゼロ。照準の価値がそのまま倍化する'],apply:u=>{u.afterimage+=1;}},
+ {id:'hellfire',code:'HELLFIRE RAIN',t:3,kind:'gamble',name:'ヘルファイアレイン',desc:'主砲の着弾点を空が焼く。照準した場所に地獄の雨が降る。',detail:['着弾派生：着弾点±60へ上空からミサイル7発 × 所持数','雨DMG：主砲の約28% / 発','雨ミサイルのコアDMGは同ターン内で 100%→45%→20%→10% に減衰'],apply:u=>{u.hellfire+=1;}}
 ];
 function tierWeights(turn){
   if(turn<=3)return [1,0,0];
@@ -1234,6 +1247,8 @@ function spawnShot(from,ang,pow,opts){
     damageLabel:o.damageLabel||null,
     swarmPhase:o.swarmMissile?'climb':null,
     orbitBias:o.orbitBias||0,
+    launchAng:o.launchAng!=null?o.launchAng:55,arcT:null,
+    aimX:o.aimX!=null?o.aimX:null,aimY:o.aimY!=null?o.aimY:null,
     proximity:o.proximity!=null?o.proximity:u.proximity,
     secondBurst:o.secondBurst!=null?o.secondBurst:u.secondBurst,
     splitWarhead:o.splitWarhead!=null?o.splitWarhead:u.splitWarhead,
@@ -1333,6 +1348,28 @@ function enemyPlan(){
   }
   return best;
 }
+// v5.11: 弾道の着弾点(座標)を求める。風も考慮して実弾道と一致させる。壁/敵コア近接/着地で停止。
+function shellLandingPoint(from,ang,pow){
+  const m=muzzle(from),rad=ang*Math.PI/180,dir=from==='player'?1:-1,u=unit(from);
+  const sp=(pow*POWER_INTERNAL_SCALE)*0.245*(u.speedMul||1)*SHELL_SPEED_SCALE;
+  let x=m.x,y=m.y,vx=Math.cos(rad)*sp*dir,vy=-Math.sin(rad)*sp*(1+(u.loft||0)*0.08);
+  const foe=unit(opposite(from)),wf=WIND_FORCE*(1-Math.min(0.7,u.windres));
+  for(let i=0;i<900;i++){
+    const ox=x,oy=y;
+    const gAcc=GRAV*(1+Math.min(0.75,u.heavy*0.22))*SHELL_GRAV_SCALE;
+    vx+=G.wind*wf;vy+=gAcc;
+    const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
+    x+=vx;y+=(vy-0.5*gAcc);
+    if(segmentHitsWall(ox,oy,x,y)){const hp=wallHitPoint(ox,oy,x,y);return{x:hp.x,y:hp.y};}
+    if(Math.hypot(x-foe.x,y-foe.y)<CORE_R+5)return{x:foe.x,y:foe.y};
+    // v5.35: 以前はx>WORLD_Wでもclampして端に丸めていたため、遠投時にスウォームが
+    // ワールド端に張り付いて爆発していた。ワールド外に出る弾道はclampせず実座標を返し、
+    // スウォームがそのまま画面外へ飛び抜けるようにする(遠投ミス=外れ)。
+    if(x<0||x>WORLD_W)return{x,y,offWorld:true};
+    if(y>=tY(x))return{x,y:tY(x)};
+  }
+  return{x,y};
+}
 function simDist(ang,pow){
   const m=muzzle('enemy'),rad=ang*Math.PI/180;
   const sp=(pow*POWER_INTERNAL_SCALE)*0.245*(G.enemy.speedMul||1)*SHELL_SPEED_SCALE;
@@ -1346,7 +1383,7 @@ function simDist(ang,pow){
     // v4.6: 誘導カード（magnet）の飛翔中補正も内部モデルに反映。ここを無視すると、
     // 実弾道だけがコア方向へ微妙に曲がり、絞り込んだ弾道ほど大きく外れてしまう。
     if(G.enemy.magnet>0){
-      const ma=Math.atan2(G.player.y-y,G.player.x-x),mm=Math.min(0.075,0.022*G.enemy.magnet);
+      const ma=Math.atan2(G.player.y-y,G.player.x-x),downMag=vy>0?1.55:1,mm=Math.min(0.18,0.038*G.enemy.magnet*downMag);
       vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
     }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
@@ -1371,8 +1408,8 @@ function fireUnit(from,baseAng,basePow){
     const jitter=(Math.random()*2-1)*(1.35+spread*0.55)*jitterMul;
     const pJitter=(Math.random()*2-1)*effectivePowSpread(u,from);
     const shotPow=clamp(basePow+pJitter,10,100);
-    const dmg=u.dmg*multiFactor*(big?1.6:1)*(doom?1.8:1);
-    const rad=u.radius*(big?1.8:1)*(doom?1.7:1);
+    const dmg=u.dmg*multiFactor*(big?1.75:1)*(doom?2.05:1);
+    const rad=u.radius*MAIN_BLAST_RADIUS_MULT*(big?1.95:1)*(doom?1.9:1);
     spawnShot(from,baseAng+(i-(mainCount-1)/2)*1.35+jitter,shotPow,{mainPayload:true,big:big||doom,dmg,radius:rad,delay:i*8,bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:doom?'終末榴弾':(big?'ビッグバン':'主砲')});
   }
   // v4: ファントムラウンド — SAM迎撃を吸う幻影弾（本体と同弾道±ブレ）
@@ -1388,7 +1425,7 @@ function fireUnit(from,baseAng,basePow){
     const an=3*u.afterimage;
     for(let k=0;k<an;k++){
       spawnShot(from,baseAng+(Math.random()*2-1)*0.4,basePow,
-        {dmg:u.dmg*multiFactor*0.55,radius:u.radius*0.9,delay:34+k*13,ghost:true,
+        {dmg:u.dmg*multiFactor*0.65,radius:u.radius*1.0,delay:34+k*13,ghost:true,
          bounces:u.bounce,magnet:u.magnet,proximity:u.proximity,decoy:u.decoy,damageLabel:'残像弾'});
     }
     floater(muzzle(from).x,muzzle(from).y-64,'AFTERIMAGE ×'+an,from==='player'?'#bff7ff':'#ffb3c8',false);
@@ -1403,27 +1440,48 @@ function fireUnit(from,baseAng,basePow){
     for(let n=0;n<u.comet;n++)for(let side of [-1,1]){
       const jitter=side*(5+n*1.4)+(Math.random()*2-1)*(1.8+effectiveSpread(u,from)*0.18);
       spawnShot(from,baseAng+jitter,clamp(basePow+(Math.random()*2-1)*5,10,100),{
-        big:true,dmg:u.dmg*0.78,radius:u.radius*1.48,delay:18+n*14+(side>0?7:0),bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:'彗星弾'
+        big:true,dmg:u.dmg*0.90,radius:u.radius*1.62,delay:18+n*14+(side>0?7:0),bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:'彗星弾'
       });
     }
   }
   if(u.swarm>0){
-    const count=12*u.swarm;
+    const count=14*u.swarm;
     const dir=from==='player'?1:-1;
     const swarmSpread=1+Math.max(0,u.swarm-1)*0.32;
-    for(let i=0;i<count;i++){
-      const lane=i-(count-1)/2;
-      // v3.15: 中央壁に全弾吸われないよう、いったん高空へ上昇して壁を越えてから追尾する。
-      spawnShot(from,68+Math.random()*10,62,{
+    // v5.6: 中心弾=プレイヤーの弾道(放物線)、周辺弾=ランダムばらけホーミング
+    // 中心弾を1本、放物線で通す（volleyFireで指定した角度・威力そのまま）
+    const centerAng=from==='player'?aimAngle():baseAng;
+    const centerPow=from==='player'?playerPower(document.getElementById('pow').value):basePow;
+    // v5.8: プレイヤーの着弾点(風考慮)。周辺スウォームはここを狙って収束する。
+    const aim=shellLandingPoint(from,centerAng,centerPow);
+    // v5.13: aimが自分側/敵と逆方向に出たら敵コアへフォールバック(スウォームが自分に曲がる事故を防ぐ)。
+    const ownC=unit(from),foeC=unit(opposite(from));
+    const toFoe=Math.sign(foeC.x-ownC.x);
+    if(Math.sign(aim.x-ownC.x)!==toFoe || Math.abs(aim.x-ownC.x)<Math.abs(foeC.x-ownC.x)*0.35){
+      aim.x=foeC.x;aim.y=foeC.y;
+    }
+    spawnShot(from,centerAng,centerPow,{
+      dmg:u.dmg*0.26,radius:23,bounces:u.bounce,magnet:0,
+      damageLabel:'スウォーム(直撃)'
+    });
+    // 周辺弾: 角度・威力を中心からランダムにばらけさせてホーミング
+    for(let i=0;i<count-1;i++){
+      // ガウス近似: 2つのrandom足して正規分布に近づける → 中心付近に集まりやすい
+      const g=()=>(Math.random()+Math.random()-1); // 範囲[-1,1]、中心に偏る
+      const angSpread=22*swarmSpread*g();
+      const powSpread=18*swarmSpread*g();
+      const bias=(Math.random()*2-1)*140*swarmSpread; // 横ばらけ(orbitBias)は広めにフルランダム
+      spawnShot(from,68+Math.random()*12,clamp(centerPow+powSpread,24,100),{
         rawPower:62,homing:true,swarmMissile:true,
-        orbitBias:lane*18*swarmSpread+dir*(Math.random()*18*swarmSpread),
-        dmg:u.dmg*0.13,radius:17,delay:14+i*3,bounces:0,magnet:0,gravityScale:0.55,decoy:u.decoy,damageLabel:'スウォーム'
+        orbitBias:bias,launchAng:centerAng,aimX:aim.x,aimY:aim.y,
+        dmg:u.dmg*0.16,radius:20,delay:6+i*4+Math.random()*8,
+        bounces:0,magnet:0,gravityScale:0.55,decoy:u.decoy,damageLabel:'スウォーム'
       });
     }
   }
   if(u.carpet>0){
     const dir=from==='player'?1:-1;
-    planes.push({from,x:from==='player'?-80:WORLD_W+80,y:H*0.16,vx:9*dir,drops:10*u.carpet,dropT:0});
+    planes.push({from,x:from==='player'?-80:WORLD_W+80,y:H*0.16,vx:9*dir,drops:12*u.carpet,dropT:0,dropInterval:clamp(6-(u.carpet-1)*1.45,2.4,6)});
   }
   if(doom){
     dealDamage(from,4+u.doomsday*3,false,'反動');
@@ -1439,9 +1497,9 @@ function volleyFire(){
   G.specialHits={};
   G.duel={enemyPlan:enemyPlan(),enemyQueued:false,enemyFired:false,resolved:false};
   G.camLockX=null;
-  document.getElementById('ctrl').classList.add('hidden');
+  document.getElementById('ctrl').classList.add('hidden');setCtrlHidden(true);
   msg('PLAYER ROUND',850);
-  const ang=+document.getElementById('ang').value,pow=playerPower(document.getElementById('pow').value);
+  const ang=aimAngle(),pow=playerPower(document.getElementById('pow').value);
   fireUnit('player',ang,pow);
 }
 function noActiveOrdnance(){return projectiles.length===0&&planes.length===0&&interceptors.length===0;}
@@ -1510,12 +1568,12 @@ function explode(x,y,r,dmg,from,opts){
   if(!o.noCarve)carve(x,y,r*0.78);
   if(u.secondBurst>0&&payloadOk&&!o.noSecond)
     setTimeout(()=>{if(G.over)return;
-      const rr=r*(0.52+Math.min(0.18,u.secondBurst*0.04));
-      explode(x,y,rr,dmg*(0.42+Math.min(0.16,u.secondBurst*0.04)),from,{child:true,noWell:true,noOrb:true,noSecond:true,specialEffect:'echo',damageLabel:'エコー'});
+      const rr=r*(0.62+Math.min(0.20,u.secondBurst*0.05));
+      explode(x,y,rr,dmg*(0.52+Math.min(0.20,u.secondBurst*0.05)),from,{child:true,noWell:true,noOrb:true,noSecond:true,specialEffect:'echo',damageLabel:'エコー'});
       floater(x,y-24,'ECHO',from==='player'?'#00f0ff':'#ff2d78',false);
     },700);
   if(u.napalm>0&&payloadOk)
-    fires.push({from,x,y:tY(x),r:23+u.napalm*7,life:3,dmg:3*u.napalm});
+    fires.push({from,x,y:tY(x),r:28+u.napalm*9,life:4,dmg:4*u.napalm});
   if(u.gwell>0&&!o.noWell&&payloadOk)
     setTimeout(()=>{if(G.over)return;
       beams.push({type:'well',x,y:y-10,r:0,max:64,life:48,c:'#a24dff'});
@@ -1530,7 +1588,7 @@ function explode(x,y,r,dmg,from,opts){
     const d=Math.hypot(x-foe.x,y-foe.y);
     if(d<THUNDER_CHAIN_RANGE){
       const falloff=1-d/THUNDER_CHAIN_RANGE;
-      const val=12*u.thunder*falloff;
+      const val=15*u.thunder*falloff;
       if(val>0.25)setTimeout(()=>{if(G.over)return;
         beams.push({type:'bolt',x1:x,y1:y,x2:foe.x,y2:foe.y-4,life:16,c:from==='player'?'#bff7ff':'#ffb3c8',seed:Math.random()*99});
         dealSpecialDamage(foeName,val,false,from,'thunder','サンダー');
@@ -1543,13 +1601,13 @@ function explode(x,y,r,dmg,from,opts){
   // v4: ヘルファイアレイン — 着弾点へ空からミサイル
   if(u.hellfire>0&&payloadOk&&!o.noHell){
     if(from==='player')G.stats.hellfire++;
-    const n=6*u.hellfire;
+    const n=7*u.hellfire;
     for(let k=0;k<n;k++){
       projectiles.push({from,x:clamp(x+(Math.random()*2-1)*60,16,WORLD_W-16),y:-24-Math.random()*60,
         vx:(Math.random()*2-1)*0.7,vy:4.2+Math.random()*2.2,
         homing:false,big:false,child:true,hellfire:true,bomb:false,bounces:0,magnet:0,
         specialEffect:'hellfire',damageLabel:'ヘルファイア',
-        gravityScale:0.55,fuseRisk:0,fuseT:null,dmg:u.dmg*0.22,radius:22,
+        gravityScale:0.55,fuseRisk:0,fuseT:null,dmg:u.dmg*0.28,radius:25,
         swarmMissile:false,swarmPhase:null,orbitBias:0,proximity:0,secondBurst:0,splitWarhead:0,
         splitChild:false,_splitDone:true,_prevVy:null,decoy:u.decoy||0,
         _wallAvoids:0,_interceptStarted:false,_interceptCount:0,
@@ -1560,14 +1618,14 @@ function explode(x,y,r,dmg,from,opts){
 }
 function fireOrbital(x,from){
   const u=unit(from),c=from==='player'?'#00f0ff':'#ff2d78';
-  beams.push({type:'orbital',x,y:0,r:9+u.orbital*3.5,life:32,c:'#fff'});
+  beams.push({type:'orbital',x,y:0,r:11+u.orbital*4.5,life:34,c:'#fff'});
   flash(.34);shake(11);glitch(8);slowmo(.35);punch(9);sfx('laser');
   const gy=tY(x);
-  carve(x,gy,34+u.orbital*7);
+  carve(x,gy,42+u.orbital*9);
   burst(x,gy,64,['#ffffff',c,'#ffe680'],6,38);
-  const dmg=8*u.orbital;
+  const dmg=11*u.orbital;
   [['player',G.player],['enemy',G.enemy]].forEach(([who,core])=>{
-    if(Math.abs(x-core.x)<27+u.orbital*5)dealSpecialDamage(who,who===from?dmg*0.45:dmg,true,from,'orbital','レーザー');
+    if(Math.abs(x-core.x)<34+u.orbital*7)dealSpecialDamage(who,who===from?dmg*0.45:dmg,true,from,'orbital','レーザー');
   });
 }
 function checkEnemyOverdrive(){
@@ -1623,7 +1681,18 @@ function startTurn(){
   });
   if(G.over)return;
   G.phase='aim';
-  document.getElementById('ctrl').classList.remove('hidden');
+  setCtrlHidden(false);
+  // v5.37: 1ターン目だけ、風無視の弾道予測が敵に当たる角度・威力をスライダー初期値にする。
+  // 2ターン目以降は前ターンの値をそのまま引き継ぐ(従来通り)。
+  // guide.ang/powは「実効値」なので、スライダー生値へ逆変換(角度反転・威力-20)して入れる。
+  if(G.turn===1){
+    const guide=findNoWindHitGuide();
+    if(guide){
+      angEl.value=clamp(Math.round(AIM_SUM-guide.ang),10,85);
+      powEl.value=clamp(Math.round(guide.pow-POWER_FLOOR_BOOST),10,100);
+      angEl.oninput();powEl.oninput();
+    }
+  }
   msg('T-'+String(G.turn).padStart(2,'0')+' // AIM',1000);
   sfx('turn');
 }
@@ -1697,7 +1766,7 @@ function gameOver(win){
   hideResultGate();
   G.pendingResult=false;
   killCam(win);
-  document.getElementById('ctrl').classList.add('hidden');
+  document.getElementById('ctrl').classList.add('hidden');setCtrlHidden(true);
   document.getElementById('report').classList.remove('show');
   const dmgLog=document.getElementById('damageLog');if(dmgLog)dmgLog.classList.remove('show');
   G.damageLogActive=false;
@@ -1748,7 +1817,19 @@ if(nextLvBtn)nextLvBtn.onclick=()=>{
 
 /* ============ input ============ */
 const angEl=document.getElementById('ang'),powEl=document.getElementById('pow');
-angEl.oninput=()=>document.getElementById('angV').textContent=angEl.value+'°';
+// v5.26: pointer-events:noneだけではiOS Safariでrangeスライダーのタッチが漏れて拾われる事故が
+// 実機ログで確認された(ctrlHidden=trueなのにang inputが発火し続けていた)。
+// CSS任せをやめ、hidden化と同時にinput自体をdisabledにして物理的に操作不能にする。
+function setCtrlHidden(hidden){
+  const el=document.getElementById('ctrl');
+  el.classList.toggle('hidden',hidden);
+  angEl.disabled=hidden;powEl.disabled=hidden;
+}
+// v5.14: スライダーを反転。右=寝る(低角度)/左=立つ(高角度)。生値と実角度を分離して全参照を1点変換。
+const AIM_SUM=95; // min(10)+max(85)。実角度 = AIM_SUM - スライダー生値
+function aimAngle(){return AIM_SUM-(+angEl.value);}
+angEl.oninput=()=>document.getElementById('angV').textContent=aimAngle()+'°';
+angEl.oninput();
 powEl.oninput=()=>document.getElementById('powV').textContent=powEl.value+'%';
 document.getElementById('fireBtn').onclick=()=>volleyFire();
 const effectBtn=document.getElementById('effectBtn');if(effectBtn)effectBtn.onclick=()=>showEffectPanel();
@@ -1770,7 +1851,7 @@ function currentEffectSummary(u){
     ['誘導',(u.magnet||0)+'段階 / 主砲が敵コアへ少し曲がる'],
     ['近接信管',(u.proximity||0)+'段階 / 敵コア付近で空中爆発'],
     ['分裂弾頭',(u.splitWarhead||0)+'枚 / 頂点通過で左右2発に分裂'],
-    ['SAM迎撃数',u.interceptor+'発 / 初期1発、カードで増加'],
+    ['SAM迎撃数',u.interceptor+'発 / 初期0発、カードで獲得'],
     ['SAM補正','範囲+'+Math.round((u.samRange||0)*90)+'m相当 / 命中+'+Math.round((u.samHit||0)*5)+'%相当']
   ];
 }
@@ -1832,14 +1913,15 @@ document.getElementById('startBtn').onclick=()=>{
   setTimeout(()=>cutin('ENEMY DETECTED',pe.name,'red'),950);
   setTimeout(startTurn,2200);
 };
-let dragging=false,dragStart=null;
-cv.addEventListener('pointerdown',e=>{if(G.phase!=='aim')return;dragging=true;dragStart={x:e.clientX,y:e.clientY};});
+let dragging=false,dragStart=null,dragCamStart=0,dragBaseX=0;
+cv.addEventListener('pointerdown',e=>{if(G.phase!=='aim')return;dragging=true;dragStart={x:e.clientX,y:e.clientY};dragCamStart=G.camManualOffset||0;dragBaseX=camBaseX!=null?camBaseX:0;});
 cv.addEventListener('pointermove',e=>{if(!dragging)return;
-  const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;
-  const a=Math.max(10,Math.min(85,Math.round(Math.atan2(-dy,Math.max(1,dx))*180/Math.PI)));
-  const pw=Math.max(10,Math.min(100,Math.round(Math.hypot(dx,dy)/2.8))); 
-  if(dx>5){angEl.value=a;angEl.oninput();}
-  powEl.value=pw;powEl.oninput();
+  const dx=e.clientX-dragStart.x;
+  // v5.18: offsetの上限は固定maxOffではなく「ドラッグ開始時点のcamBaseX基準で実際に画面が動く範囲」に絞る。
+  // 前回はoffsetだけ画面外まで溜め込めて、戻す時に無駄なドラッグ量が必要になるバグがあった。
+  const maxX=Math.max(0,WORLD_W-W);
+  const offMin=0-dragBaseX, offMax=maxX-dragBaseX;
+  G.camManualOffset=clamp(dragCamStart-dx,offMin,offMax);
 });
 addEventListener('pointerup',()=>dragging=false);
 
@@ -1863,10 +1945,19 @@ function cameraTarget(){
 }
 function updateCamera(dt){
   const target=cameraTarget();
-  if(G.camLockX!=null){camX=target;return;}
-  camX+=(target-camX)*Math.min(1,0.10*dt);
+  const maxX=Math.max(0,WORLD_W-W);
+  // v5.15: aimフェーズ以外では手動オフセットを消し、自動追従に戻す。
+  if(G.phase!=='aim')G.camManualOffset=0;
+  const off=G.camManualOffset||0;
+  // v5.16: 旧実装はtarget+offsetをイージング前に0..maxXへclampしており、
+  // targetが0付近(拠点がワールド左端寄り)だと負のoffsetが即座に消される事故があった(T1で顕著)。
+  // → オフセット抜きの基準位置(camBaseX)だけをイージングさせ、offsetは最後に別途加算する。
+  if(camBaseX==null)camBaseX=target;
+  if(G.camLockX!=null){camBaseX=target;camX=clamp(target+off,0,maxX);return;}
+  camBaseX+=(target-camBaseX)*Math.min(1,0.10*dt);
+  camX=clamp(camBaseX+off,0,maxX);
   // v3.25: SAM起動後は、まず砲弾追跡で端まで寄せる。端に到達してから拠点固定。
-  if(G.camPendingLockX!=null&&Math.abs(camX-G.camPendingLockX)<8){
+  if(G.camPendingLockX!=null&&Math.abs(camBaseX-G.camPendingLockX)<8){
     G.camLockX=G.camPendingLockX;
     G.camPendingLockX=null;
   }
@@ -1947,10 +2038,11 @@ function interceptorTargets(defenderName,primary){
 }
 function interceptorHitChance(target,defender){
   let ch;
-  if(target?.bomb)ch=0.62+Math.random()*0.08;          // 爆弾は遅いので落としやすい
-  else if(target?.swarmMissile)ch=0.40+Math.random()*0.12;  // スウォームは小さくて速い
-  else if(target?.big)ch=0.52+Math.random()*0.08;
-  else ch=0.47+Math.random()*0.08;                          // 主砲弾は約50%
+  // v5.34: ベースをさらに約10%pt引き下げ(v5.28からの追加調整)。攻撃をもっと通しやすく。
+  if(target?.bomb)ch=0.37+Math.random()*0.08;          // 爆弾は遅いので落としやすい
+  else if(target?.swarmMissile)ch=0.15+Math.random()*0.12;  // スウォームは小さくて速い
+  else if(target?.big)ch=0.27+Math.random()*0.08;
+  else ch=0.22+Math.random()*0.08;                          // 主砲弾
   ch+=(defender?.samHit||0)*0.05;
   if(defender?.ciws&&(target?.bomb||target?.swarmMissile||target?.hellfire))ch+=0.15*defender.ciws;
   if(defender?.samBoost)ch+=0.025*defender.samBoost;
@@ -1958,7 +2050,7 @@ function interceptorHitChance(target,defender){
     // v5.3: 常時命中ボーナスを半減。覚醒(+0.06)は維持。
     ch+=(G.enemyLevel>=4?0.02:0)+(G.enemyLevel>=5?0.02:0)+(enemyOverdriveActive()?0.06:0);
   }
-  ch-=Math.min(0.26,(target?.decoy||0)*0.10);
+  ch-=Math.min(0.34,(target?.decoy||0)*0.13);
   return clamp(ch,0.20,defender===G.enemy&&G.enemyLevel>=5?0.86:0.82);
 }
 
@@ -1980,7 +2072,7 @@ function tryLaunchInterceptor(p){
   }
   // 迎撃数ぶんだけ脅威を予約。残ったスウォームは次の防空斉射で拾う。
   targets.slice(0,count).forEach(t=>{if(t){t._interceptStarted=true;t._interceptCount=(t._interceptCount||0)+1;}});
-  defender._samCooldown=Math.max(24,42-(defender.samBoost||0)*5);
+  defender._samCooldown=Math.max(36,63-(defender.samBoost||0)*7.5);
   const col=defenderName==='player'?'#00f0ff':'#ff2d78';
   const dir=defenderName==='player'?1:-1;
   const lp=launcherPoint(defenderName);
@@ -1997,7 +2089,7 @@ function tryLaunchInterceptor(p){
       x:lp.x,y:lp.y,
       vx:0,
       vy:-(20.0+Math.random()*2.2),
-      life:330+n*7+Math.random()*38,c:col,trail:[],hitChance:interceptorHitChance(target,defender),
+      life:330+n*7+Math.random()*38,c:samColor(defenderName),trail:[],hitChance:interceptorHitChance(target,defender),
       armed:false,phase:'boost',boostT:18+Math.random()*5+n*0.25,launchDelay:0,launcherX:lp.x,launcherY:lp.y,fanDeg,fanSide:side,
       speedMul,accelMul,weave,weaveT:Math.random()*Math.PI*2,missileNo:n,empSam:defender.empSam||0
     });
@@ -2027,15 +2119,27 @@ function empBurst(x,y,defenderName,power){
   }
   if(affected){floater(x,y-30,'EMP BURST ×'+affected,'#a24dff',false);glitch(4);shake(3);}
 }
+function interceptDetonation(t,m){
+  if(!t||!t.mainPayload)return false;
+  const r=Math.max(18,t.radius*INTERCEPT_MAIN_BLAST_RADIUS);
+  const d=t.dmg*INTERCEPT_MAIN_BLAST_DAMAGE;
+  explode(t.x,t.y,r,d,t.from,{big:false,child:true,noWell:true,noOrb:true,noThunder:true,noHell:true,noSecond:true,damageLabel:'迎撃爆発'});
+  floater(t.x,t.y-34,'INTERCEPT BLAST',m.c,false);
+  return true;
+}
 function updateInterceptors(dt){
+  // v5.12: 弾が増えた時だけパーティクルを薄める。14発以下は従来通り、超えたら反比例で間引き。
+  const _dens=projectiles.length+interceptors.length;
+  const pThin=_dens>14?14/_dens:1;
   for(let i=interceptors.length-1;i>=0;i--){
     const m=interceptors[i],t=m.target;
     if(m.launchDelay>0){m.launchDelay-=dt;continue;}
     if(!t||!projectiles.includes(t)||t.delay>0){interceptors.splice(i,1);continue;}
     const lead=7+(m.missileNo%3)*2;
-    m.weaveT=(m.weaveT||0)+0.11*dt;
-    const tx=t.x+t.vx*lead+Math.sin(m.weaveT)*(m.weave||0);
-    const ty=t.y+t.vy*lead+Math.cos(m.weaveT*0.7)*(m.weave||0)*0.35;
+    // v5.30: weave(蛇行)を無効化。turnRate旋回と揺れる目標が噛み合って軌跡がカクついていた。
+    // 旋回自体が弧を描くのでweaveは役割がかぶる。boost中はtxを使わないので元から無影響。
+    const tx=t.x+t.vx*lead;
+    const ty=t.y+t.vy*lead;
     if(m.phase==='boost'){
       // v5.9: 全SAMを発射台から垂直上昇。上昇中だけ速度2倍、上昇後に扇形へ展開。
       m.boostT-=dt;
@@ -2053,22 +2157,28 @@ function updateInterceptors(dt){
       }
     }else{
       m.armed=true;
-      const a=Math.atan2(ty-m.y,tx-m.x);
+      // v5.11: 角速度制限つきの旋回で小Rの弧を描いて突っ込む。
+      const desired=Math.atan2(ty-m.y,tx-m.x);
+      const cur=Math.atan2(m.vy,m.vx);
+      let da=desired-cur;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
+      const turnRate=0.24*(m.accelMul||1);
+      const nd=cur+clamp(da,-turnRate*dt,turnRate*dt);
       const accel=1.12*(m.accelMul||1);
-      m.vx+=Math.cos(a)*accel*dt;m.vy+=Math.sin(a)*accel*dt;
       const maxSp=INTERCEPTOR_MAX_SPEED*(m.speedMul||1);
-      const sp=Math.hypot(m.vx,m.vy);if(sp>maxSp){m.vx*=maxSp/sp;m.vy*=maxSp/sp;}
+      const nsp=Math.min(maxSp,Math.hypot(m.vx,m.vy)+accel*dt);
+      m.vx=Math.cos(nd)*nsp;m.vy=Math.sin(nd)*nsp;
       m.x+=m.vx*dt;m.y+=m.vy*dt;m.life-=dt;
     }
-    m.trail.push({x:m.x,y:m.y});if(m.trail.length>42)m.trail.shift();
-    if(Math.random()<0.58)particles.push({x:m.x,y:m.y,vx:(Math.random()*2-1)*.65,vy:(Math.random()*2-1)*.65,life:13,max:13,c:m.c,sz:1.35,grav:0,rot:0,vr:0});
+    m.trail.push({x:m.x,y:m.y});if(m.trail.length>(_dens>25?4:(_dens>15?6:10)))m.trail.shift(); // v5.41: さらに短縮
+    if(Math.random()<0.58*pThin)particles.push({x:m.x,y:m.y,vx:(Math.random()*2-1)*.65,vy:(Math.random()*2-1)*.65,life:13,max:13,c:m.c,sz:1.35,grav:0,rot:0,vr:0});
     const close=m.armed&&Math.hypot(m.x-t.x,m.y-t.y)<(t.big?30:22);
     if(close){
       if(Math.random()<m.hitChance){
         const idx=projectiles.indexOf(t);if(idx>=0)projectiles.splice(idx,1);
-        burst(t.x,t.y,42,[m.c,'#ffffff','#ffc233'],4.8,32);
-        beams.push({type:'ring',x:t.x,y:t.y,r:4,max:42,life:18,c:m.c});
-        floater(t.x,t.y-20,m.empSam?'EMP INTERCEPT':'INTERCEPT',m.c,true);
+        const detonated=interceptDetonation(t,m);
+        if(!detonated)burst(t.x,t.y,42,[m.c,'#ffffff','#ffc233'],4.8,32);
+        beams.push({type:'ring',x:t.x,y:t.y,r:4,max:detonated?58:42,life:18,c:m.c});
+        floater(t.x,t.y-20,m.empSam?'EMP INTERCEPT':(detonated?'INTERCEPT BLAST':'INTERCEPT'),m.c,true);
         if(m.empSam)empBurst(t.x,t.y,m.from,m.empSam);
         shake(6);glitch(4);sfx('intercept');
         interceptors.splice(i,1);continue;
@@ -2094,10 +2204,10 @@ function splitProjectileAtApex(p){
   const dir=p.from==='player'?1:-1;
   const col=p.from==='player'?'#00f0ff':'#ff2d78';
   const stacks=Math.max(1,p.splitWarhead||1);
-  const childDmg=p.dmg*(0.52+Math.min(0.14,stacks*0.035));
-  const childRad=p.radius*(0.66+Math.min(0.10,stacks*0.025));
-  const sidePush=0.72+Math.min(0.42,stacks*0.08);
-  const baseVy=Math.max(0.34,Math.abs(p.vy)*0.35+0.22);
+  const childDmg=p.dmg*(0.60+Math.min(0.18,stacks*0.045));
+  const childRad=p.radius*(0.76+Math.min(0.14,stacks*0.032));
+  const sidePush=0.62+Math.min(0.34,stacks*0.07);
+  const baseVy=Math.max(0.58,Math.abs(p.vy)*0.42+0.30);
   for(const side of [-1,1]){
     projectiles.push({
       from:p.from,x:p.x+side*3,y:p.y,
@@ -2131,6 +2241,9 @@ function update(dt){
   // v3.18: SAMクールダウンを毎フレーム減らす。これが残ると途中から防空が無反応になる。
   G.player._samCooldown=Math.max(0,(G.player._samCooldown||0)-dt);
   G.enemy._samCooldown=Math.max(0,(G.enemy._samCooldown||0)-dt);
+  // v5.12: 弾が増えた時だけ弾トレイル煙を薄める。
+  const _pdens=projectiles.length+interceptors.length;
+  const pThin=_pdens>14?14/_pdens:1;
   for(let i=projectiles.length-1;i>=0;i--){
     const p=projectiles[i];
     if(p.delay>0){p.delay-=dt;continue;}
@@ -2145,46 +2258,88 @@ function update(dt){
       if(p.homing){
         let tx=tgt.x,ty=tgt.y-6,accel=0.13;
         if(p.swarmMissile){
+          // v5.21: 弾道を全面刷新。斜め誘導で「目標を通り過ぎてから地面に触れる」ズレを構造的に断つ。
+          // 低空巡航→壁手前で急上昇→上空で狙点の真上まで水平移動→そこから垂直落下、の4フェーズ固定ルート。
           const dir=p.from==='player'?1:-1,b=wallBounds();
-          const safeY=clamp(WALL.top-125,46,H*0.36);
-          if(!p.swarmPhase)p.swarmPhase='climb';
-          if(p.swarmPhase==='climb'){
-            tx=p.x+dir*(76+Math.abs(p.orbitBias||0)*0.18);
-            ty=safeY+(p.orbitBias||0)*0.05;
+          const cruiseY=clamp(WALL.top+22,H*0.62,H*0.86); // 低空(地面すれすれ)
+          const highY=clamp(WALL.top-160,40,H*0.26);       // 壁を越えるための高高度
+          const aimX=p.aimX!=null?p.aimX:tgt.x,aimY=p.aimY!=null?p.aimY:tgt.y;
+          if(!p.swarmPhase)p.swarmPhase='cruise';
+          if(p.swarmPhase==='cruise'){
+            // 低空をまっすぐ壁へ向かって飛ぶ。orbitBiasで縦に軽くバラけさせるだけ(横道の見た目)。
+            tx=p.x+dir*90;
+            ty=cruiseY+(p.orbitBias||0)*0.06;
+            accel=0.24;
+            if((dir>0&&p.x>b.l-150)||(dir<0&&p.x<b.r+150))p.swarmPhase='climb';
+          }else if(p.swarmPhase==='climb'){
+            // 壁の手前で急上昇。前進はほぼ止めて垂直に近い角度で上へ。
+            tx=p.x+dir*18;
+            ty=highY;
+            accel=0.30;
+            if(p.y<=highY+14)p.swarmPhase='descend';
+          }else if(p.swarmPhase==='descend'){
+            // 上空を保ったまま、狙点の真上まで水平移動。orbitBiasで横に大きくバラける。
+            tx=aimX+(p.orbitBias||0)*0.9;
+            ty=highY;
             accel=0.22;
-            if(p.y<=safeY+16||(dir>0&&p.x>b.l-135)||(dir<0&&p.x<b.r+135))p.swarmPhase='clear';
-          }else if(p.swarmPhase==='clear'){
-            tx=WALL.x+dir*(WALL.w*0.62+125)+(p.orbitBias||0)*0.78;
-            ty=safeY+(p.orbitBias||0)*0.045;
-            accel=0.20;
-            if((dir>0&&p.x>b.r+45)||(dir<0&&p.x<b.l-45))p.swarmPhase='track';
+            if(Math.abs(p.x-(aimX+(p.orbitBias||0)*0.9))<20){p.swarmPhase='orbit';p.orbitT=0;}
+          }else if(p.swarmPhase==='orbit'){
+            // v5.24: 速度積分(慣性/直接速度どちらも)は誤差蓄積かクランプで綺麗な円にならなかった。
+            // → 中心・半径・角度を状態として持ち、角度だけ進めて座標は下流で直接計算する(2284行付近)。
+            if(p._orbitCx==null){
+              p._orbitCx=aimX;p._orbitCy=highY-18;
+              p._orbitR=Math.min(90,Math.max(24,Math.hypot(p.x-aimX,(p.y-(highY-18))/0.55)));
+              p._orbitAng=Math.atan2((p.y-(highY-18))/0.55,p.x-aimX);
+              p.orbitT=0;
+            }
+            const spinSign=p.orbitBias>=0?1:-1;
+            const spin=spinSign*0.070; // 1フレームあたりの回転角(ラジアン)
+            p.orbitT+=pdt;
+            p._orbitAng+=spin*pdt;
+            // plunge移行時に自然な初速になるよう、接線方向の速度も概算で与えておく。
+            const tangentSp=Math.min(8.0,p._orbitR*0.070*1.35);
+            p.vx=-Math.sin(p._orbitAng)*spinSign*tangentSp;
+            p.vy=Math.cos(p._orbitAng)*spinSign*tangentSp*0.55;
+            accel=0; // 座標は下流で直接確定するため、目標追従(tx,ty)による加算は無効化。
+            if(p.orbitT>28){
+              p.swarmPhase='plunge';
+              // v5.48: 旋回円の端から落とすと横補正が間に合わず、狙点の手前/奥に落ちることがある。
+              // plunge開始時に狙点の真上へ寄せ、ここから垂直落下に固定する。
+              p.x=aimX;p.y=Math.min(p.y,highY-10);p.vx=0;p.vy=2.4;p._plungeLocked=true;
+            }
           }else{
-            tx=tgt.x+(p.orbitBias||0)*0.12;
-            ty=tgt.y-8+Math.sin((p.life||0)*0.03+(p.orbitBias||0))*9;
-            accel=0.19;
-          }
-          // 壁の手前で低くなったら、追尾より上昇を優先する。
-          if(p.swarmPhase!=='track'&&p.x>b.l-170&&p.x<b.r+170&&p.y>WALL.top-54){
-            tx=p.x+dir*55;ty=safeY;accel=0.28;
+            // plunge: 狙点の真上から垂直に落下。水平はごくわずかな補正のみ。
+            tx=aimX;ty=aimY;
+            accel=0.36; // v5.48: 狙点への収束を強める
+            if(p._plungeLocked){p.x=aimX;p.vx=0;}
+            else p.vx*=Math.pow(0.86,pdt); // 水平速度を減衰させ、真下への刺さりを強める
           }
         }
         const a=Math.atan2(ty-p.y,tx-p.x);p.vx+=Math.cos(a)*accel*pdt;p.vy+=Math.sin(a)*accel*pdt;
       }else if(p.magnet>0&&!p.child&&!p.bomb){
-        const a=Math.atan2(tgt.y-p.y,tgt.x-p.x),m=Math.min(0.075,0.022*p.magnet);
+        const a=Math.atan2(tgt.y-p.y,tgt.x-p.x),downMag=p.vy>0?1.55:1,m=Math.min(0.18,0.038*p.magnet*downMag);
         p.vx+=Math.cos(a)*m*pdt;p.vy+=Math.sin(a)*m*pdt;
       }
       const maxSp=p.homing?HOMING_MAX_SPEED:(p.big?BIG_ARTILLERY_MAX_SPEED:ARTILLERY_MAX_SPEED);
       const spNow=Math.hypot(p.vx,p.vy);if(spNow>maxSp){p.vx*=maxSp/spNow;p.vy*=maxSp/spNow;}
       if(splitProjectileAtApex(p)){projectiles.splice(i,1);break;}
       p._prevVy=p.vy;
-      // v5.1: 位置更新を放物線の厳密解に。以前はセミオイラーで、防空圏スロー(pdt=0.32)時に
-      // 積分ステップが細かくなり着弾点が最大+5pxズレていた(圏内で伸びる)。
-      // 台形補正 -0.5*g*pdt^2 で pdt に依らず同一軌道になる。飛距離への影響を根絶。
       const gAcc=GRAV*(p.gravityScale||1);
-      p.x+=p.vx*pdt;p.y+=(p.vy-0.5*gAcc*pdt)*pdt;
+      if(p.swarmPhase==='orbit'&&p._orbitCx!=null){
+        // v5.24: 速度積分だと誤差が蓄積して螺旋状に膨らむ(シミュ確認済み)ため、
+        // orbit中は角度から座標を直接計算する。重力・風の影響もこの間だけ止める。
+        p.x=p._orbitCx+Math.cos(p._orbitAng)*p._orbitR;
+        p.y=p._orbitCy+Math.sin(p._orbitAng)*p._orbitR*0.55;
+      }else{
+        // v5.1: 位置更新を放物線の厳密解に。以前はセミオイラーで、防空圏スロー(pdt=0.32)時に
+        // 積分ステップが細かくなり着弾点が最大+5pxズレていた(圏内で伸びる)。
+        // 台形補正 -0.5*g*pdt^2 で pdt に依らず同一軌道になる。飛距離への影響を根絶。
+        p.x+=p.vx*pdt;p.y+=(p.vy-0.5*gAcc*pdt)*pdt;
+      }
       const hitWall=segmentHitsWall(oldX,oldY,p.x,p.y);
-      p.trail.push({x:p.x,y:p.y});if(p.trail.length>(p.big?40:22))p.trail.shift();
-      if(Math.random()<0.35)particles.push({x:p.x,y:p.y,vx:(Math.random()*2-1)*.8,vy:(Math.random()*2-1)*.8,life:14,max:14,c:p.from==='player'?'#7ef9ff':'#ff7ab0',sz:1.5,grav:0,rot:0,vr:0});
+      const trailMax=_pdens>18?(p.big?18:10):(p.big?40:22); // v5.29: 弾が増えたらトレイル短縮
+      p.trail.push({x:p.x,y:p.y});if(p.trail.length>trailMax)p.trail.shift();
+      if(Math.random()<0.35*pThin)particles.push({x:p.x,y:p.y,vx:(Math.random()*2-1)*.8,vy:(Math.random()*2-1)*.8,life:14,max:14,c:p.from==='player'?'#7ef9ff':'#ff7ab0',sz:1.5,grav:0,rot:0,vr:0});
       p.life-=pdt;
       if(p.fuseT!=null){
         p.fuseT-=pdt;
@@ -2200,18 +2355,22 @@ function update(dt){
       const hitG=p.y>=groundY;
       const distFoe=Math.hypot(p.x-foe.x,p.y-foe.y);
       const hitCore=distFoe<CORE_R+(p.big?14:5);
+      // v5.20: スウォーム(track中)は「地面に着くまで待つ」と、狙った座標(aimX/aimY)を通り過ぎたり
+      // 手前で地面に接地してズレた場所で爆発してしまう。目標座標そのものへの到達で着弾させる。
+      const distAim=(p.swarmMissile&&p.swarmPhase==='plunge'&&p.aimX!=null)?Math.hypot(p.x-p.aimX,p.y-p.aimY):Infinity;
+      const hitAim=distAim<26;
       const proximityHit=p.proximity&&!p.child&&!p.bomb&&!p.swarmMissile&&!hitCore&&distFoe<CORE_R+24+p.proximity*8;
       const hitOwn=Math.hypot(p.x-own.x,p.y-own.y)<CORE_R&&p.life<660;
       if(hitWall){
         const hp=wallHitPoint(oldX,oldY,p.x,p.y);
-        if(p.swarmMissile&&p._wallAvoids<2){
+        if(p.swarmMissile&&p._wallAvoids<2&&p.swarmPhase!=='orbit'&&p.swarmPhase!=='plunge'){
           const dir=p.from==='player'?1:-1;
           p._wallAvoids++;
           p.x=hp.x+dir*10;
           p.y=Math.max(32,WALL.top-28-Math.random()*24);
           p.vx=Math.abs(p.vx)*dir*0.72;
           p.vy=-Math.max(3.8,Math.abs(p.vy)*0.75);
-          p.trail=[];p.swarmPhase='clear';
+          p.trail=[];p.swarmPhase='descend';p.y=Math.min(p.y,H*0.30);
           floater(p.x,p.y-14,'PULL UP',p.from==='player'?'#00f0ff':'#ff2d78',false);
           continue;
         }
@@ -2230,7 +2389,7 @@ function update(dt){
         sfx('bounce');
         continue;
       }
-      if(hitG||hitCore||hitOwn||proximityHit||p.x<-120||p.x>WORLD_W+120||p.life<=0){
+      if(hitG||hitCore||hitAim||hitOwn||proximityHit||p.x<-120||p.x>WORLD_W+120||p.life<=0){
         projectiles.splice(i,1);
         if(p.phantom){
           burst(p.x,Math.min(p.y,tY(p.x)),14,[p.from==='player'?'#7ef9ff':'#ff7ab0','#ffffff'],2.6,20);
@@ -2242,15 +2401,20 @@ function update(dt){
             floater(p.x,p.y-16,'PROXIMITY',p.from==='player'?'#00f0ff':'#ff2d78',false);
             // v4.4: 近接信管は発動距離と爆発半径を一致。
             // 「PROXIMITYは出たのにダメージが入らない」空振りゾーンを解消。
-            const proxR=CORE_R+24+p.proximity*8;
-            explode(p.x,p.y,proxR,p.dmg*(0.66+Math.min(0.14,p.proximity*0.04)),p.from,{big:false,child:p.child,mainPayload:p.mainPayload,noCarve:true,specialEffect:'proximity',damageLabel:'近接信管'});
-          }else explode(p.x,Math.min(p.y,tY(p.x)),p.radius,p.dmg,p.from,{big:p.big,child:p.child,mainPayload:p.mainPayload,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
+            const proxR=CORE_R+30+p.proximity*10;
+            explode(p.x,p.y,proxR,p.dmg*(0.72+Math.min(0.18,p.proximity*0.05)),p.from,{big:false,child:p.child,mainPayload:p.mainPayload,noCarve:true,specialEffect:'proximity',damageLabel:'近接信管'});
+          }else{
+            const swarmAimImpact=p.swarmMissile&&p.aimX!=null&&(hitAim||hitG||p.life<=0);
+            const ix=swarmAimImpact?clamp(p.aimX,0,WORLD_W):p.x;
+            const iy=swarmAimImpact?Math.min(p.aimY!=null?p.aimY:tY(ix),tY(ix)):Math.min(p.y,tY(p.x));
+            explode(ix,iy,p.radius,p.dmg,p.from,{big:p.big,child:p.child,mainPayload:p.mainPayload,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
+          }
           const cu=unit(p.from);
           if(cu.cluster>0&&!p.child&&!p.homing&&!p.bomb){
-            for(let k=0;k<8*cu.cluster;k++)
+            for(let k=0;k<10*cu.cluster;k++)
               projectiles.push({from:p.from,x:p.x,y:p.y-8,vx:(Math.random()*2-1)*4.1,vy:-(Math.random()*3.6+2.7),
                 homing:false,big:false,child:true,bomb:false,bounces:0,magnet:0,specialEffect:'cluster',damageLabel:'子弾',
-                dmg:cu.dmg*0.17,radius:cu.radius*0.38,trail:[],delay:0,life:300});
+                dmg:cu.dmg*0.21,radius:cu.radius*0.45,trail:[],delay:0,life:300});
           }
         }
         break;
@@ -2261,11 +2425,11 @@ function update(dt){
   if(!G.over&&interceptors.length===0){G.camLockX=null;G.camPendingLockX=null;}
   for(let i=planes.length-1;i>=0;i--){
     const pl=planes[i],u=unit(pl.from);pl.x+=pl.vx*dt;pl.dropT-=dt;
-    const shouldDrop=pl.from==='player'?pl.x>WORLD_W*0.50:pl.x<WORLD_W*0.50;
+    const shouldDrop=pl.from==='player'?pl.x>WORLD_W*0.40:pl.x<WORLD_W*0.60;
     if(shouldDrop&&pl.drops>0&&pl.dropT<=0){
-      pl.dropT=6;pl.drops--;
+      pl.dropT=pl.dropInterval||6;pl.drops--;
       const dir=pl.from==='player'?1:-1;
-      projectiles.push({from:pl.from,x:pl.x,y:pl.y,vx:2*dir,vy:1,dmg:u.dmg*0.27,radius:28,bomb:true,child:true,homing:false,big:false,bounces:0,magnet:0,decoy:u.decoy,damageLabel:'爆撃',trail:[],delay:0,life:400});
+      projectiles.push({from:pl.from,x:pl.x,y:pl.y,vx:2*dir,vy:1,dmg:u.dmg*0.33,radius:32,bomb:true,child:true,homing:false,big:false,bounces:0,magnet:0,decoy:u.decoy,damageLabel:'爆撃',trail:[],delay:0,life:400});
     }
     if(pl.x>WORLD_W+120||pl.x<-120)planes.splice(i,1);
   }
@@ -2282,11 +2446,12 @@ function update(dt){
     if(b.life<=0)beams.splice(i,1);}
   for(let i=floaters.length-1;i>=0;i--){const f=floaters[i];f.y-=1.2*dt;f.life-=dt/40;if(f.life<=0)floaters.splice(i,1);}
   // shooting stars
-  if(Math.random()<0.008)stars.push({x:Math.random()*W,y:Math.random()*H*0.3,vx:-(Math.random()*4+3),vy:Math.random()*1.5+0.5,life:40});
+  if(G.turn<15&&Math.random()<(perfHeavy()?0.003:0.008))stars.push({x:Math.random()*W,y:Math.random()*H*0.3,vx:-(Math.random()*4+3),vy:Math.random()*1.5+0.5,life:40});
   for(let i=stars.length-1;i>=0;i--){const s=stars[i];s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;if(s.life<=0)stars.splice(i,1);}
   G.shake=Math.max(0,G.shake-dt*1.2);
   G.glitch=Math.max(0,G.glitch-dt*0.8);
   G.punch=Math.max(0,G.punch-dt*1.5);
+  capFxArrays();
   updateCamera(dt);
   G.hue+=dt*0.05;
 }
@@ -2321,23 +2486,33 @@ function buildSkyline(){
 }
 function drawSkyline(now,arr,par,baseY,fill,winA){
   const off=-camX*par;
-  ctx.save();ctx.translate(off,0);
-  ctx.fillStyle=fill;
+  const dread=dreadLevel();
+  if(G.turn>=15)return;
+  const cityLife=clamp((15-G.turn)/7,0,1);
+  const red=1-cityLife;
+  const buildAlpha=0.35+cityLife*0.55;
+  const buildFill=`rgba(${Math.round(18+48*red)},${Math.round(10-4*red)},${Math.round(18-10*red)},${buildAlpha})`;
+  const winKill=1-dread*0.85;
+  ctx.save();ctx.globalAlpha=cityLife;ctx.translate(off,0);
+  ctx.fillStyle=buildFill;
   for(const b of arr){
     const sx=b.x+off;if(sx+b.w<-20||sx>W+20)continue;
     ctx.fillRect(b.x,baseY-b.h,b.w,b.h);
-    if(b.ant){
+    if(b.ant&&cityLife>0.18){
       ctx.fillRect(b.x+b.w/2-1,baseY-b.h-12,2,12);
       const bl=(Math.sin(now*0.004+b.x)>0.6);
-      if(bl){ctx.fillStyle='#ff2d78';ctx.fillRect(b.x+b.w/2-1.5,baseY-b.h-15,3,3);ctx.fillStyle=fill;}
+      if(bl){ctx.fillStyle='#ff2d78';ctx.fillRect(b.x+b.w/2-1.5,baseY-b.h-15,3,3);ctx.fillStyle=buildFill;}
     }
-    for(const w of b.wins){
-      let a=winA;
-      if(w.fl)a*=0.35+0.65*(Math.sin(now*0.001*w.fl+w.ph)>0?1:0.15);
-      ctx.fillStyle=hexA(w.c,a);
-      ctx.fillRect(b.x+w.x,baseY-b.h+w.y,3,4.5);
+    if(cityLife>0.20){
+      for(const w of b.wins){
+        if((w.ph%1)>winKill)continue;
+        let a=winA*cityLife;
+        if(w.fl)a*=0.35+0.65*(Math.sin(now*0.001*w.fl+w.ph)>0?1:0.15);
+        ctx.fillStyle=red>0.01?`rgba(255,${Math.round(80-45*red)},${Math.round(60-35*red)},${a})`:hexA(w.c,a);
+        ctx.fillRect(b.x+w.x,baseY-b.h+w.y,3,4.5);
+      }
     }
-    ctx.fillStyle=fill;
+    ctx.fillStyle=buildFill;
   }
   ctx.restore();
 }
@@ -2397,13 +2572,25 @@ function drawWindBackground(now){
 
 function draw(now){
   ctx.clearRect(0,0,W,H);
+  const viewL=camX-90,viewR=camX+W+90;
+  const _pdens=projectiles.length+interceptors.length; // v5.29: 混戦時の描画軽量化判定に使う
   const sx=(Math.random()*2-1)*G.shake,sy=(Math.random()*2-1)*G.shake;
   ctx.save();
   // camera punch (zoom pulse)
   const z=1+G.punch*0.004;
   ctx.translate(W/2+sx,H/2+sy);ctx.scale(z,z);ctx.translate(-W/2,-H/2);
+  // v5.39: ターンが進むほど背景を暗く＆赤く染める。15ターンで赤がハッキリ気付くカーブ。
+  const dread=dreadLevel();
+  const rd=(base,rAdd,gMul,bMul)=>{               // base色を赤方向へ寄せつつ暗くする簡易ヘルパ
+    const r=Math.round(base[0]+rAdd*dread);
+    const g=Math.round(base[1]*(1-(1-gMul)*dread));
+    const b=Math.round(base[2]*(1-(1-bMul)*dread));
+    return `rgb(${r},${g},${b})`;
+  };
   const bg=ctx.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,'#060a16');bg.addColorStop(.6,'#08101f');bg.addColorStop(1,'#04070e');
+  bg.addColorStop(0,rd([6,10,22],  26,0.55,0.5));   // 上: #060a16 → 暗い赤紫へ
+  bg.addColorStop(.6,rd([8,16,31], 30,0.5,0.45));   // 中
+  bg.addColorStop(1,rd([4,7,14],   20,0.6,0.55));   // 下
   ctx.fillStyle=bg;ctx.fillRect(-30,-30,W+60,H+60);
   // v5: 瞬く星空（微パララックス）
   for(const st of STARFIELD){
@@ -2420,7 +2607,7 @@ function draw(now){
   ctx.fillStyle=ag;ctx.fillRect(0,0,W,H*0.6);
   // v4: 血月 — ターンが進むほど赤く染まる
   {
-    const t=clamp((G.turn-1)/9,0,1);
+    const t=dreadLevel();
     const mx=W*0.78,my=H*0.15,mr=40+t*10;
     const cr=Math.round(0xcf+(0xff-0xcf)*t),cg=Math.round(0xe8*(1-t)+0x3b*t),cb=Math.round(0xff*(1-t)+0x4d*t);
     const mc='rgb('+cr+','+cg+','+cb+')';
@@ -2461,7 +2648,9 @@ function draw(now){
   ctx.save();ctx.translate(-camX,0);
   // fires
   fires.forEach(f=>{
-    for(let k=0;k<3;k++){const fx=f.x+(Math.random()*2-1)*f.r;
+    if(f.x+f.r<viewL||f.x-f.r>viewR)return;
+    const flameDots=perfHeavy()?1:3;
+    for(let k=0;k<flameDots;k++){const fx=f.x+(Math.random()*2-1)*f.r;
       ctx.fillStyle=Math.random()<.5?'rgba(255,120,40,.7)':'rgba(255,200,60,.6)';
       ctx.fillRect(fx,tY(fx)-Math.random()*20-4,3,3);}
     const g=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,f.r*1.4);
@@ -2494,6 +2683,7 @@ function draw(now){
     drawTrajectoryPreview(now);
   }
   planes.forEach(pl=>{
+    if(pl.x<viewL-120||pl.x>viewR+120)return;
     const dir=pl.from==='player'?1:-1;
     ctx.fillStyle=pl.from==='player'?'#ffc233':'#ff7ab0';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=12;
     ctx.beginPath();ctx.moveTo(pl.x,pl.y);ctx.lineTo(pl.x-26*dir,pl.y-7);ctx.lineTo(pl.x-26*dir,pl.y+7);ctx.closePath();ctx.fill();
@@ -2502,14 +2692,28 @@ function draw(now){
   ctx.globalCompositeOperation='lighter'; // v5: トレイルを発光させる
   projectiles.forEach(p=>{
     if(p.delay>0)return;
+    if(p.x<viewL||p.x>viewR||p.y<-140||p.y>H+140)return;
     const c=p.hellfire?'#ff9d3d':(p.swarmMissile?'#ffc233':(p.ghost?(p.from==='player'?'#bff7ff':'#ffb3c8'):(p.from==='player'?(p.big?'#ffc233':'#00f0ff'):'#ff2d78')));
     ctx.lineWidth=p.swarmMissile?2.6:(p.big?5:(p.magnet?3:2));
     if(p.phantom)ctx.globalAlpha=0.38+Math.random()*0.25;
     else if(p.ghost)ctx.globalAlpha=0.66;
-    for(let i=1;i<p.trail.length;i++){
-      const a=i/p.trail.length;
-      ctx.strokeStyle=hexA(c,a*0.8);
-      ctx.beginPath();ctx.moveTo(p.trail[i-1].x,p.trail[i-1].y);ctx.lineTo(p.trail[i].x,p.trail[i].y);ctx.stroke();
+    const tr=p.trail;
+    if(tr.length>2){
+      // v5.33: 折れ線→中点を通る二次ベジェで滑らかに(特に旋回するスウォームで効く)。
+      if(_pdens>18){
+        ctx.strokeStyle=hexA(c,0.6);ctx.beginPath();ctx.moveTo(tr[0].x,tr[0].y);
+        for(let i=1;i<tr.length-1;i++){const mx=(tr[i].x+tr[i+1].x)/2,my=(tr[i].y+tr[i+1].y)/2;ctx.quadraticCurveTo(tr[i].x,tr[i].y,mx,my);}
+        ctx.lineTo(tr[tr.length-1].x,tr[tr.length-1].y);ctx.stroke();
+      }else{
+        for(let i=1;i<tr.length-1;i++){
+          const a=i/tr.length;ctx.strokeStyle=hexA(c,a*0.8);
+          const sx=(tr[i-1].x+tr[i].x)/2,sy=(tr[i-1].y+tr[i].y)/2;
+          const ex=(tr[i].x+tr[i+1].x)/2,ey=(tr[i].y+tr[i+1].y)/2;
+          ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo(tr[i].x,tr[i].y,ex,ey);ctx.stroke();
+        }
+      }
+    }else if(tr.length===2){
+      ctx.beginPath();ctx.moveTo(tr[0].x,tr[0].y);ctx.lineTo(tr[1].x,tr[1].y);ctx.stroke();
     }
     ctx.fillStyle='#fff';ctx.shadowColor=c;ctx.shadowBlur=p.big?26:14;
     ctx.beginPath();ctx.arc(p.x,p.y,p.big?7:(p.magnet?3:2.6),0,7);ctx.fill();ctx.shadowBlur=0;
@@ -2517,6 +2721,8 @@ function draw(now){
   });
   drawInterceptors(now);
   beams.forEach(b=>{
+    const bx=b.x!=null?b.x:((b.x1||0)+(b.x2||0))*0.5;
+    if(bx<viewL-180||bx>viewR+180)return;
     if(b.type==='flash'){ // v5: 爆発の白閃光
       const a=Math.max(0,b.life/b.max);
       const g=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
@@ -2562,6 +2768,7 @@ function draw(now){
     }
   });
   particles.forEach(q=>{
+    if(q.x<viewL||q.x>viewR||q.y<-80||q.y>H+120)return;
     ctx.globalAlpha=Math.max(0,q.life/q.max);
     if(q.chunk){ctx.globalCompositeOperation='source-over';ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.rot);
       ctx.fillStyle=q.c;ctx.strokeStyle='rgba(0,240,255,.5)';ctx.lineWidth=1;
@@ -2571,6 +2778,7 @@ function draw(now){
   });
   ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
   floaters.forEach(f=>{
+    if(f.x<viewL||f.x>viewR)return;
     ctx.globalAlpha=Math.min(1,f.life);
     ctx.font=(f.big?'900 26px':'700 16px')+" 'Orbitron'";
     ctx.textAlign='center';ctx.fillStyle=f.c;ctx.shadowColor=f.c;ctx.shadowBlur=12;
@@ -2754,12 +2962,12 @@ function drawNoWindHitGuide(now){
 }
 function simulateAimPreviewTrajectory(useWind,fullRun){
   const u=G.player,m=muzzle('player');
-  const a=+angEl.value,pw=playerPower(powEl.value);
+  const a=aimAngle(),pw=playerPower(powEl.value);
   const rad=a*Math.PI/180;
   const rawPow=pw*POWER_INTERNAL_SCALE;
   const sp=rawPow*0.245*(u.speedMul||1)*SHELL_SPEED_SCALE;
   let x=m.x,y=m.y,vx=Math.cos(rad)*sp,vy=-Math.sin(rad)*sp*(1+(u.loft||0)*0.08);
-  const pts=[{x,y}],centerX=WORLD_W*0.50;
+  const pts=[{x,y}],stopX=(WORLD_W*0.50+G.enemy.x)/2; // v5.19: 中央〜敵拠点の中間まで伸ばす
   const wf=useWind?WIND_FORCE*(1-Math.min(0.7,u.windres)):0;
   for(let i=0;i<(fullRun?720:360);i++){
     const ox=x,oy=y;
@@ -2770,7 +2978,7 @@ function simulateAimPreviewTrajectory(useWind,fullRun){
     x+=vx;y+=(vy-0.5*gAcc);
     pts.push({x,y});
     if(segmentHitsWall(ox,oy,x,y))break;
-    if(y>=tY(x)||x<0||x>WORLD_W||(!fullRun&&x>=centerX))break;
+    if(y>=tY(x)||x<0||x>WORLD_W||(!fullRun&&x>=stopX))break;
   }
   return {pts,end:pts[pts.length-1]};
 }
@@ -2847,12 +3055,31 @@ function drawCentralWall(now){
   ctx.restore();
 }
 function drawInterceptors(now){
+  const _pdens=projectiles.length+interceptors.length; // v5.29
+  const viewL=camX-90,viewR=camX+W+90;
   interceptors.forEach(m=>{
+    if(m.x<viewL||m.x>viewR||m.y<-160||m.y>H+160)return;
     ctx.save();
     ctx.strokeStyle=hexA(m.c,.7);ctx.lineWidth=2;
-    for(let i=1;i<m.trail.length;i++){
-      const a=i/m.trail.length;ctx.strokeStyle=hexA(m.c,a*.75);
-      ctx.beginPath();ctx.moveTo(m.trail[i-1].x,m.trail[i-1].y);ctx.lineTo(m.trail[i].x,m.trail[i].y);ctx.stroke();
+    const tr=m.trail;
+    if(tr.length>2){
+      // v5.33: 折れ線→中点を通る二次ベジェで滑らかに(SAMは速く1フレーム間隔が空くため直線的に見えていた)。
+      if(_pdens>18){
+        // 混戦時: 単色一括。
+        ctx.strokeStyle=hexA(m.c,.55);ctx.beginPath();ctx.moveTo(tr[0].x,tr[0].y);
+        for(let i=1;i<tr.length-1;i++){const mx=(tr[i].x+tr[i+1].x)/2,my=(tr[i].y+tr[i+1].y)/2;ctx.quadraticCurveTo(tr[i].x,tr[i].y,mx,my);}
+        ctx.lineTo(tr[tr.length-1].x,tr[tr.length-1].y);ctx.stroke();
+      }else{
+        // 通常時: 先端ほど濃くフェード。区間ごとにstrokeするが制御点は前後の中点を使い滑らかに繋ぐ。
+        for(let i=1;i<tr.length-1;i++){
+          const a=i/tr.length;ctx.strokeStyle=hexA(m.c,a*.75);
+          const sx=(tr[i-1].x+tr[i].x)/2,sy=(tr[i-1].y+tr[i].y)/2;
+          const ex=(tr[i].x+tr[i+1].x)/2,ey=(tr[i].y+tr[i+1].y)/2;
+          ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo(tr[i].x,tr[i].y,ex,ey);ctx.stroke();
+        }
+      }
+    }else if(tr.length===2){
+      ctx.beginPath();ctx.moveTo(tr[0].x,tr[0].y);ctx.lineTo(tr[1].x,tr[1].y);ctx.stroke();
     }
     const ang=Math.atan2(m.vy,m.vx);
     ctx.translate(m.x,m.y);ctx.rotate(ang);
@@ -2891,7 +3118,7 @@ function drawTargetMarker(){
 
 function drawCore(c,col,now){
   const pl=c===G.player,dir=pl?1:-1;
-  const barrelAng=pl?(+angEl.value*Math.PI/180):(55*Math.PI/180);
+  const barrelAng=pl?(aimAngle()*Math.PI/180):(55*Math.PI/180);
   ctx.strokeStyle=col;ctx.lineWidth=4;ctx.shadowColor=col;ctx.shadowBlur=8;
   ctx.beginPath();ctx.moveTo(c.x,c.y-4);
   ctx.lineTo(c.x+Math.cos(barrelAng)*26*dir,c.y-4-Math.sin(barrelAng)*26);
@@ -2907,6 +3134,19 @@ function drawCore(c,col,now){
   ctx.restore();
   ctx.fillStyle='#fff';ctx.shadowColor=col;ctx.shadowBlur=20;
   ctx.beginPath();ctx.arc(c.x,c.y,4,0,7);ctx.fill();ctx.shadowBlur=0;
+}
+// v5.41: SAMの色を陣営内で機体ごとに散らす。プレイヤー=シアン〜青系、敵=マゼンタ〜赤紫系。
+function samColor(who){
+  const h=who==='player'?(175+Math.random()*40):(315+Math.random()*35); // 色相レンジ
+  const s=80+Math.random()*20, l=55+Math.random()*15;
+  return hslToHex(h,s,l);
+}
+function hslToHex(h,s,l){
+  s/=100;l/=100;
+  const k=n=>(n+h/30)%12;
+  const a=s*Math.min(l,1-l);
+  const f=n=>{const c=l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return Math.round(c*255);};
+  return '#'+[f(0),f(8),f(4)].map(v=>v.toString(16).padStart(2,'0')).join('');
 }
 function hexA(hex,a){
   const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
