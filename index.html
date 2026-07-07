@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.59 // EVEN CARPET</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.60 // TRUE LODESTAR</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -1868,8 +1868,19 @@ function renderEffectPanel(){
   }).join(''):'<div class="effectOwned"><b>カードなし</b><p>まだ強化カードを取得していない。ターン終了後のSYSTEM UPGRADEで1枚ずつ効果が増える。</p></div>';
   body.innerHTML=`<div class="effectSection"><h3>現在の合計ステータス</h3><div class="effectGrid">${stats}</div></div><div class="effectSection"><h3>所持カード詳細</h3>${ownedHtml}</div><div class="effectSection"><h3>共通ルール</h3><div class="effectStat">ヘルファイア・ナパーム・サンダー・レーザー系はメイン弾の爆発からだけ発動。スウォーム、爆撃、子弾、分裂子弾、残像弾からは連鎖しない。</div><div class="effectStat">カード特殊効果のコアDMGは同一ターン内で 100% → 45% → 20% → 10% に減衰する。</div><div class="effectStat">風軽減は最大70%。表示WINDはそのままでも、実際に弾が流される量が下がる。</div></div>`;
 }
-function showEffectPanel(){renderEffectPanel();document.getElementById('effectPanel')?.classList.add('show');sfx('ui');}
-function hideEffectPanel(){document.getElementById('effectPanel')?.classList.remove('show');sfx('ui');}
+let _effectPanelTimer=null;
+function showEffectPanel(){
+  renderEffectPanel();
+  document.getElementById('effectPanel')?.classList.add('show');
+  sfx('ui');
+  clearInterval(_effectPanelTimer);
+  _effectPanelTimer=setInterval(renderEffectPanel,400); // v5.60: 開いている間は自動更新
+}
+function hideEffectPanel(){
+  document.getElementById('effectPanel')?.classList.remove('show');
+  sfx('ui');
+  clearInterval(_effectPanelTimer);_effectPanelTimer=null;
+}
 function setDifficultyLevel(v){
   G.enemyLevel=clamp(+v||3,1,5);
   document.querySelectorAll('.lvBtn').forEach(b=>b.classList.toggle('active',+b.dataset.lv===G.enemyLevel));
@@ -2731,7 +2742,9 @@ function draw(now){
     }else if(tr.length===2){
       ctx.beginPath();ctx.moveTo(tr[0].x,tr[0].y);ctx.lineTo(tr[1].x,tr[1].y);ctx.stroke();
     }
-    ctx.fillStyle='#fff';ctx.shadowColor=c;ctx.shadowBlur=p.big?26:14;
+    ctx.fillStyle='#fff';
+    // v5.60: 混戦時(_pdens>18)はshadowBlurを止める。弾数に関わらず毎フレーム全弾へブラーをかけていたのが後半の重さの主因。
+    if(_pdens>18)ctx.shadowBlur=0;else{ctx.shadowColor=c;ctx.shadowBlur=p.big?26:14;}
     ctx.beginPath();ctx.arc(p.x,p.y,p.big?7:(p.magnet?3:2.6),0,7);ctx.fill();ctx.shadowBlur=0;
     ctx.globalAlpha=1;
   });
@@ -2862,6 +2875,11 @@ function simulateGuideTrajectory(from,ang,pow,collect,useWind){
     const gAcc=GRAV*(1+Math.min(0.75,u.heavy*0.22))*SHELL_GRAV_SCALE;
     vx+=G.wind*wf;
     vy+=gAcc;
+    // v5.60: LODESTAR(magnet)の飛翔中補正を予測線にも反映。実弾道(update)・敵AI照準(simDist)と揃える。
+    if(u.magnet>0){
+      const ma=Math.atan2(foe.y-y,foe.x-x),downMag=vy>0?1.55:1,mm=Math.min(0.18,0.038*u.magnet*downMag);
+      vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
+    }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
     x+=vx;y+=(vy-0.5*gAcc);
     if(y<minY)minY=y;
@@ -2985,11 +3003,17 @@ function simulateAimPreviewTrajectory(useWind,fullRun){
   let x=m.x,y=m.y,vx=Math.cos(rad)*sp,vy=-Math.sin(rad)*sp*(1+(u.loft||0)*0.08);
   const pts=[{x,y}],stopX=(WORLD_W*0.50+G.enemy.x)/2; // v5.19: 中央〜敵拠点の中間まで伸ばす
   const wf=useWind?WIND_FORCE*(1-Math.min(0.7,u.windres)):0;
+  const foe=G.enemy;
   for(let i=0;i<(fullRun?720:360);i++){
     const ox=x,oy=y;
     const gAcc=GRAV*(1+Math.min(0.75,u.heavy*0.22))*SHELL_GRAV_SCALE;
     vx+=G.wind*wf;
     vy+=gAcc;
+    // v5.60: LODESTAR(magnet)の飛翔中補正を予測線にも反映。実弾道(update)・敵AI照準(simDist)と揃える。
+    if(u.magnet>0){
+      const ma=Math.atan2(foe.y-y,foe.x-x),downMag=vy>0?1.55:1,mm=Math.min(0.18,0.038*u.magnet*downMag);
+      vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
+    }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
     x+=vx;y+=(vy-0.5*gAcc);
     pts.push({x,y});
@@ -3099,7 +3123,8 @@ function drawInterceptors(now){
     }
     const ang=Math.atan2(m.vy,m.vx);
     ctx.translate(m.x,m.y);ctx.rotate(ang);
-    ctx.fillStyle='#ffffff';ctx.shadowColor=m.c;ctx.shadowBlur=16;
+    ctx.fillStyle='#ffffff';
+    if(_pdens>18)ctx.shadowBlur=0;else{ctx.shadowColor=m.c;ctx.shadowBlur=16;}
     ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(-7,-4);ctx.lineTo(-4,0);ctx.lineTo(-7,4);ctx.closePath();ctx.fill();
     ctx.restore();
   });
