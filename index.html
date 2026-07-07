@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.62 // FULL DISCLOSURE</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.63 // QUIET SKIES</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -1384,8 +1384,8 @@ function simDist(ang,pow){
     // v4.6: 誘導カード（magnet）の飛翔中補正も内部モデルに反映。ここを無視すると、
     // 実弾道だけがコア方向へ微妙に曲がり、絞り込んだ弾道ほど大きく外れてしまう。
     if(G.enemy.magnet>0){
-      // v5.61: 実弾道側の強化(最大2倍・降下倍率2.2)に追随。
-      const ma=Math.atan2(G.player.y-y,G.player.x-x),downMag=vy>0?2.2:1,mm=Math.min(0.36,0.076*G.enemy.magnet*downMag);
+      // v5.63: 実弾道側の強化(暫定値・要調整。従来比3倍)に追随。
+      const ma=Math.atan2(G.player.y-y,G.player.x-x),downMag=vy>0?2.2:1,mm=Math.min(1.08,0.228*G.enemy.magnet*downMag);
       vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
     }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
@@ -2348,8 +2348,8 @@ function update(dt){
         }
         const a=Math.atan2(ty-p.y,tx-p.x);p.vx+=Math.cos(a)*accel*pdt;p.vy+=Math.sin(a)*accel*pdt;
       }else if(p.magnet>0&&!p.child&&!p.bomb){
-        // v5.61: LODESTAR強化(最大2倍)。降下中は特に強く吸い寄せられるよう降下倍率も引き上げ。
-        const a=Math.atan2(tgt.y-p.y,tgt.x-p.x),downMag=p.vy>0?2.2:1,m=Math.min(0.36,0.076*p.magnet*downMag);
+        // v5.63: LODESTAR再強化。従来比3倍(暫定値、後日バランス再調整予定)。
+        const a=Math.atan2(tgt.y-p.y,tgt.x-p.x),downMag=p.vy>0?2.2:1,m=Math.min(1.08,0.228*p.magnet*downMag);
         p.vx+=Math.cos(a)*m*pdt;p.vy+=Math.sin(a)*m*pdt;
       }
       const maxSp=p.homing?HOMING_MAX_SPEED:(p.big?BIG_ARTILLERY_MAX_SPEED:ARTILLERY_MAX_SPEED);
@@ -2562,7 +2562,9 @@ function drawSkyline(now,arr,par,baseY,fill,winA){
 }
 function drawWindBackground(now){
   const wA=Math.abs(G.wind),dir=Math.sign(G.wind||1),wc=windColor(wA);
-  const power=clamp(wA/WIND_MAX,0,1);
+  let power=clamp(wA/WIND_MAX,0,1);
+  // v5.63: 弾が飛んでいる間(playerShot/enemyShot)は風の描写を1/10に抑える。実際の風の強さ(G.wind)自体は変えない。
+  if(G.phase==='playerShot'||G.phase==='enemyShot')power*=0.10;
   ctx.save();
   // 風速に応じた空の色。暴風時は背景だけで危険が分かるようにする。
   const sky=ctx.createLinearGradient(0,0,0,H*0.62);
