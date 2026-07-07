@@ -123,6 +123,10 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   padding:7px 10px;background:rgba(255,194,51,.07);color:var(--gold);border:1px solid rgba(255,194,51,.75);
   box-shadow:0 0 12px rgba(255,194,51,.28),inset 0 0 12px rgba(255,194,51,.10);cursor:pointer;white-space:nowrap;}
 #effectBtn:active{transform:scale(.95);background:rgba(255,194,51,.18);}
+#rerollBtn{pointer-events:auto;font-family:'Orbitron';font-weight:900;font-size:11px;letter-spacing:.12em;
+  padding:7px 14px;margin:2px 0 14px;background:rgba(162,77,255,.08);color:var(--violet);border:1px dashed rgba(162,77,255,.75);
+  box-shadow:0 0 12px rgba(162,77,255,.24);cursor:pointer;white-space:nowrap;}
+#rerollBtn:active{transform:scale(.95);background:rgba(162,77,255,.2);}
 #effectPanel{position:absolute;inset:0;z-index:35;display:none;align-items:center;justify-content:center;padding:18px;
   background:rgba(2,5,10,.90);backdrop-filter:blur(5px);pointer-events:auto;}
 #effectPanel.show{display:flex;}
@@ -408,7 +412,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.67 // OVER THE WALL</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.68 // REROLL TEST</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -432,6 +436,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   <div id="draft">
     <div id="draftTitle">SYSTEM UPGRADE</div>
     <div id="draftSub">強化モジュールを1つ選択せよ // TIER II/IIIは各1枚まで</div>
+    <button id="rerollBtn">🔁 REROLL // 引き直し(テスト用)</button>
     <div id="cards"></div>
   </div>
   <div id="effectPanel">
@@ -1145,14 +1150,7 @@ function showEnemyUpgrade(c){
     if(c.t===3||c.kind==='gamble'){glitch(10);shake(6);}
   }
 }
-function showDraft(){
-  if(G.over||G.phase==='draft')return;
-  hideResultGate();
-  G.pendingResult=false;
-  G.phase='draft';
-  document.getElementById('report').classList.remove('show');
-  const dmgLog=document.getElementById('damageLog');if(dmgLog)dmgLog.classList.remove('show');
-  G.damageLogActive=false;
+function populateDraftCards(){
   const box=document.getElementById('cards');box.innerHTML='';
   draftPool(G.owned,G.turn).forEach(c=>{
     const el=document.createElement('div');el.className='card t'+c.t+(c.kind==='gamble'?' gamble':'');
@@ -1167,7 +1165,23 @@ function showDraft(){
       G.turn++;newWind();updateHUD();startTurn();};
     box.appendChild(el);
   });
+}
+function showDraft(){
+  if(G.over||G.phase==='draft')return;
+  hideResultGate();
+  G.pendingResult=false;
+  G.phase='draft';
+  document.getElementById('report').classList.remove('show');
+  const dmgLog=document.getElementById('damageLog');if(dmgLog)dmgLog.classList.remove('show');
+  G.damageLogActive=false;
+  populateDraftCards();
   document.getElementById('draft').classList.add('show');
+}
+// v5.68: テストプレイ用 — ターンやカード所持数を進めず、その場の3択だけ引き直す。
+function rerollDraft(){
+  if(G.phase!=='draft')return;
+  sfx('pick');
+  populateDraftCards();
 }
 function renderChips(){
   const box=document.getElementById('chips');box.innerHTML='';
@@ -1843,6 +1857,7 @@ document.getElementById('fireBtn').onclick=()=>volleyFire();
 const effectBtn=document.getElementById('effectBtn');if(effectBtn)effectBtn.onclick=()=>showEffectPanel();
 const effectClose=document.getElementById('effectClose');if(effectClose)effectClose.onclick=()=>hideEffectPanel();
 const effectPanel=document.getElementById('effectPanel');if(effectPanel)effectPanel.onclick=e=>{if(e.target===effectPanel)hideEffectPanel();};
+const rerollBtn=document.getElementById('rerollBtn');if(rerollBtn)rerollBtn.onclick=()=>rerollDraft();
 
 function escHtml(v){return String(v).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
 function fmtPct(v){return Math.round(v*100)+'%';}
