@@ -412,7 +412,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.78 // LAST STAND</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.79 // DOUBLE DOWN</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -949,9 +949,9 @@ const CARDS=[
  {id:'bounce',code:'RICOCHET ONE',t:1,kind:'stable',name:'バウンド弾',desc:'地形に当たった時、1回だけ跳ねる。壁越え後の変則ヒットを狙える。',detail:['地形バウンド：+1回','壁は破壊不能。壁そのものでは跳ね返らない','跳ねた後は速度が落ちる'],apply:u=>{u.bounce+=1;}},
  {id:'cluster',code:'HYDRA SEEDS',t:2,kind:'stable',name:'クラスターボム',desc:'着弾後に小型子弾を散らす。直撃より、周辺制圧と削り向け。',detail:['着弾時：子弾10発 × 所持数','子弾DMG：主砲の約21% / 小爆発','同ターン内の子弾コアDMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.cluster+=1;}},
  {id:'napalm',code:'PROMETHEUS CODE',t:2,kind:'stable',name:'ナパームコード',desc:'着弾点を炎上させ、範囲内の敵コアに継続ダメージを入れる。',detail:['炎上：4ターン残留','継続DMG：4 × 所持数 / ターン','同ターン内の複数炎上DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.napalm+=1;}},
- {id:'laststand',code:'LAST STAND FUZE',t:3,kind:'gamble',name:'ラストスタンド信管',desc:'自コアが傷つくほど信管が過敏になり、爆発が大きく荒々しくなる崖っぷち仕様。',detail:['自コアのHPが低いほど着弾ダメージが増加(最大 HP1%で+60% / 枚)','満タンHPでは効果なし','爆発の粒子・カメラシェイクもHPが低いほど派手になる'],apply:u=>{u.laststand=(u.laststand||0)+1;}},
+ {id:'laststand',code:'LAST STAND FUZE',t:3,kind:'gamble',name:'ラストスタンド信管',desc:'自コアが傷つくほど信管が過敏になり、爆発が大きく荒々しくなる崖っぷち仕様。',detail:['自コアのHPが低いほど着弾ダメージ・爆発範囲が増加(1枚・自HP10%でちょうど×2)','満タンHPでは効果なし','爆発の粒子・カメラシェイクもHPが低いほど派手になる'],apply:u=>{u.laststand=(u.laststand||0)+1;}},
  {id:'magnet',code:'LODESTAR',t:2,kind:'stable',name:'電磁誘導弾',desc:'飛翔中に敵コア方向へ曲がる。完全追尾ではないが、以前よりかなり頼れる。',detail:['誘導：中程度。下降中はさらに強く敵コアへ寄る','重ねるほど曲がりやすい','壁に向かう低弾道は救えない'],apply:u=>{u.magnet+=1;}},
- {id:'pierce',code:'PIERCING SLUG',t:2,kind:'gamble',name:'貫通徹甲弾',desc:'コアへ深くめり込んでから炸裂する徹甲弾頭。直撃した時だけ大きく伸びる、外れても何も起きないハイリスク仕様。',detail:['直撃(CRIT)時のみ：ダメージ +35% / 枚','近接ヒットや外れには一切ボーナスなし','対象：主砲弾・残像弾・彗星弾のみ'],apply:u=>{u.pierce=(u.pierce||0)+1;}},
+ {id:'pierce',code:'PIERCING SLUG',t:2,kind:'gamble',name:'貫通徹甲弾',desc:'コアへ深くめり込んでから炸裂する徹甲弾頭。直撃した時だけ大きく伸びる、外れても何も起きないハイリスク仕様。',detail:['直撃(CRIT)時のみ：ダメージ ×2 / 枚(1枚で2倍)','近接ヒットや外れには一切ボーナスなし','対象：主砲弾・残像弾・彗星弾のみ'],apply:u=>{u.pierce=(u.pierce||0)+1;}},
  {id:'split',code:'GEMINI WARHEAD',t:2,kind:'stable',name:'分裂弾頭',desc:'最高高度付近で弾頭が左右に割れる。中央壁を越えた後の面制圧に強い。',detail:['分裂：主砲弾が頂点付近で2発に分かれる','分裂弾DMG：各弾 約60%〜。重ねるとさらに上昇','分裂弾はSAM迎撃対象。追加効果の連鎖は抑制'],apply:u=>{u.splitWarhead+=1;}},
  {id:'radar',code:'ARGUS EYE',t:2,kind:'stable',name:'防空レーダー',desc:'防空圏を広げ、SAMの迎撃精度を少し上げる。爆撃・スウォーム対策。',detail:['防空範囲：+90m','SAM命中：+5% / 枚','迎撃ミサイル本数は増えない'],apply:u=>{u.samRange+=1;u.samHit+=1;}},
  {id:'chaff',code:'GHOST VEIL',t:2,kind:'stable',name:'チャフ散布弾',desc:'自軍の攻撃兵装に妨害片を撒き、敵SAMに落とされにくくする。',detail:['敵SAM命中率：-13% / 枚','対象：主砲弾 / 爆撃弾 / スウォーム','防空を突破するための支援カード'],apply:u=>{u.decoy+=1;}},
@@ -1573,8 +1573,10 @@ function explode(x,y,r,dmg,from,opts){
   const colsP=from==='player'?['#00f0ff','#7ef9ff','#ffffff','#2aa8ff']:['#ff2d78','#ff7ab0','#ffffff','#ff9d3d'];
   // v5.64: 重い時(perfHeavy: ターン経過/弾数過多/FPS低下)は爆発の粒子・デブリ・リングを間引く。
   const heavy=perfHeavy();
-  // v5.78: ラストスタンド信管 — 発射側の自コアHPが低いほど、この爆発の派手さ・ダメージが増す。
-  const lsMul=u.laststand?1+(1-clamp(u.hp/u.maxhp,0,1))*0.6*u.laststand:1;
+  // v5.79: ラストスタンド信管 — 発射側の自コアHPが低いほど、この爆発の派手さ・ダメージ・範囲が増す。
+  // 係数10/9: 1枚所持・自HP10%の時にちょうどダメージ×2になる。
+  const lsMul=u.laststand?1+(1-clamp(u.hp/u.maxhp,0,1))*(10/9)*u.laststand:1;
+  if(u.laststand)r*=lsMul; // 範囲もダメージと同じ倍率で拡大
   const lsVis=Math.min(2.4,lsMul);
   burst(x,y,Math.round((o.big?125:52)*(heavy?0.35:1)*lsVis),colsP,o.big?8:5,o.big?56:36);
   debris(x,y,Math.round((o.big?14:7)*(heavy?0.4:1)*lsVis),from==='player'?'#0a4a5a':'#5a0a2a');
@@ -1593,7 +1595,7 @@ function explode(x,y,r,dmg,from,opts){
       let mult=Math.max(0.20,1-d/(r+CORE_R));
       let crit=d<CORE_R*1.35;
       let val=dmg*mult*(crit?1.75:1);
-      if(crit&&pierceEligible&&u.pierce&&who!==from)val*=1+0.35*u.pierce;
+      if(crit&&pierceEligible&&u.pierce&&who!==from)val*=1+1.0*u.pierce;
       val*=lsMul;
       if(from===who)val*=0.45;
       if(o.specialEffect)dealSpecialDamage(who,val,crit,from,o.specialEffect,o.damageLabel);
@@ -1887,7 +1889,7 @@ function currentEffectSummary(u){
     ['風軽減',windCut+'% / 軽減上限70%'],
     ['バウンド',u.bounce+'回'],
     ['誘導',(u.magnet||0)+'段階 / 主砲が敵コアへ少し曲がる'],
-    ['貫通徹甲弾',(u.pierce||0)+'枚 / 直撃時のみダメージ×'+(1+0.35*(u.pierce||0)).toFixed(2)],
+    ['貫通徹甲弾',(u.pierce||0)+'枚 / 直撃時のみダメージ×'+(1+1.0*(u.pierce||0)).toFixed(2)],
     ['分裂弾頭',(u.splitWarhead||0)+'枚 / 分裂後1発 '+n1(u.dmg*splitFrac)+'dmg (=主砲'+u.dmg.toFixed(1)+'×'+Math.round(splitFrac*100)+'%)'],
     ['クラスターボム',(u.cluster||0)+'枚 / 子弾'+(10*(u.cluster||0))+'発 × 各'+n1(u.dmg*0.21)+'dmg'],
     ['ナパームコード',(u.napalm||0)+'枚 / 炎上'+(4*(u.napalm||0))+'dmg×4ターン'],
@@ -1909,7 +1911,7 @@ function currentEffectSummary(u){
     ['チャフ散布弾',(u.decoy||0)+'枚 / 敵SAM命中 -'+Math.round(Math.min(34,(u.decoy||0)*13))+'%'],
     ['過積載弾頭',(u.heavy||0)+'枚 / 重力影響 +'+heavyPct+'%(飛距離低下)'],
     ['試作信管',(u.prototypeFuse||0)+'枚 / 自爆リスク '+fuseRisk+'%/発'],
-    ['ラストスタンド信管',(u.laststand||0)+'枚 / 現在HP'+Math.round(Math.max(0,u.hp)/u.maxhp*100)+'%で着弾ダメージ×'+(u.laststand?(1+(1-clamp(u.hp/u.maxhp,0,1))*0.6*u.laststand).toFixed(2):'1.00')]
+    ['ラストスタンド信管',(u.laststand||0)+'枚 / 現在HP'+Math.round(Math.max(0,u.hp)/u.maxhp*100)+'%で着弾ダメージ・範囲×'+(u.laststand?(1+(1-clamp(u.hp/u.maxhp,0,1))*(10/9)*u.laststand).toFixed(2):'1.00')]
   ];
 }
 function renderEffectPanel(){
