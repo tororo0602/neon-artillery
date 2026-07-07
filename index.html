@@ -408,7 +408,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.65 // SAM SET</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.66 // TRUE SLOW</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -2159,7 +2159,9 @@ function empBurst(x,y,defenderName,power){
     if(!q||q.from!==attacker||q.delay>0)continue;
     const d=Math.hypot(q.x-x,q.y-y);
     if(d>rad)continue;
-    q.vx*=0.52;q.vy*=0.52;q.life=Math.max(90,(q.life||360)-18*power);
+    // v5.66: 速度そのものは変えず、体感時間(pdt)だけ引き延ばす。弾道・着弾点は完全に維持したまま「遅くなる」だけにする。
+    q._empSlowT=Math.max(q._empSlowT||0,60+power*18);
+    q._empSlowMul=0.35;
     affected++;
     if((q.swarmMissile||q.bomb||q.hellfire||q.splitChild)&&Math.random()<0.16+power*0.06){
       projectiles.splice(i,1);
@@ -2305,7 +2307,10 @@ function update(dt){
     for(let s=0;s<1;s++){
       const u=unit(p.from);
       tryLaunchInterceptor(p);
-      const pdt=dt*projectileDefenseSlowFactor(p);
+      // v5.66: EMP減速は速度を変えずpdt(体感時間)だけ縮める。着弾点は変わらず、到達に時間がかかるだけになる。
+      if(p._empSlowT>0)p._empSlowT-=dt;
+      const empFactor=p._empSlowT>0?p._empSlowMul:1;
+      const pdt=dt*projectileDefenseSlowFactor(p)*empFactor;
       const oldX=p.x,oldY=p.y;
       let wf=WIND_FORCE*(1-Math.min(0.7,u.windres));
       p.vx+=G.wind*wf*pdt;p.vy+=GRAV*pdt*(p.gravityScale||1);
