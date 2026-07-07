@@ -412,7 +412,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.68 // REROLL TEST</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.69 // CLOSING GRIP</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -1402,8 +1402,12 @@ function simDist(ang,pow){
     // v4.6: 誘導カード（magnet）の飛翔中補正も内部モデルに反映。ここを無視すると、
     // 実弾道だけがコア方向へ微妙に曲がり、絞り込んだ弾道ほど大きく外れてしまう。
     if(G.enemy.magnet>0&&(x-WALL.x)*-1>0){
-      // v5.67: 実弾道側(壁を越えてから急に吸い寄せる)に追随。
-      const ma=Math.atan2(G.player.y-y,G.player.x-x),downMag=vy>0?2.2:1,mm=Math.min(2.4,0.42*G.enemy.magnet*downMag);
+      // v5.69: 実弾道側(壁を越えた後、敵に近づくほど吸引が強くなる)に追随。
+      const distToCore=Math.hypot(G.player.x-x,G.player.y-y);
+      const wallDist=Math.max(60,Math.abs(G.player.x-WALL.x));
+      const proximityFrac=clamp(1-distToCore/wallDist,0,1);
+      const proxBoost=1+proximityFrac*3;
+      const ma=Math.atan2(G.player.y-y,G.player.x-x),downMag=vy>0?2.2:1,mm=Math.min(4.5,0.42*G.enemy.magnet*downMag*proxBoost);
       vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
     }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
@@ -2394,10 +2398,14 @@ function update(dt){
         }
         const a=Math.atan2(ty-p.y,tx-p.x);p.vx+=Math.cos(a)*accel*pdt;p.vy+=Math.sin(a)*accel*pdt;
       }else if(p.magnet>0&&!p.child&&!p.bomb){
-        // v5.67: 壁を越えるまでは素直な弾道のまま、越えた瞬間からグッと強く敵コアへ吸い寄せる(暫定値)。
+        // v5.69: 壁を越えるまでは素直な弾道のまま。越えた後は敵に近づくほど吸引が強くなる(最大+300%)。
         const dir=p.from==='player'?1:-1,pastWall=(p.x-WALL.x)*dir>0;
         if(pastWall){
-          const a=Math.atan2(tgt.y-p.y,tgt.x-p.x),downMag=p.vy>0?2.2:1,m=Math.min(2.4,0.42*p.magnet*downMag);
+          const distToCore=Math.hypot(tgt.x-p.x,tgt.y-p.y);
+          const wallDist=Math.max(60,Math.abs(tgt.x-WALL.x));
+          const proximityFrac=clamp(1-distToCore/wallDist,0,1);
+          const proxBoost=1+proximityFrac*3;
+          const a=Math.atan2(tgt.y-p.y,tgt.x-p.x),downMag=p.vy>0?2.2:1,m=Math.min(4.5,0.42*p.magnet*downMag*proxBoost);
           p.vx+=Math.cos(a)*m*pdt;p.vy+=Math.sin(a)*m*pdt;
         }
       }
