@@ -412,7 +412,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.76 // FAINT PULL</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.77 // WHISPER PULL</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -1407,7 +1407,7 @@ function simDist(ang,pow){
       const wallDist=Math.max(60,Math.abs(G.player.x-WALL.x));
       const proximityFrac=clamp(1-distToCore/wallDist,0,1);
       const downMag=vy>0?2.2:1;
-      const turnRate=Math.min(0.01125,0.001875*G.enemy.magnet*downMag*(1+proximityFrac*3));
+      const turnRate=Math.min(0.005625,0.0009375*G.enemy.magnet*downMag*(1+proximityFrac*3));
       const desired=Math.atan2(G.player.y-y,G.player.x-x),cur=Math.atan2(vy,vx);
       let da=desired-cur;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
       const nd=cur+clamp(da,-turnRate,turnRate),sp=Math.hypot(vx,vy);
@@ -2409,7 +2409,7 @@ function update(dt){
           const wallDist=Math.max(60,Math.abs(tgt.x-WALL.x));
           const proximityFrac=clamp(1-distToCore/wallDist,0,1);
           const downMag=p.vy>0?2.2:1;
-          const turnRate=Math.min(0.01125,0.001875*p.magnet*downMag*(1+proximityFrac*3));
+          const turnRate=Math.min(0.005625,0.0009375*p.magnet*downMag*(1+proximityFrac*3));
           const desired=Math.atan2(tgt.y-p.y,tgt.x-p.x),cur=Math.atan2(p.vy,p.vx);
           let da=desired-cur;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
           const nd=cur+clamp(da,-turnRate*pdt,turnRate*pdt),sp=Math.hypot(p.vx,p.vy);
