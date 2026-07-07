@@ -412,7 +412,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.70 // SPLIT AND PULL</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.71 // EXCESSIVE COMET</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -966,7 +966,7 @@ const CARDS=[
  {id:'carpet',code:'IRON RAIN',t:3,kind:'stable',name:'カーペットボム',desc:'爆撃機が敵陣へ爆弾を投下する。面制圧だがSAMに落とされる。',detail:['爆弾：12発 × 所持数','爆弾DMG：主砲の約33% / 発','爆弾は防空迎撃対象。突破できれば強い'],apply:u=>{u.carpet+=1;}},
  {id:'swarm',code:'LOCUST SWARM',t:3,kind:'stable',name:'ミサイルスウォーム',desc:'敵陣周辺を制圧する小型ミサイル群を放つ。メイン弾の着弾点ではなく敵コア周辺へ降下する。',detail:['ミサイル：+14発 / 枚、上限なし','落下中心：敵コア周辺 ±120px','防空迎撃対象。数でSAMを飽和させる'],apply:u=>{u.swarm+=1;}},
  {id:'bigbang',code:'GENESIS BREAKER',t:3,kind:'gamble',name:'ビッグバン・プロトコル',desc:'主砲を巨大化させる大技。火力・範囲ともに跳ねるが自爆も怖い。',detail:['主砲DMG：×1.75','爆発半径：×1.95','着弾スロー演出あり / 1回取得系'],apply:u=>{u.bigbang+=1;},once:true},
- {id:'comet',code:'TWIN COMET Mk.II',t:3,kind:'gamble',name:'ツインコメット',desc:'巨大な彗星弾を2発追加で放つ。派手だが散りとSAM迎撃に注意。',detail:['追加弾：2発 × 所持数','追加弾DMG：主砲の約90% / 発','巨大弾扱い。防空優先度は高い'],apply:u=>{u.comet+=1;}},
+ {id:'comet',code:'TWIN COMET Mk.II',t:3,kind:'gamble',name:'ツインコメット',desc:'巨大な彗星弾を2発追加で放つ。派手だが散りとSAM迎撃に注意。',detail:['追加弾：2発 × 所持数','追加弾DMG：主砲の約90% / 発','爆発半径：×5.5(無駄に特大)','巨大弾扱い。防空優先度は高い'],apply:u=>{u.comet+=1;}},
  {id:'doomsday',code:'Mk.IX RAGNAROK',t:3,kind:'gamble',name:'終末榴弾',desc:'主砲を終末級の威力と範囲へ変える。発射時に自陣も傷む。',detail:['主砲DMG：×2.05','爆発半径：×1.90','反動：自陣へ 4 + 所持数×3 DMG'],apply:u=>{u.doomsday+=1;}},
  {id:'berserk',code:'BERSERK LIMIT',t:3,kind:'gamble',name:'暴走装薬',desc:'火力を大幅に上げる代わりに、砲弾がかなり暴れる。ロマン枠。',detail:['攻撃：主砲DMG ×2.10','デメリット：角度ブレ +8 / POWERブレ ±10','目安：10 → 21 / 直撃最大 約37'],apply:u=>{u.dmg*=2.1;u.spread+=8;u.powSpread+=10;u.gambleSpread+=8;u.gamblePowSpread+=10;}},
  {id:'echo',code:'ECHO SHELL',t:1,kind:'stable',name:'エコーシェル',desc:'着弾の残響が同地点で二度目の爆発を起こす。抉れた地形の奥まで届く。',detail:['残響爆発：着弾0.7秒後に同地点で再爆発','残響DMG：約52%＋所持数で上昇','同ターン内の複数ECHO DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.secondBurst+=1;}},
@@ -1464,7 +1464,7 @@ function fireUnit(from,baseAng,basePow){
     for(let n=0;n<u.comet;n++)for(let side of [-1,1]){
       const jitter=side*(5+n*1.4)+(Math.random()*2-1)*(1.8+effectiveSpread(u,from)*0.18);
       spawnShot(from,baseAng+jitter,clamp(basePow+(Math.random()*2-1)*5,10,100),{
-        big:true,dmg:u.dmg*0.90,radius:u.radius*1.62,delay:18+n*14+(side>0?7:0),bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:'彗星弾'
+        big:true,dmg:u.dmg*0.90,radius:u.radius*5.5,delay:18+n*14+(side>0?7:0),bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:'彗星弾'
       });
     }
   }
