@@ -408,7 +408,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.64 // ADAPTIVE LOAD</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.65 // SAM SET</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -2180,10 +2180,13 @@ function updateInterceptors(dt){
   // v5.12: 弾が増えた時だけパーティクルを薄める。14発以下は従来通り、超えたら反比例で間引き。
   const _dens=projectiles.length+interceptors.length;
   const pThin=_dens>14?14/_dens:1;
+  // v5.65: 生存確認をprojectiles.includes()のO(n)走査からSetのO(1)参照に変更。
+  // 迎撃ミサイルm発×投射物n発でO(n×m)になっていたのを解消(SAM側の重さの主因)。
+  const liveProjectiles=new Set(projectiles);
   for(let i=interceptors.length-1;i>=0;i--){
     const m=interceptors[i],t=m.target;
     if(m.launchDelay>0){m.launchDelay-=dt;continue;}
-    if(!t||!projectiles.includes(t)||t.delay>0){interceptors.splice(i,1);continue;}
+    if(!t||!liveProjectiles.has(t)||t.delay>0){interceptors.splice(i,1);continue;}
     const lead=7+(m.missileNo%3)*2;
     // v5.30: weave(蛇行)を無効化。turnRate旋回と揺れる目標が噛み合って軌跡がカクついていた。
     // 旋回自体が弧を描くのでweaveは役割がかぶる。boost中はtxを使わないので元から無影響。
