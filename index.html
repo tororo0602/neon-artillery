@@ -412,7 +412,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.77 // WHISPER PULL</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.78 // LAST STAND</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -717,11 +717,11 @@ function updateMuteBtn(){
 /* ============ state ============ */
 function makeUnit(){return {
   hp:100,maxhp:100,x:0,y:0,
-  dmg:10,radius:30,shots:1,windres:0,cluster:0,napalm:0,gwell:0,orbital:0,carpet:0,swarm:0,bigbang:0,
+  dmg:10,radius:30,shots:1,windres:0,cluster:0,napalm:0,orbital:0,carpet:0,swarm:0,bigbang:0,
   bounce:0,magnet:0,interceptor:0,comet:0,doomsday:0,prototypeFuse:0,heavy:0,spread:0,powSpread:0,
   gambleSpread:0,gamblePowSpread:0,
-  speedMul:1,loft:0,proximity:0,secondBurst:0,splitWarhead:0,samRange:0,samHit:0,decoy:0,
-  phantom:0,thunder:0,afterimage:0,hellfire:0,samBoost:0,ciws:0,empSam:0
+  speedMul:1,loft:0,secondBurst:0,splitWarhead:0,samRange:0,samHit:0,decoy:0,
+  phantom:0,thunder:0,afterimage:0,hellfire:0,samBoost:0,ciws:0,empSam:0,pierce:0,laststand:0
 };}
 const PERSONAS={
   1:{name:'訓練型ドローン "T-04"',lines:['照準較正中……','訓練モード、継続','記録：命中率、低下']},
@@ -785,7 +785,7 @@ function specialHitMultiplier(from,effect,who){
   return SPECIAL_DECAY[Math.min(n,SPECIAL_DECAY.length-1)];
 }
 const DAMAGE_LABELS={
-  shell:'主砲',direct:'直撃',proximity:'近接信管',thunder:'サンダー',orbital:'レーザー',echo:'エコー',
+  shell:'主砲',direct:'直撃',thunder:'サンダー',orbital:'レーザー',echo:'エコー',
   napalm:'炎上',cluster:'子弾',hellfire:'ヘルファイア',swarm:'スウォーム',carpet:'爆撃',comet:'彗星弾',
   split:'分裂弾',afterimage:'残像弾',doomsday:'終末榴弾',bigbang:'ビッグバン',recoil:'反動'
 };
@@ -949,9 +949,9 @@ const CARDS=[
  {id:'bounce',code:'RICOCHET ONE',t:1,kind:'stable',name:'バウンド弾',desc:'地形に当たった時、1回だけ跳ねる。壁越え後の変則ヒットを狙える。',detail:['地形バウンド：+1回','壁は破壊不能。壁そのものでは跳ね返らない','跳ねた後は速度が落ちる'],apply:u=>{u.bounce+=1;}},
  {id:'cluster',code:'HYDRA SEEDS',t:2,kind:'stable',name:'クラスターボム',desc:'着弾後に小型子弾を散らす。直撃より、周辺制圧と削り向け。',detail:['着弾時：子弾10発 × 所持数','子弾DMG：主砲の約21% / 小爆発','同ターン内の子弾コアDMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.cluster+=1;}},
  {id:'napalm',code:'PROMETHEUS CODE',t:2,kind:'stable',name:'ナパームコード',desc:'着弾点を炎上させ、範囲内の敵コアに継続ダメージを入れる。',detail:['炎上：4ターン残留','継続DMG：4 × 所持数 / ターン','同ターン内の複数炎上DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.napalm+=1;}},
- {id:'gwell',code:'EVENT HORIZON',t:2,kind:'stable',name:'グラビティウェル',desc:'着弾点を重力崩壊させ、地形を大きく削る。地形勝負用。',detail:['直接DMG：なし','地形破壊：大。遮蔽や足場を崩す','中央の破壊不能壁は削れない / 1回取得系'],apply:u=>{u.gwell+=1;},once:true},
+ {id:'laststand',code:'LAST STAND FUZE',t:3,kind:'gamble',name:'ラストスタンド信管',desc:'自コアが傷つくほど信管が過敏になり、爆発が大きく荒々しくなる崖っぷち仕様。',detail:['自コアのHPが低いほど着弾ダメージが増加(最大 HP1%で+60% / 枚)','満タンHPでは効果なし','爆発の粒子・カメラシェイクもHPが低いほど派手になる'],apply:u=>{u.laststand=(u.laststand||0)+1;}},
  {id:'magnet',code:'LODESTAR',t:2,kind:'stable',name:'電磁誘導弾',desc:'飛翔中に敵コア方向へ曲がる。完全追尾ではないが、以前よりかなり頼れる。',detail:['誘導：中程度。下降中はさらに強く敵コアへ寄る','重ねるほど曲がりやすい','壁に向かう低弾道は救えない'],apply:u=>{u.magnet+=1;}},
- {id:'proximity',code:'AIRBURST FUZE',t:2,kind:'stable',name:'近接信管',desc:'敵コアの近くを通過した時に空中爆発する。直撃できない時の保険。',detail:['発動：敵コア近くで空中爆発','空中爆発DMG：約72%〜90%','同ターン内の複数発動DMGは 100%→45%→20%→10% に減衰'],apply:u=>{u.proximity+=1;}},
+ {id:'pierce',code:'PIERCING SLUG',t:2,kind:'gamble',name:'貫通徹甲弾',desc:'コアへ深くめり込んでから炸裂する徹甲弾頭。直撃した時だけ大きく伸びる、外れても何も起きないハイリスク仕様。',detail:['直撃(CRIT)時のみ：ダメージ +35% / 枚','近接ヒットや外れには一切ボーナスなし','対象：主砲弾・残像弾・彗星弾のみ'],apply:u=>{u.pierce=(u.pierce||0)+1;}},
  {id:'split',code:'GEMINI WARHEAD',t:2,kind:'stable',name:'分裂弾頭',desc:'最高高度付近で弾頭が左右に割れる。中央壁を越えた後の面制圧に強い。',detail:['分裂：主砲弾が頂点付近で2発に分かれる','分裂弾DMG：各弾 約60%〜。重ねるとさらに上昇','分裂弾はSAM迎撃対象。追加効果の連鎖は抑制'],apply:u=>{u.splitWarhead+=1;}},
  {id:'radar',code:'ARGUS EYE',t:2,kind:'stable',name:'防空レーダー',desc:'防空圏を広げ、SAMの迎撃精度を少し上げる。爆撃・スウォーム対策。',detail:['防空範囲：+90m','SAM命中：+5% / 枚','迎撃ミサイル本数は増えない'],apply:u=>{u.samRange+=1;u.samHit+=1;}},
  {id:'chaff',code:'GHOST VEIL',t:2,kind:'stable',name:'チャフ散布弾',desc:'自軍の攻撃兵装に妨害片を撒き、敵SAMに落とされにくくする。',detail:['敵SAM命中率：-13% / 枚','対象：主砲弾 / 爆撃弾 / スウォーム','防空を突破するための支援カード'],apply:u=>{u.decoy+=1;}},
@@ -1081,20 +1081,21 @@ function draftPool(owned=G.owned,turn=G.turn,excludeIds=[],opts={}){
 function enemyCardScore(c){
   const owned=G.enemyOwned||{},lv=G.enemyLevel||3,od=enemyOverdriveActive();
   // v4.6: 実戦計測（同条件シードでの命中ダメージ比較）に基づき、
-  // 過大評価だったproximity/splitを下げ、過小評価だったwide/heavyを上げた。
+  // 過大評価だったsplitを下げ、過小評価だったwide/heavyを上げた。
   const value={
     amp:22,wide:22,twin:24,fin:18,stab:18,bounce:9,echo:19,
-    cluster:24,napalm:23,gwell:14,magnet:22,proximity:10,split:12,radar:25,chaff:22,interceptor:24,samboost:20,ciws:27,empsam:32,phantom:20,thunder:26,
+    cluster:24,napalm:23,magnet:22,pierce:16,split:12,radar:25,chaff:22,interceptor:24,samboost:20,ciws:27,empsam:32,phantom:20,thunder:26,
     oc:20,proto:12,heavy:20,
-    orbital:22,carpet:30,swarm:34,bigbang:26,comet:28,doomsday:18,berserk:20,afterimage:36,hellfire:32
+    orbital:22,carpet:30,swarm:34,bigbang:26,comet:28,doomsday:18,berserk:20,afterimage:36,hellfire:32,laststand:24
   };
   let v=(value[c.id]||14)+c.t*7;
   if(c.once&&owned[c.id])v-=80;
   if(c.kind==='gamble')v+=lv>=4?4:-10;
   if(c.id==='chaff'&&(owned.swarm||owned.carpet||owned.hellfire))v+=18;
   if(c.id==='interceptor'||c.id==='radar'||c.id==='samboost'||c.id==='ciws'||c.id==='empsam')v+=Math.max(0,10-G.enemy.hp/G.enemy.maxhp*10);
+  if(c.id==='laststand')v+=Math.max(0,16-G.enemy.hp/G.enemy.maxhp*16);
   if((c.id==='ciws'||c.id==='empsam')&&(G.player.swarm||G.player.carpet||G.player.hellfire))v+=14;
-  if((c.id==='wide'||c.id==='proximity'||c.id==='thunder')&&owned.amp)v+=6;
+  if((c.id==='wide'||c.id==='thunder')&&owned.amp)v+=6;
   if((c.id==='swarm'||c.id==='carpet'||c.id==='hellfire')&&owned.chaff)v+=12;
   if(c.id==='fin'&&((G.enemy.gambleSpread||0)+(G.enemy.gamblePowSpread||0))>4)v+=12;
   if(od&&c.t===3)v+=18;
@@ -1268,7 +1269,6 @@ function spawnShot(from,ang,pow,opts){
     orbitBias:o.orbitBias||0,
     launchAng:o.launchAng!=null?o.launchAng:55,arcT:null,
     aimX:o.aimX!=null?o.aimX:null,aimY:o.aimY!=null?o.aimY:null,
-    proximity:o.proximity!=null?o.proximity:u.proximity,
     secondBurst:o.secondBurst!=null?o.secondBurst:u.secondBurst,
     splitWarhead:o.splitWarhead!=null?o.splitWarhead:u.splitWarhead,
     splitChild:!!o.splitChild,_splitDone:!!o._splitDone,_prevVy:null,
@@ -1437,7 +1437,7 @@ function fireUnit(from,baseAng,basePow){
     const shotPow=clamp(basePow+pJitter,10,100);
     const dmg=u.dmg*multiFactor*(big?1.75:1)*(doom?2.05:1);
     const rad=u.radius*MAIN_BLAST_RADIUS_MULT*(big?1.95:1)*(doom?1.9:1);
-    spawnShot(from,baseAng+(i-(mainCount-1)/2)*1.35+jitter,shotPow,{mainPayload:true,big:big||doom,dmg,radius:rad,delay:i*8,bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:doom?'終末榴弾':(big?'ビッグバン':'主砲')});
+    spawnShot(from,baseAng+(i-(mainCount-1)/2)*1.35+jitter,shotPow,{mainPayload:true,big:big||doom,dmg,radius:rad,delay:i*8,bounces:u.bounce,magnet:u.magnet,fuseRisk,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:doom?'終末榴弾':(big?'ビッグバン':'主砲')});
   }
   // v4: ファントムラウンド — SAM迎撃を吸う幻影弾（本体と同弾道±ブレ）
   if(u.phantom>0){
@@ -1453,7 +1453,7 @@ function fireUnit(from,baseAng,basePow){
     for(let k=0;k<an;k++){
       spawnShot(from,baseAng+(Math.random()*2-1)*0.4,basePow,
         {dmg:u.dmg*multiFactor*0.65,radius:u.radius*1.0,delay:34+k*13,ghost:true,
-         bounces:u.bounce,magnet:u.magnet,proximity:u.proximity,decoy:u.decoy,damageLabel:'残像弾'});
+         bounces:u.bounce,magnet:u.magnet,decoy:u.decoy,damageLabel:'残像弾'});
     }
     floater(muzzle(from).x,muzzle(from).y-64,'AFTERIMAGE ×'+an,from==='player'?'#bff7ff':'#ffb3c8',false);
   }
@@ -1467,7 +1467,7 @@ function fireUnit(from,baseAng,basePow){
     for(let n=0;n<u.comet;n++)for(let side of [-1,1]){
       const jitter=side*(5+n*1.4)+(Math.random()*2-1)*(1.8+effectiveSpread(u,from)*0.18);
       spawnShot(from,baseAng+jitter,clamp(basePow+(Math.random()*2-1)*5,10,100),{
-        big:true,dmg:u.dmg*0.90,radius:u.radius*5.5,delay:18+n*14+(side>0?7:0),bounces:u.bounce,magnet:u.magnet,fuseRisk,proximity:u.proximity,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:'彗星弾'
+        big:true,dmg:u.dmg*0.90,radius:u.radius*5.5,delay:18+n*14+(side>0?7:0),bounces:u.bounce,magnet:u.magnet,fuseRisk,secondBurst:u.secondBurst,splitWarhead:u.splitWarhead,decoy:u.decoy,damageLabel:'彗星弾'
       });
     }
   }
@@ -1573,21 +1573,28 @@ function explode(x,y,r,dmg,from,opts){
   const colsP=from==='player'?['#00f0ff','#7ef9ff','#ffffff','#2aa8ff']:['#ff2d78','#ff7ab0','#ffffff','#ff9d3d'];
   // v5.64: 重い時(perfHeavy: ターン経過/弾数過多/FPS低下)は爆発の粒子・デブリ・リングを間引く。
   const heavy=perfHeavy();
-  burst(x,y,Math.round((o.big?125:52)*(heavy?0.35:1)),colsP,o.big?8:5,o.big?56:36);
-  debris(x,y,Math.round((o.big?14:7)*(heavy?0.4:1)),from==='player'?'#0a4a5a':'#5a0a2a');
-  shake(o.big?16:8);punch(o.big?12:4);sfx(o.big?'bigboom':'boom');
+  // v5.78: ラストスタンド信管 — 発射側の自コアHPが低いほど、この爆発の派手さ・ダメージが増す。
+  const lsMul=u.laststand?1+(1-clamp(u.hp/u.maxhp,0,1))*0.6*u.laststand:1;
+  const lsVis=Math.min(2.4,lsMul);
+  burst(x,y,Math.round((o.big?125:52)*(heavy?0.35:1)*lsVis),colsP,o.big?8:5,o.big?56:36);
+  debris(x,y,Math.round((o.big?14:7)*(heavy?0.4:1)*lsVis),from==='player'?'#0a4a5a':'#5a0a2a');
+  shake((o.big?16:8)*lsVis);punch((o.big?12:4)*lsVis);sfx(o.big?'bigboom':'boom');
   if(o.big){slowmo(0.75);flash(.45);glitch(12);}
   beams.push({type:'ring',x,y,r:6,max:r*1.55,life:20,c:colsP[0]});
   if(!heavy)beams.push({type:'ring',x,y,r:2,max:r*2.1,life:28,c:'#ffffff'});
   beams.push({type:'flash',x,y,r:o.big?r*1.6:r*1.1,life:o.big?14:9,max:o.big?14:9,c:colsP[0]}); // v5
   // v4.6: ダメージ判定は掘削(carve)前のコア座標で行う。先に掘ってしまうと dropCores() で
   // コアのY座標が動き、爆発半径が広いカードほど自分の爆発で判定距離を悪化させていた。
+  // v5.78: 貫通徹甲弾 — 主砲弾/残像弾/彗星弾の直撃(CRIT)だけダメージを大きく伸ばす。外れ・近接ヒットには無関係。
+  const pierceEligible=o.damageLabel==='主砲'||o.damageLabel==='終末榴弾'||o.damageLabel==='ビッグバン'||o.damageLabel==='残像弾'||o.damageLabel==='彗星弾';
   [['player',G.player],['enemy',G.enemy]].forEach(([who,c])=>{
     const d=Math.hypot(x-c.x,y-c.y);
     if(d<r+CORE_R){
       let mult=Math.max(0.20,1-d/(r+CORE_R));
       let crit=d<CORE_R*1.35;
       let val=dmg*mult*(crit?1.75:1);
+      if(crit&&pierceEligible&&u.pierce&&who!==from)val*=1+0.35*u.pierce;
+      val*=lsMul;
       if(from===who)val*=0.45;
       if(o.specialEffect)dealSpecialDamage(who,val,crit,from,o.specialEffect,o.damageLabel);
       else dealDamage(who,val,crit,o.damageLabel||damageLabel(o.big?'bigbang':'shell'));
@@ -1597,17 +1604,11 @@ function explode(x,y,r,dmg,from,opts){
   if(u.secondBurst>0&&payloadOk&&!o.noSecond)
     setTimeout(()=>{if(G.over)return;
       const rr=r*(0.62+Math.min(0.20,u.secondBurst*0.05));
-      explode(x,y,rr,dmg*(0.52+Math.min(0.20,u.secondBurst*0.05)),from,{child:true,noWell:true,noOrb:true,noSecond:true,specialEffect:'echo',damageLabel:'エコー'});
+      explode(x,y,rr,dmg*(0.52+Math.min(0.20,u.secondBurst*0.05)),from,{child:true,noOrb:true,noSecond:true,specialEffect:'echo',damageLabel:'エコー'});
       floater(x,y-24,'ECHO',from==='player'?'#00f0ff':'#ff2d78',false);
     },700);
   if(u.napalm>0&&payloadOk)
     fires.push({from,x,y:tY(x),r:28+u.napalm*9,life:4,dmg:4*u.napalm});
-  if(u.gwell>0&&!o.noWell&&payloadOk)
-    setTimeout(()=>{if(G.over)return;
-      beams.push({type:'well',x,y:y-10,r:0,max:64,life:48,c:'#a24dff'});
-      carve(x,y-6,r*1.0);shake(9);glitch(7);sfx('laser');
-      burst(x,y,44,['#a24dff','#d9b3ff','#ffffff'],6,42);
-    },220);
   if(u.orbital>0&&payloadOk&&!o.noOrb)
     setTimeout(()=>{if(G.over)return;fireOrbital(x,from);},350);
   // v4.1: ライトニングアーク — 着弾点が敵コアに近い時だけ放電。遠すぎる外し拾いは無効
@@ -1636,7 +1637,7 @@ function explode(x,y,r,dmg,from,opts){
         homing:false,big:false,child:true,hellfire:true,bomb:false,bounces:0,magnet:0,
         specialEffect:'hellfire',damageLabel:'ヘルファイア',
         gravityScale:0.55,fuseRisk:0,fuseT:null,dmg:u.dmg*0.28,radius:25,
-        swarmMissile:false,swarmPhase:null,orbitBias:0,proximity:0,secondBurst:0,splitWarhead:0,
+        swarmMissile:false,swarmPhase:null,orbitBias:0,secondBurst:0,splitWarhead:0,
         splitChild:false,_splitDone:true,_prevVy:null,decoy:u.decoy||0,
         _wallAvoids:0,_interceptStarted:false,_interceptCount:0,
         c:projectileColor(from,{hellfire:true,child:true}),
@@ -1873,7 +1874,6 @@ function currentEffectSummary(u){
   const windCut=Math.min(70,Math.round((u.windres||0)*100));
   const mainCount=u.shots;
   const multiFactor=mainCount>1?clamp(1-0.08*(mainCount-1),0.58,0.86):1;
-  const proxFrac=(u.proximity||0)>0?0.72+Math.min(0.18,u.proximity*0.05):0;
   const splitFrac=(u.splitWarhead||0)>0?0.60+Math.min(0.18,u.splitWarhead*0.045):0;
   const echoFrac=(u.secondBurst||0)>0?0.52+Math.min(0.20,u.secondBurst*0.05):0;
   const heavyPct=Math.round(Math.min(75,(u.heavy||0)*22));
@@ -1887,7 +1887,7 @@ function currentEffectSummary(u){
     ['風軽減',windCut+'% / 軽減上限70%'],
     ['バウンド',u.bounce+'回'],
     ['誘導',(u.magnet||0)+'段階 / 主砲が敵コアへ少し曲がる'],
-    ['近接信管',(u.proximity||0)+'段階 / 発動時 '+n1(u.dmg*proxFrac)+'dmg (=主砲'+u.dmg.toFixed(1)+'×'+Math.round(proxFrac*100)+'%)'],
+    ['貫通徹甲弾',(u.pierce||0)+'枚 / 直撃時のみダメージ×'+(1+0.35*(u.pierce||0)).toFixed(2)],
     ['分裂弾頭',(u.splitWarhead||0)+'枚 / 分裂後1発 '+n1(u.dmg*splitFrac)+'dmg (=主砲'+u.dmg.toFixed(1)+'×'+Math.round(splitFrac*100)+'%)'],
     ['クラスターボム',(u.cluster||0)+'枚 / 子弾'+(10*(u.cluster||0))+'発 × 各'+n1(u.dmg*0.21)+'dmg'],
     ['ナパームコード',(u.napalm||0)+'枚 / 炎上'+(4*(u.napalm||0))+'dmg×4ターン'],
@@ -1908,7 +1908,8 @@ function currentEffectSummary(u){
     ['EMP迎撃弾',(u.empSam||0)+'枚 / 迎撃成功時、半径'+Math.round(70+(u.empSam||0)*28)+'pxの敵兵装を減速'],
     ['チャフ散布弾',(u.decoy||0)+'枚 / 敵SAM命中 -'+Math.round(Math.min(34,(u.decoy||0)*13))+'%'],
     ['過積載弾頭',(u.heavy||0)+'枚 / 重力影響 +'+heavyPct+'%(飛距離低下)'],
-    ['試作信管',(u.prototypeFuse||0)+'枚 / 自爆リスク '+fuseRisk+'%/発']
+    ['試作信管',(u.prototypeFuse||0)+'枚 / 自爆リスク '+fuseRisk+'%/発'],
+    ['ラストスタンド信管',(u.laststand||0)+'枚 / 現在HP'+Math.round(Math.max(0,u.hp)/u.maxhp*100)+'%で着弾ダメージ×'+(u.laststand?(1+(1-clamp(u.hp/u.maxhp,0,1))*0.6*u.laststand).toFixed(2):'1.00')]
   ];
 }
 function renderEffectPanel(){
@@ -2196,7 +2197,7 @@ function interceptDetonation(t,m){
   if(!t||!t.mainPayload)return false;
   const r=Math.max(18,t.radius*INTERCEPT_MAIN_BLAST_RADIUS);
   const d=t.dmg*INTERCEPT_MAIN_BLAST_DAMAGE;
-  explode(t.x,t.y,r,d,t.from,{big:false,child:true,noWell:true,noOrb:true,noThunder:true,noHell:true,noSecond:true,damageLabel:'迎撃爆発'});
+  explode(t.x,t.y,r,d,t.from,{big:false,child:true,noOrb:true,noThunder:true,noHell:true,noSecond:true,damageLabel:'迎撃爆発'});
   floater(t.x,t.y-34,'INTERCEPT BLAST',m.c,false);
   return true;
 }
@@ -2293,7 +2294,7 @@ function splitProjectileAtApex(p){
       bounces:p.bounces||0,magnet:p.magnet||0,gravityScale:p.gravityScale||1,
       fuseRisk:0,fuseT:null,dmg:childDmg,radius:childRad,
       swarmMissile:false,swarmPhase:null,orbitBias:0,
-      proximity:0,secondBurst:0,splitWarhead:0,decoy:p.decoy||0,damageLabel:'分裂弾',
+      secondBurst:0,splitWarhead:0,decoy:p.decoy||0,damageLabel:'分裂弾',
       _wallAvoids:0,_interceptStarted:false,_interceptCount:0,
       c:projectileColor(p.from,{splitChild:true,child:true}),
       trail:[...p.trail.slice(-8)],delay:0,life:Math.min(520,p.life||520)
@@ -2442,7 +2443,7 @@ function update(dt){
         if(p.fuseT<=0){
           projectiles.splice(i,1);
           msg('試作信管 自爆',650);glitch(6);shake(6);
-          explode(p.x,p.y,p.radius*0.75,p.dmg*0.45,p.from,{big:false,child:true,noWell:true,noOrb:true});
+          explode(p.x,p.y,p.radius*0.75,p.dmg*0.45,p.from,{big:false,child:true,noOrb:true});
           break;
         }
       }
@@ -2456,7 +2457,6 @@ function update(dt){
       const sxAim=p._plungeX!=null?p._plungeX:p.aimX,syAim=p._plungeY!=null?p._plungeY:p.aimY;
       const distAim=(p.swarmMissile&&p.swarmPhase==='plunge'&&sxAim!=null)?Math.hypot(p.x-sxAim,p.y-syAim):Infinity;
       const hitAim=distAim<26;
-      const proximityHit=p.proximity&&!p.child&&!p.bomb&&!p.swarmMissile&&!hitCore&&distFoe<CORE_R+24+p.proximity*8;
       const hitOwn=Math.hypot(p.x-own.x,p.y-own.y)<CORE_R&&p.life<660;
       if(hitWall){
         const hp=wallHitPoint(oldX,oldY,p.x,p.y);
@@ -2476,7 +2476,7 @@ function update(dt){
         G.lastImpactX=hp.x;
         floater(hp.x,hp.y-18,'WALL BLOCK',p.from==='player'?'#00f0ff':'#ff2d78',false);
         sfx('clang');
-        explode(hp.x,hp.y,p.radius*0.82,p.dmg*0.55,p.from,{big:p.big,child:p.child,mainPayload:p.mainPayload,noCarve:true,noWell:true,noOrb:true,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
+        explode(hp.x,hp.y,p.radius*0.82,p.dmg*0.55,p.from,{big:p.big,child:p.child,mainPayload:p.mainPayload,noCarve:true,noOrb:true,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
         break;
       }
       if(hitG&&!hitCore&&p.bounces>0&&p.vy>0&&p.x>=0&&p.x<=WORLD_W){
@@ -2486,7 +2486,7 @@ function update(dt){
         sfx('bounce');
         continue;
       }
-      if(hitG||hitCore||hitAim||hitOwn||proximityHit||p.x<-120||p.x>WORLD_W+120||p.life<=0){
+      if(hitG||hitCore||hitAim||hitOwn||p.x<-120||p.x>WORLD_W+120||p.life<=0){
         projectiles.splice(i,1);
         if(p.phantom){
           burst(p.x,Math.min(p.y,tY(p.x)),14,[p.from==='player'?'#7ef9ff':'#ff7ab0','#ffffff'],2.6,20);
@@ -2494,18 +2494,10 @@ function update(dt){
           break;
         }
         if(p.x>-120&&p.x<WORLD_W+120&&p.y<H+70){
-          if(proximityHit){
-            floater(p.x,p.y-16,'PROXIMITY',p.from==='player'?'#00f0ff':'#ff2d78',false);
-            // v4.4: 近接信管は発動距離と爆発半径を一致。
-            // 「PROXIMITYは出たのにダメージが入らない」空振りゾーンを解消。
-            const proxR=CORE_R+30+p.proximity*10;
-            explode(p.x,p.y,proxR,p.dmg*(0.72+Math.min(0.18,p.proximity*0.05)),p.from,{big:false,child:p.child,mainPayload:p.mainPayload,noCarve:true,specialEffect:'proximity',damageLabel:'近接信管'});
-          }else{
-            const swarmAimImpact=p.swarmMissile&&(p._plungeX!=null||p.aimX!=null)&&(hitAim||hitG||p.life<=0);
-            const ix=swarmAimImpact?clamp(p._plungeX!=null?p._plungeX:p.aimX,0,WORLD_W):p.x;
-            const iy=swarmAimImpact?Math.min(p._plungeY!=null?p._plungeY:(p.aimY!=null?p.aimY:tY(ix)),tY(ix)):Math.min(p.y,tY(p.x));
-            explode(ix,iy,p.radius,p.dmg,p.from,{big:p.big,child:p.child,mainPayload:p.mainPayload,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
-          }
+          const swarmAimImpact=p.swarmMissile&&(p._plungeX!=null||p.aimX!=null)&&(hitAim||hitG||p.life<=0);
+          const ix=swarmAimImpact?clamp(p._plungeX!=null?p._plungeX:p.aimX,0,WORLD_W):p.x;
+          const iy=swarmAimImpact?Math.min(p._plungeY!=null?p._plungeY:(p.aimY!=null?p.aimY:tY(ix)),tY(ix)):Math.min(p.y,tY(p.x));
+          explode(ix,iy,p.radius,p.dmg,p.from,{big:p.big,child:p.child,mainPayload:p.mainPayload,specialEffect:p.specialEffect,damageLabel:p.damageLabel});
           const cu=unit(p.from);
           if(cu.cluster>0&&!p.child&&!p.homing&&!p.bomb){
             for(let k=0;k<10*cu.cluster;k++)
