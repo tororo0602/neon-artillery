@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.60 // TRUE LODESTAR</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.61 // LODESTAR PULL</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -1384,7 +1384,8 @@ function simDist(ang,pow){
     // v4.6: 誘導カード（magnet）の飛翔中補正も内部モデルに反映。ここを無視すると、
     // 実弾道だけがコア方向へ微妙に曲がり、絞り込んだ弾道ほど大きく外れてしまう。
     if(G.enemy.magnet>0){
-      const ma=Math.atan2(G.player.y-y,G.player.x-x),downMag=vy>0?1.55:1,mm=Math.min(0.18,0.038*G.enemy.magnet*downMag);
+      // v5.61: 実弾道側の強化(最大2倍・降下倍率2.2)に追随。
+      const ma=Math.atan2(G.player.y-y,G.player.x-x),downMag=vy>0?2.2:1,mm=Math.min(0.36,0.076*G.enemy.magnet*downMag);
       vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
     }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
@@ -2332,7 +2333,8 @@ function update(dt){
         }
         const a=Math.atan2(ty-p.y,tx-p.x);p.vx+=Math.cos(a)*accel*pdt;p.vy+=Math.sin(a)*accel*pdt;
       }else if(p.magnet>0&&!p.child&&!p.bomb){
-        const a=Math.atan2(tgt.y-p.y,tgt.x-p.x),downMag=p.vy>0?1.55:1,m=Math.min(0.18,0.038*p.magnet*downMag);
+        // v5.61: LODESTAR強化(最大2倍)。降下中は特に強く吸い寄せられるよう降下倍率も引き上げ。
+        const a=Math.atan2(tgt.y-p.y,tgt.x-p.x),downMag=p.vy>0?2.2:1,m=Math.min(0.36,0.076*p.magnet*downMag);
         p.vx+=Math.cos(a)*m*pdt;p.vy+=Math.sin(a)*m*pdt;
       }
       const maxSp=p.homing?HOMING_MAX_SPEED:(p.big?BIG_ARTILLERY_MAX_SPEED:ARTILLERY_MAX_SPEED);
@@ -2875,11 +2877,6 @@ function simulateGuideTrajectory(from,ang,pow,collect,useWind){
     const gAcc=GRAV*(1+Math.min(0.75,u.heavy*0.22))*SHELL_GRAV_SCALE;
     vx+=G.wind*wf;
     vy+=gAcc;
-    // v5.60: LODESTAR(magnet)の飛翔中補正を予測線にも反映。実弾道(update)・敵AI照準(simDist)と揃える。
-    if(u.magnet>0){
-      const ma=Math.atan2(foe.y-y,foe.x-x),downMag=vy>0?1.55:1,mm=Math.min(0.18,0.038*u.magnet*downMag);
-      vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
-    }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
     x+=vx;y+=(vy-0.5*gAcc);
     if(y<minY)minY=y;
@@ -3003,17 +3000,11 @@ function simulateAimPreviewTrajectory(useWind,fullRun){
   let x=m.x,y=m.y,vx=Math.cos(rad)*sp,vy=-Math.sin(rad)*sp*(1+(u.loft||0)*0.08);
   const pts=[{x,y}],stopX=(WORLD_W*0.50+G.enemy.x)/2; // v5.19: 中央〜敵拠点の中間まで伸ばす
   const wf=useWind?WIND_FORCE*(1-Math.min(0.7,u.windres)):0;
-  const foe=G.enemy;
   for(let i=0;i<(fullRun?720:360);i++){
     const ox=x,oy=y;
     const gAcc=GRAV*(1+Math.min(0.75,u.heavy*0.22))*SHELL_GRAV_SCALE;
     vx+=G.wind*wf;
     vy+=gAcc;
-    // v5.60: LODESTAR(magnet)の飛翔中補正を予測線にも反映。実弾道(update)・敵AI照準(simDist)と揃える。
-    if(u.magnet>0){
-      const ma=Math.atan2(foe.y-y,foe.x-x),downMag=vy>0?1.55:1,mm=Math.min(0.18,0.038*u.magnet*downMag);
-      vx+=Math.cos(ma)*mm;vy+=Math.sin(ma)*mm;
-    }
     const spNow=Math.hypot(vx,vy);if(spNow>ARTILLERY_MAX_SPEED){vx*=ARTILLERY_MAX_SPEED/spNow;vy*=ARTILLERY_MAX_SPEED/spNow;}
     x+=vx;y+=(vy-0.5*gAcc);
     pts.push({x,y});
