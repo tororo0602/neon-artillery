@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.61 // LODESTAR PULL</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.62 // FULL DISCLOSURE</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -1840,21 +1840,47 @@ const effectPanel=document.getElementById('effectPanel');if(effectPanel)effectPa
 
 function escHtml(v){return String(v).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
 function fmtPct(v){return Math.round(v*100)+'%';}
+function n1(v){return Math.round(v*10)/10;}
 function currentEffectSummary(u){
   const windCut=Math.min(70,Math.round((u.windres||0)*100));
+  const mainCount=u.shots;
+  const multiFactor=mainCount>1?clamp(1-0.08*(mainCount-1),0.58,0.86):1;
+  const proxFrac=(u.proximity||0)>0?0.72+Math.min(0.18,u.proximity*0.05):0;
+  const splitFrac=(u.splitWarhead||0)>0?0.60+Math.min(0.18,u.splitWarhead*0.045):0;
+  const echoFrac=(u.secondBurst||0)>0?0.52+Math.min(0.20,u.secondBurst*0.05):0;
+  const heavyPct=Math.round(Math.min(75,(u.heavy||0)*22));
+  const fuseRisk=Math.round(Math.min(48,25*(u.prototypeFuse||0)));
   return [
     ['主砲DMG',u.dmg.toFixed(1)+' / 基礎10からカードで変動'],
     ['爆発半径',u.radius.toFixed(1)+' / 基礎30。大きいほど近距離ヒットを拾う'],
-    ['主砲発射数',u.shots+'発 / 複数発は1発ごとに多弾減衰あり'],
+    ['主砲発射数',mainCount+'発 (1発あたり '+n1(u.dmg*multiFactor)+' = 主砲'+u.dmg.toFixed(1)+'×多弾減衰'+Math.round(multiFactor*100)+'%)'],
     ['角度ブレ',(u.spread||0).toFixed(1)+' / 低いほど狙いが安定'],
     ['POWERブレ','±'+(u.powSpread||0).toFixed(1)+' / 低いほど飛距離が安定'],
     ['風軽減',windCut+'% / 軽減上限70%'],
     ['バウンド',u.bounce+'回'],
     ['誘導',(u.magnet||0)+'段階 / 主砲が敵コアへ少し曲がる'],
-    ['近接信管',(u.proximity||0)+'段階 / 敵コア付近で空中爆発'],
-    ['分裂弾頭',(u.splitWarhead||0)+'枚 / 頂点通過で左右2発に分裂'],
+    ['近接信管',(u.proximity||0)+'段階 / 発動時 '+n1(u.dmg*proxFrac)+'dmg (=主砲'+u.dmg.toFixed(1)+'×'+Math.round(proxFrac*100)+'%)'],
+    ['分裂弾頭',(u.splitWarhead||0)+'枚 / 分裂後1発 '+n1(u.dmg*splitFrac)+'dmg (=主砲'+u.dmg.toFixed(1)+'×'+Math.round(splitFrac*100)+'%)'],
+    ['クラスターボム',(u.cluster||0)+'枚 / 子弾'+(10*(u.cluster||0))+'発 × 各'+n1(u.dmg*0.21)+'dmg'],
+    ['ナパームコード',(u.napalm||0)+'枚 / 炎上'+(4*(u.napalm||0))+'dmg×4ターン'],
+    ['エコーシェル',(u.secondBurst||0)+'枚 / 残響'+n1(u.dmg*echoFrac)+'dmg (=主砲×'+Math.round(echoFrac*100)+'%、0.7秒後)'],
+    ['ライトニングアーク',(u.thunder||0)+'枚 / 最大'+n1(7.5*(u.thunder||0))+'dmg (250px圏内、距離減衰あり)'],
+    ['オービタルレーザー',(u.orbital||0)+'枚 / 追加照射'+n1(11*(u.orbital||0))+'dmg'],
+    ['カーペットボム',(u.carpet||0)+'枚 / 爆弾'+(12*(u.carpet||0))+'発 × 各'+n1(u.dmg*0.33)+'dmg'],
+    ['ミサイルスウォーム',(u.swarm||0)+'枚 / 直撃1発 '+n1(u.dmg*0.26)+'dmg + 周辺'+Math.max(0,14*(u.swarm||0)-1)+'発 × 各'+n1(u.dmg*0.16)+'dmg'],
+    ['ツインコメット',(u.comet||0)+'枚 / 追加弾'+(2*(u.comet||0))+'発 × 各'+n1(u.dmg*0.90)+'dmg'],
+    ['終末榴弾 反動',(u.doomsday||0)+'枚 / 発射毎に自陣へ '+(u.doomsday?4+u.doomsday*3:0)+'dmg'],
+    ['ヘルファイアレイン',(u.hellfire||0)+'枚 / 降雨'+(7*(u.hellfire||0))+'発 × 各'+n1(u.dmg*0.28)+'dmg'],
+    ['アフターイメージ',(u.afterimage||0)+'枚 / 追撃'+(3*(u.afterimage||0))+'発 × 各'+n1(u.dmg*multiFactor*0.65)+'dmg'],
+    ['ファントムラウンド',(u.phantom||0)+'枚 / 幻影'+(4*(u.phantom||0))+'発 × 各'+n1(u.dmg*0.15)+'dmg(おとり)'],
     ['SAM迎撃数',u.interceptor+'発 / 初期0発、カードで獲得'],
-    ['SAM補正','範囲+'+Math.round((u.samRange||0)*90)+'m相当 / 命中+'+Math.round((u.samHit||0)*5)+'%相当']
+    ['SAM補正','範囲+'+Math.round((u.samRange||0)*90)+'m相当 / 命中+'+Math.round((u.samHit||0)*5)+'%相当'],
+    ['高速SAMブースター',(u.samBoost||0)+'枚 / SAM速度・加速 +'+Math.round((u.samBoost||0)*12)+'%、再斉射短縮'],
+    ['近接防御CIWS',(u.ciws||0)+'枚 / 爆弾・スウォームへのSAM命中 +'+Math.round((u.ciws||0)*15)+'%'],
+    ['EMP迎撃弾',(u.empSam||0)+'枚 / 迎撃成功時、半径'+Math.round(70+(u.empSam||0)*28)+'pxの敵兵装を減速'],
+    ['チャフ散布弾',(u.decoy||0)+'枚 / 敵SAM命中 -'+Math.round(Math.min(34,(u.decoy||0)*13))+'%'],
+    ['過積載弾頭',(u.heavy||0)+'枚 / 重力影響 +'+heavyPct+'%(飛距離低下)'],
+    ['試作信管',(u.prototypeFuse||0)+'枚 / 自爆リスク '+fuseRisk+'%/発']
   ];
 }
 function renderEffectPanel(){
@@ -1869,19 +1895,8 @@ function renderEffectPanel(){
   }).join(''):'<div class="effectOwned"><b>カードなし</b><p>まだ強化カードを取得していない。ターン終了後のSYSTEM UPGRADEで1枚ずつ効果が増える。</p></div>';
   body.innerHTML=`<div class="effectSection"><h3>現在の合計ステータス</h3><div class="effectGrid">${stats}</div></div><div class="effectSection"><h3>所持カード詳細</h3>${ownedHtml}</div><div class="effectSection"><h3>共通ルール</h3><div class="effectStat">ヘルファイア・ナパーム・サンダー・レーザー系はメイン弾の爆発からだけ発動。スウォーム、爆撃、子弾、分裂子弾、残像弾からは連鎖しない。</div><div class="effectStat">カード特殊効果のコアDMGは同一ターン内で 100% → 45% → 20% → 10% に減衰する。</div><div class="effectStat">風軽減は最大70%。表示WINDはそのままでも、実際に弾が流される量が下がる。</div></div>`;
 }
-let _effectPanelTimer=null;
-function showEffectPanel(){
-  renderEffectPanel();
-  document.getElementById('effectPanel')?.classList.add('show');
-  sfx('ui');
-  clearInterval(_effectPanelTimer);
-  _effectPanelTimer=setInterval(renderEffectPanel,400); // v5.60: 開いている間は自動更新
-}
-function hideEffectPanel(){
-  document.getElementById('effectPanel')?.classList.remove('show');
-  sfx('ui');
-  clearInterval(_effectPanelTimer);_effectPanelTimer=null;
-}
+function showEffectPanel(){renderEffectPanel();document.getElementById('effectPanel')?.classList.add('show');sfx('ui');}
+function hideEffectPanel(){document.getElementById('effectPanel')?.classList.remove('show');sfx('ui');}
 function setDifficultyLevel(v){
   G.enemyLevel=clamp(+v||3,1,5);
   document.querySelectorAll('.lvBtn').forEach(b=>b.classList.toggle('active',+b.dataset.lv===G.enemyLevel));
