@@ -221,6 +221,9 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   text-shadow:0 0 8px rgba(0,240,255,.6);}
 #muteBtn.off{color:#5a7180;border-color:rgba(232,246,255,.2);text-shadow:none;}
 #muteBtn:active{transform:translateX(-50%) scale(.94);}
+#fpsCounter{position:absolute;top:4px;right:6px;z-index:13;pointer-events:none;
+  font-family:'Orbitron';font-size:9px;letter-spacing:.06em;color:rgba(159,184,200,.6);}
+#fpsCounter.warn{color:rgba(255,194,51,.9);text-shadow:0 0 6px rgba(255,194,51,.5);}
 /* start screen */
 #start{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:flex-start;
   background:radial-gradient(circle at center,rgba(0,240,255,.08),rgba(2,5,10,.94) 62%);backdrop-filter:blur(5px);padding:22px;text-align:center;overflow-y:auto;}
@@ -371,6 +374,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   <div id="scan"></div><div id="vig"></div><div id="flash"></div>
   <div id="crisis"><div class="edge"></div><div id="crisisTicker"><span>WARNING // CORE INTEGRITY CRITICAL — 損傷率70%超過 — 全兵装、応答セヨ — WARNING // CORE INTEGRITY CRITICAL — 損傷率70%超過 — 全兵装、応答セヨ —</span></div></div>
   <div id="hud">
+    <div id="fpsCounter">60 FPS</div>
     <div class="hpwrap left"><div class="hplabel">YOU // 自陣コア</div><div class="hpbar"><div class="hpghost" id="hgL" style="width:100%"></div><div class="hpfill" id="hpL" style="width:100%"></div></div></div>
     <div class="hpwrap right"><div class="hplabel">敵AI // ENEMY CORE</div><div class="hpbar"><div class="hpghost" id="hgR" style="width:100%"></div><div class="hpfill" id="hpR" style="width:100%"></div></div></div>
     <div id="turnbox"><div id="turnnum">T-01</div><div id="windbox" style="color: rgb(0, 240, 255); text-shadow: rgb(0, 240, 255) 0px 0px 8px;">WIND ←← 2.0</div><div id="rangebox">RANGE 0872m // DIFFICULTY LV 3</div></div>
@@ -404,7 +408,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;m
   </div>
   <div id="start" class="show">
     <div id="startTitle">NEON ARTILLERY</div>
-    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.63 // QUIET SKIES</div>
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:.4em;color:#8fb6c8;margin:-6px 0 10px;">v5.64 // ADAPTIVE LOAD</div>
     <div id="startSub">難易度を選択して砲撃戦を開始<br>LV5は敵AI命中率90%級＋HP50%以下で覚醒<br><span style="color:#38d9ff;">🔊 SOUND ON推奨 — 血月と共に加速するBGM実装</span></div>
     <div id="difficultyPanel">
       <div id="diffTitle">ENEMY DIFFICULTY // 5段階レベル</div>
@@ -738,7 +742,7 @@ let projectiles=[],interceptors=[],particles=[],beams=[],fires=[],floaters=[],pl
 const CORE_R=11,GRAV=0.16;
 const MAX_PARTICLES=520,MAX_BEAMS=90,MAX_STARS=44; // v5.42: late-game FPS guardrails
 function perfLoad(){return projectiles.length+interceptors.length*2+particles.length/4+beams.length*3+planes.length*4;}
-function perfHeavy(){return G.turn>=12||perfLoad()>210;}
+function perfHeavy(){return G.turn>=12||perfLoad()>210||_perfAutoHeavy;}
 function capFxArrays(){
   if(particles.length>MAX_PARTICLES)particles.splice(0,particles.length-MAX_PARTICLES);
   if(beams.length>MAX_BEAMS)beams.splice(0,beams.length-MAX_BEAMS);
@@ -1546,12 +1550,14 @@ function explode(x,y,r,dmg,from,opts){
   const o=opts||{},u=unit(from);
   const payloadOk=!!o.mainPayload;
   const colsP=from==='player'?['#00f0ff','#7ef9ff','#ffffff','#2aa8ff']:['#ff2d78','#ff7ab0','#ffffff','#ff9d3d'];
-  burst(x,y,o.big?125:52,colsP,o.big?8:5,o.big?56:36);
-  debris(x,y,o.big?14:7,from==='player'?'#0a4a5a':'#5a0a2a');
+  // v5.64: 重い時(perfHeavy: ターン経過/弾数過多/FPS低下)は爆発の粒子・デブリ・リングを間引く。
+  const heavy=perfHeavy();
+  burst(x,y,Math.round((o.big?125:52)*(heavy?0.35:1)),colsP,o.big?8:5,o.big?56:36);
+  debris(x,y,Math.round((o.big?14:7)*(heavy?0.4:1)),from==='player'?'#0a4a5a':'#5a0a2a');
   shake(o.big?16:8);punch(o.big?12:4);sfx(o.big?'bigboom':'boom');
   if(o.big){slowmo(0.75);flash(.45);glitch(12);}
   beams.push({type:'ring',x,y,r:6,max:r*1.55,life:20,c:colsP[0]});
-  beams.push({type:'ring',x,y,r:2,max:r*2.1,life:28,c:'#ffffff'});
+  if(!heavy)beams.push({type:'ring',x,y,r:2,max:r*2.1,life:28,c:'#ffffff'});
   beams.push({type:'flash',x,y,r:o.big?r*1.6:r*1.1,life:o.big?14:9,max:o.big?14:9,c:colsP[0]}); // v5
   // v4.6: ダメージ判定は掘削(carve)前のコア座標で行う。先に掘ってしまうと dropCores() で
   // コアのY座標が動き、爆発半径が広いカードほど自分の爆発で判定距離を悪化させていた。
@@ -1955,6 +1961,21 @@ addEventListener('pointerup',()=>dragging=false);
 
 /* ============ loop ============ */
 let last=performance.now();
+// v5.64: FPS計測 + ヒステリシス付き自動軽量化フラグ
+let _fpsHist=[],_fpsAvg=60,_perfAutoHeavy=false,_fpsUiT=0;
+function updateFPS(frameMs){
+  if(frameMs<=0||frameMs>250)return; // タブ復帰等の瞬間的な巨大dtは無視
+  _fpsHist.push(1000/frameMs);
+  if(_fpsHist.length>40)_fpsHist.shift();
+  _fpsAvg=_fpsHist.reduce((a,b)=>a+b,0)/_fpsHist.length;
+  if(_perfAutoHeavy&&_fpsAvg>54)_perfAutoHeavy=false;
+  else if(!_perfAutoHeavy&&_fpsAvg<44)_perfAutoHeavy=true;
+  _fpsUiT++;
+  if(_fpsUiT%15===0){
+    const el=document.getElementById('fpsCounter');
+    if(el){el.textContent=Math.round(_fpsAvg)+' FPS'+(_perfAutoHeavy?' ▼ LITE':'');el.classList.toggle('warn',_perfAutoHeavy);}
+  }
+}
 
 function cameraTarget(){
   const maxX=Math.max(0,WORLD_W-W);
@@ -2260,7 +2281,9 @@ function splitProjectileAtApex(p){
 function hitstop(frames){G.hitstop=Math.max(G.hitstop||0,frames);}
 function loop(now){
   requestAnimationFrame(loop);
-  let dt=Math.min(32,now-last)/16.6;last=now;
+  const frameMs=now-last;
+  let dt=Math.min(32,frameMs)/16.6;last=now;
+  updateFPS(frameMs);
   // v5: ヒットストップ — 直撃の瞬間だけ時間が凍る
   if(G.hitstop>0){G.hitstop-=dt;dt*=0.04;}
   if(G.slowT>0){G.slowT-=dt/60;dt*=0.28;}
